@@ -7,7 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Send, Upload, Building2, Factory, HelpCircle } from "lucide-react";
+import { Send, Upload, Building2, Factory, HelpCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { createProblem } from "@/app/actions/problems";
+import { useRouter } from "next/navigation";
 
 const FadeUpText = ({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) => {
   return (
@@ -23,6 +26,41 @@ const FadeUpText = ({ text, className, delay = 0 }: { text: string; className?: 
 };
 
 export default function ProblemsPortal() {
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    company: "",
+    sector: "",
+    problem: "",
+    outcome: ""
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsPending(true);
+    setError(null);
+    
+    if (!formData.company || !formData.sector || !formData.problem) {
+      setError("Please fill in all required fields.");
+      setIsPending(false);
+      return;
+    }
+
+    const res = await createProblem(formData);
+    
+    if (res.error) {
+      if (res.error.includes("log in")) {
+        router.push("/login?callbackUrl=/problems");
+      } else {
+        setError(res.error);
+        setIsPending(false);
+      }
+    } else {
+      router.push("/dashboard/problems");
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-background">
       {/* PREMIUM BACKGROUND ELEMENTS */}
@@ -80,23 +118,33 @@ export default function ProblemsPortal() {
             </CardHeader>
             
             <CardContent className="p-8 md:p-12 pt-0">
-              <form className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {error && (
+                  <div className="bg-red-500/10 text-red-500 p-4 rounded-xl text-sm font-bold border border-red-500/20">
+                    {error}
+                  </div>
+                )}
+                
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="company" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Company Name</Label>
+                    <Label htmlFor="company" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Company Name *</Label>
                     <div className="relative group">
                       <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <Input 
                         id="company" 
+                        value={formData.company}
+                        onChange={(e) => setFormData({...formData, company: e.target.value})}
                         placeholder="e.g. BuildIt Steel Ltd." 
                         className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl"
                       />
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="sector" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Industry Sector</Label>
+                    <Label htmlFor="sector" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Industry Sector *</Label>
                     <Input 
                       id="sector" 
+                      value={formData.sector}
+                      onChange={(e) => setFormData({...formData, sector: e.target.value})}
                       placeholder="e.g. Advanced Manufacturing" 
                       className="bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl"
                     />
@@ -104,9 +152,11 @@ export default function ProblemsPortal() {
                 </div>
                 
                 <div className="space-y-3">
-                  <Label htmlFor="problem" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Problem Statement</Label>
+                  <Label htmlFor="problem" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Problem Statement *</Label>
                   <Textarea 
                     id="problem" 
+                    value={formData.problem}
+                    onChange={(e) => setFormData({...formData, problem: e.target.value})}
                     placeholder="Describe the quality issue, its current impact, and any data points you have already collected..." 
                     className="min-h-[160px] bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-2xl p-4 leading-relaxed"
                   />
@@ -116,6 +166,8 @@ export default function ProblemsPortal() {
                   <Label htmlFor="outcome" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Expected Outcome</Label>
                   <Textarea 
                     id="outcome" 
+                    value={formData.outcome}
+                    onChange={(e) => setFormData({...formData, outcome: e.target.value})}
                     placeholder="What does a successful resolution look like for your team?" 
                     className="min-h-[100px] bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-2xl p-4 leading-relaxed"
                   />
@@ -136,9 +188,22 @@ export default function ProblemsPortal() {
                   </div>
                 </div>
 
-                <Button type="button" className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group">
-                  Submit to Sarvottam Workflow
-                  <Send className="ml-2 h-5 w-5 opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Button 
+                  type="submit" 
+                  disabled={isPending}
+                  className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit to Sarvottam Workflow
+                      <Send className="ml-2 h-5 w-5 opacity-70 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>

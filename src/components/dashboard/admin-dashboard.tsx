@@ -1,8 +1,19 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Building, Activity, ShieldCheck } from "lucide-react";
+import { Users, Building, Activity, ShieldCheck, LogIn } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import { impersonateUser, getUsersForImpersonation } from "@/app/actions/admin";
 
-export function AdminDashboard() {
+export async function AdminDashboard() {
+  const totalUsers = await prisma.user.count();
+  const industryPartners = await prisma.user.count({ where: { role: "INDUSTRY_PARTNER" } });
+  const activeProjects = await prisma.project.count({ where: { status: "OPEN" } });
+  const totalProblems = await prisma.problem.count();
+
+  const usersList = await getUsersForImpersonation();
+
   return (
     <div className="space-y-6">
       <div>
@@ -17,8 +28,8 @@ export function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,248</div>
-            <p className="text-xs text-muted-foreground">+18% from last month</p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-xs text-muted-foreground">Registered accounts</p>
           </CardContent>
         </Card>
         <Card>
@@ -27,8 +38,8 @@ export function AdminDashboard() {
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">84</div>
-            <p className="text-xs text-muted-foreground">+5 new this week</p>
+            <div className="text-2xl font-bold">{industryPartners}</div>
+            <p className="text-xs text-muted-foreground">Active organizations</p>
           </CardContent>
         </Card>
         <Card>
@@ -37,28 +48,61 @@ export function AdminDashboard() {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">324</div>
-            <p className="text-xs text-muted-foreground">Across 4 departments</p>
+            <div className="text-2xl font-bold">{activeProjects}</div>
+            <p className="text-xs text-muted-foreground">Open for applications</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Quality Impact Score</CardTitle>
+            <CardTitle className="text-sm font-medium">Submitted Problems</CardTitle>
             <ShieldCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">94.2</div>
-            <p className="text-xs text-muted-foreground">Ecosystem Health</p>
+            <div className="text-2xl font-bold">{totalProblems}</div>
+            <p className="text-xs text-muted-foreground">Total in system</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="projects" className="w-full">
+      <Tabs defaultValue="users" className="w-full">
         <TabsList>
+          <TabsTrigger value="users">User Management</TabsTrigger>
           <TabsTrigger value="projects">Projects Pipeline</TabsTrigger>
           <TabsTrigger value="departments">Department Performance</TabsTrigger>
-          <TabsTrigger value="analytics">Global Analytics</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="users" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Directory & Impersonation</CardTitle>
+              <CardDescription>View all users and log in as them without a password to troubleshoot or manage problems.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
+                {usersList.map(user => (
+                  <div key={user.id} className="flex items-center justify-between p-4 border rounded-xl hover:bg-muted/50 transition-colors">
+                    <div>
+                      <p className="font-semibold">{user.name || "Unnamed User"}</p>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <Badge variant="outline">{user.role}</Badge>
+                      {user.role !== "SUPERADMIN" && (
+                        <form action={impersonateUser.bind(null, user.id)}>
+                          <Button type="submit" variant="secondary" size="sm">
+                            <LogIn className="w-4 h-4 mr-2" />
+                            Login As
+                          </Button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="projects" className="mt-4">
           <Card>
             <CardHeader>

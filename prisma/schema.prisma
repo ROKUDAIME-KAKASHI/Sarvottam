@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -14,9 +14,12 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  password      String?
   emailVerified DateTime?
   image         String?
-  role          String    @default("STUDENT") // SUPERADMIN, FACULTY, STUDENT, INDUSTRY_PARTNER
+  role          String    @default("STUDENT") // STUDENT, FACULTY, INDUSTRY_PARTNER, SUPERADMIN
+  skills        String?
+  portfolioUrl  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -26,6 +29,10 @@ model User {
 
   applications  Application[]
   notifications Notification[]
+  submittedProblems Problem[] @relation("SubmittedProblems")
+  assignedProblems  Problem[] @relation("AssignedProblems")
+  createdProjects   Project[] @relation("ProjectCreator")
+  impersonationTokens ImpersonationToken[]
 }
 
 model Department {
@@ -48,8 +55,8 @@ model Faculty {
   id           String     @id @default(cuid())
   userId       String     @unique
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  departmentId String
-  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
   mentoredProjects Project[]
 }
 
@@ -69,14 +76,17 @@ model Project {
   difficultyLevel  String?
   duration         String?
   status           String           @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
-  departmentId     String
-  department       Department       @relation(fields: [departmentId], references: [id])
+  departmentId     String?
+  department       Department?       @relation(fields: [departmentId], references: [id])
   mentorId         String?
   mentor           Faculty?         @relation(fields: [mentorId], references: [id])
   partnerId        String?
   partner          IndustryPartner? @relation(fields: [partnerId], references: [id])
+  creatorId        String?
+  creator          User?            @relation("ProjectCreator", fields: [creatorId], references: [id])
   applications     Application[]
   documents        Document[]
+  problems         Problem[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -128,6 +138,37 @@ model KPI {
 model Report {
   id          String   @id @default(cuid())
   title       String
-  content     String
   createdAt   DateTime @default(now())
+}
+
+model Problem {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  area        String   @default("PROCESS") // PEOPLE, PROCESS, TECHNOLOGY, BUSINESS, COMPLIANCE
+  quadrant    String?  // DO_FIRST, SCHEDULE, DELEGATE, ELIMINATE
+  status      String   @default("OPEN") // OPEN, PENDING, APPROVED, ESCALATED, RESOLVED
+  level       String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  score       Float?   @default(0) // priority score
+  facultyApproved Boolean @default(false)
+  industryApproved Boolean @default(false)
+
+  submitterId String
+  submitter   User     @relation("SubmittedProblems", fields: [submitterId], references: [id])
+  
+  assigneeId  String?
+  assignee    User?    @relation("AssignedProblems", fields: [assigneeId], references: [id])
+
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ImpersonationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }

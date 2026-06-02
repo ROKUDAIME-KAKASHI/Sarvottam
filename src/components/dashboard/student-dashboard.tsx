@@ -1,8 +1,37 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Award, Activity, Briefcase } from "lucide-react";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 
-export function StudentDashboard() {
+export async function StudentDashboard() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) return null;
+
+  // Fetch student data
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      applications: {
+        include: {
+          project: {
+            include: { partner: true }
+          }
+        }
+      },
+      submittedProblems: true,
+    }
+  });
+
+  const activeProjects = user?.applications.filter(a => a.status === "ACCEPTED") || [];
+  const openApplications = user?.applications.filter(a => a.status === "PENDING") || [];
+  const submittedProblemsCount = user?.submittedProblems.length || 0;
+  
+  // Skills string to array
+  const skillsArray = user?.skills ? user.skills.split(',').map(s => s.trim()).filter(Boolean) : ["No skills added yet"];
+
   return (
     <div className="space-y-6">
       <div>
@@ -17,18 +46,18 @@ export function StudentDashboard() {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">1 completing soon</p>
+            <div className="text-2xl font-bold">{activeProjects.length}</div>
+            <p className="text-xs text-muted-foreground">Currently participating</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Research Hours</CardTitle>
+            <CardTitle className="text-sm font-medium">Submitted Problems</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">120</div>
-            <p className="text-xs text-muted-foreground">+12% from last month</p>
+            <div className="text-2xl font-bold">{submittedProblemsCount}</div>
+            <p className="text-xs text-muted-foreground">Industry challenges raised</p>
           </CardContent>
         </Card>
         <Card>
@@ -37,8 +66,8 @@ export function StudentDashboard() {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">View portfolio</p>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">Coming soon</p>
           </CardContent>
         </Card>
         <Card>
@@ -47,7 +76,7 @@ export function StudentDashboard() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">{openApplications.length}</div>
             <p className="text-xs text-muted-foreground">Pending review</p>
           </CardContent>
         </Card>
@@ -61,18 +90,19 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                { title: "Defect Detection using AI", partner: "TechCorp MSME", status: "In Progress" },
-                { title: "Lean Manufacturing Audit", partner: "BuildIt Steel", status: "Review" }
-              ].map((project, i) => (
-                <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{project.title}</p>
-                    <p className="text-sm text-muted-foreground">{project.partner}</p>
+              {activeProjects.length === 0 ? (
+                <p className="text-sm text-muted-foreground">You are not participating in any active projects yet.</p>
+              ) : (
+                activeProjects.map((app, i) => (
+                  <div key={app.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium leading-none">{app.project.title}</p>
+                      <p className="text-sm text-muted-foreground">{app.project.partner?.companyName || "Internal"}</p>
+                    </div>
+                    <Badge variant="default">{app.project.status}</Badge>
                   </div>
-                  <Badge variant={project.status === "Review" ? "secondary" : "default"}>{project.status}</Badge>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -84,7 +114,7 @@ export function StudentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {["Six Sigma Green Belt", "Python", "Data Analysis", "Lean Management", "IoT Basics"].map((skill, i) => (
+              {skillsArray.map((skill, i) => (
                 <Badge key={i} variant="outline" className="px-3 py-1 bg-primary/5">{skill}</Badge>
               ))}
             </div>

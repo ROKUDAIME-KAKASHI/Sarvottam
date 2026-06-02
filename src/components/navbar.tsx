@@ -36,10 +36,10 @@ export default async function Navbar() {
             </Link>
           ) : (
             <>
-              <Link href="/api/auth/signin" className={buttonVariants({ variant: "ghost", size: "sm", className: "rounded-full hidden sm:inline-flex" })}>
+              <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm", className: "rounded-full hidden sm:inline-flex" })}>
                 Log in
               </Link>
-              <Link href="/api/auth/signin" className={buttonVariants({ size: "sm", className: "rounded-full shadow-md shadow-primary/20" })}>
+              <Link href="/login" className={buttonVariants({ size: "sm", className: "rounded-full shadow-md shadow-primary/20" })}>
                 Get Started
               </Link>
             </>

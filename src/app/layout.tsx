@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { HideOnDashboard } from "@/components/hide-on-dashboard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,9 +28,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex min-h-screen flex-col bg-background text-foreground" suppressHydrationWarning>
-            <Navbar />
+            <HideOnDashboard>
+              <Navbar />
+            </HideOnDashboard>
             <main className="flex-1">{children}</main>
-            <Footer />
+            <HideOnDashboard>
+              <Footer />
+            </HideOnDashboard>
           </div>
         </ThemeProvider>
       </body>
