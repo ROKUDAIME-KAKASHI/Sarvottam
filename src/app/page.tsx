@@ -65,15 +65,15 @@ export default function LandingPage() {
               In Official Partnership With
             </p>
             <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-80 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
-              <div className="relative h-14 w-40">
+              <div className="relative h-24 w-64">
                 <img 
                   src="/jain-university-logo-png_seeklogo-432784.png" 
                   alt="Jain University" 
                   className="object-contain w-full h-full"
                 />
               </div>
-              <div className="h-10 w-[2px] bg-border/50 hidden md:block"></div>
-              <div className="relative h-14 w-40">
+              <div className="h-16 w-[2px] bg-border/50 hidden md:block"></div>
+              <div className="relative h-24 w-64">
                 <img 
                   src="/0_Logo-IFQM.png" 
                   alt="IFQM" 
