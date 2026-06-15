@@ -18,22 +18,25 @@ export async function POST(req: Request) {
       parts: [{ text: m.content }],
     }));
 
-    // Add a system prompt equivalent as the first message if needed, but for simplicity we just pass the history
     const payload = {
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: "You are Sarvottam Assistant, a helpful AI guide for the Sarvottam Ecosystem. Keep your answers concise, professional, and directly related to academic/industry collaboration, project management, and platform features." }]
-        },
-        {
-          role: "model",
-          parts: [{ text: "Understood. I am Sarvottam Assistant." }]
-        },
-        ...formattedMessages
-      ],
+      systemInstruction: {
+        parts: [
+          {
+            text: `You are the Sarvottam AI Copilot, an advanced, highly professional, and intelligent enterprise assistant for the Sarvottam Ecosystem.
+Your tone is confident, professional, articulate, and deeply knowledgeable. 
+
+Role & Capabilities:
+- You help students, faculty, and industry partners navigate their dashboard.
+- You provide insights on excellence frameworks, innovation hubs, LMS certifications, placements, and sustainability (ESG/SDG).
+- You use markdown for structure (bolding key terms, using bullet points for readability).
+- Never break character. Always answer with a helpful and authoritative enterprise-grade tone.`
+          }
+        ]
+      },
+      contents: formattedMessages,
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1000,
+        temperature: 0.5,
+        maxOutputTokens: 1024,
       }
     };
 

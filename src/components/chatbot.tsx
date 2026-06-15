@@ -19,7 +19,7 @@ export function Chatbot() {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hello! I am the Sarvottam AI Assistant. How can I help you navigate the platform or assist with your projects today?",
+      content: "Welcome to the Sarvottam Ecosystem. I am your AI Copilot. How may I assist you with your professional goals, academic projects, or platform navigation today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -94,7 +94,7 @@ export function Chatbot() {
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">Sarvottam Assistant</h3>
+                  <h3 className="font-semibold text-sm">Sarvottam AI Copilot</h3>
                   <p className="text-xs text-primary-foreground/80">Online & Ready</p>
                 </div>
               </div>
