@@ -6,6 +6,8 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { HideOnDashboard } from "@/components/hide-on-dashboard";
 import { Toaster } from "sonner";
+import { auth } from "@/auth";
+import { Chatbot } from "@/components/chatbot";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,11 +16,12 @@ export const metadata: Metadata = {
   description: "Bridging academia and industry to solve real-world quality challenges.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`} suppressHydrationWarning>
@@ -36,6 +39,8 @@ export default function RootLayout({
             <HideOnDashboard>
               <Footer />
             </HideOnDashboard>
+            {session && <Chatbot />}
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>
