@@ -57,6 +57,7 @@ export function Sidebar({ role, user }: SidebarProps) {
     { name: "Research", href: "/dashboard/projects", icon: Briefcase, roles: ["STUDENT", "FACULTY", "INDUSTRY_PARTNER"] },
     { name: "Applications", href: "/dashboard/applications", icon: Inbox, roles: ["STUDENT", "FACULTY", "INDUSTRY_PARTNER"] },
     { name: "Projects / Problems", href: "/dashboard/problems", icon: AlertCircle, roles: ["ALL"] },
+    { name: "Placements & Jobs", href: "/dashboard/placements", icon: Briefcase, roles: ["ALL"] },
     { name: "Documents", href: "/dashboard/documents", icon: Files, roles: ["ALL"] },
     { name: "Reports", href: "/dashboard/reports", icon: FileText, roles: ["ALL"] },
     { name: "Notifications", href: "/dashboard/notifications", icon: Bell, roles: ["ALL"] },
