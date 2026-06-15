@@ -23,25 +23,6 @@ export default function LandingPage() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center max-w-4xl"
           >
-            {/* Partnership Logos */}
-            <div className="flex items-center justify-center gap-8 mb-10">
-              <div className="relative h-16 w-40">
-                <img 
-                  src="/jain-university-logo-png_seeklogo-432784.png" 
-                  alt="Jain University" 
-                  className="object-contain w-full h-full drop-shadow-sm"
-                />
-              </div>
-              <div className="h-10 w-[2px] bg-border/60"></div>
-              <div className="relative h-16 w-40">
-                <img 
-                  src="/0_Logo-IFQM.png" 
-                  alt="IFQM" 
-                  className="object-contain w-full h-full drop-shadow-sm"
-                />
-              </div>
-            </div>
-
             <Badge variant="outline" className="mb-8 px-4 py-1.5 text-sm font-medium rounded-full bg-background/50 backdrop-blur-md border-primary/20 text-primary">
               <BrainCircuit className="w-3.5 h-3.5 mr-2 fill-primary/20" />
               The Next Generation Ecosystem
@@ -71,6 +52,35 @@ export default function LandingPage() {
             <Link href="/login" className={buttonVariants({ variant: "outline", size: "lg", className: "h-14 px-8 text-base rounded-full border-muted-foreground/20 hover:bg-muted/50 transition-all" })}>
               Create Account
             </Link>
+          </motion.div>
+
+          {/* Partnership Logos */}
+          <motion.div 
+            className="mt-20 flex flex-col items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            <p className="text-sm font-semibold tracking-widest text-muted-foreground uppercase mb-6">
+              In Official Partnership With
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-80 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+              <div className="relative h-14 w-40">
+                <img 
+                  src="/jain-university-logo-png_seeklogo-432784.png" 
+                  alt="Jain University" 
+                  className="object-contain w-full h-full"
+                />
+              </div>
+              <div className="h-10 w-[2px] bg-border/50 hidden md:block"></div>
+              <div className="relative h-14 w-40">
+                <img 
+                  src="/0_Logo-IFQM.png" 
+                  alt="IFQM" 
+                  className="object-contain w-full h-full"
+                />
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
