@@ -62,7 +62,7 @@ export async function createJob(formData: FormData) {
     throw new Error("Unauthorized");
   }
 
-  const role = session.user.role;
+  const role = session.user.role || "STUDENT";
   if (!["FACULTY", "INDUSTRY_PARTNER", "SUPERADMIN"].includes(role)) {
     throw new Error("You do not have permission to post jobs.");
   }
