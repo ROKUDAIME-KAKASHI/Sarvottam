@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { impersonateUser, getUsersForImpersonation } from "@/app/actions/admin";
+import { ComingSoon } from "@/components/coming-soon";
+import ApplicationList from "@/app/dashboard/applications/ApplicationList";
+import { approveProblem } from "@/app/actions/problems";
 
 export async function AdminDashboard() {
   const totalUsers = await prisma.user.count();
@@ -13,6 +16,23 @@ export async function AdminDashboard() {
   const totalProblems = await prisma.problem.count();
 
   const usersList = await getUsersForImpersonation();
+  
+  const pendingApplications = await prisma.application.findMany({
+    where: { status: "PENDING" },
+    include: { project: true, user: true },
+    orderBy: { createdAt: "desc" }
+  });
+
+  const pendingProblems = await prisma.problem.findMany({
+    where: { 
+      OR: [
+        { adminApproved: false },
+        { status: "OPEN" }
+      ]
+    },
+    include: { submitter: true },
+    orderBy: { createdAt: "desc" }
+  });
 
   return (
     <div className="space-y-6">
@@ -67,10 +87,72 @@ export async function AdminDashboard() {
       <Tabs defaultValue="users" className="w-full">
         <TabsList>
           <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="approvals" className="relative">
+            Approvals
+            {(pendingApplications.length > 0 || pendingProblems.filter(p => !p.adminApproved).length > 0) && (
+              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="projects">Projects Pipeline</TabsTrigger>
           <TabsTrigger value="departments">Department Performance</TabsTrigger>
         </TabsList>
         
+        <TabsContent value="approvals" className="mt-4 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Industry Problems (Final Admin Approval)</CardTitle>
+              <CardDescription>Review and provide final authorization for problems to enter the marketplace.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-4">
+                {pendingProblems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No problems pending approval.</p>
+                ) : (
+                  pendingProblems.map(problem => (
+                    <div key={problem.id} className="flex items-center justify-between p-4 border rounded-xl">
+                      <div>
+                        <p className="font-semibold">{problem.title}</p>
+                        <p className="text-xs text-muted-foreground">By {problem.submitter.name} ({problem.submitter.role})</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={problem.adminApproved ? "default" : "secondary"}>
+                          {problem.adminApproved ? "Admin OK" : "Pending Admin"}
+                        </Badge>
+                        {!problem.adminApproved && (
+                          <form action={async () => { "use server"; await approveProblem(problem.id, "ADMIN", true); }}>
+                            <Button size="sm">Approve Problem</Button>
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Project Applications (Final Admin Approval)</CardTitle>
+              <CardDescription>Admins can provide the final override or approval for student node applications.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="p-6">
+                <ApplicationList 
+                  applications={pendingApplications.map(app => ({
+                    ...app,
+                    project: { ...app.project, creatorId: app.project.creatorId || "" }
+                  }))} 
+                  currentUserRole="SUPERADMIN" 
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="users" className="mt-4">
           <Card>
             <CardHeader>
@@ -110,9 +192,11 @@ export async function AdminDashboard() {
               <CardDescription>Overview of all projects across the platform</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground">
-                [ Chart Visualization: Projects Pipeline ]
-              </div>
+              <ComingSoon feature="Project pipeline visualization">
+                <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground cursor-pointer hover:bg-muted/20 transition-colors">
+                  [ Chart Visualization: Projects Pipeline ]
+                </div>
+              </ComingSoon>
             </CardContent>
           </Card>
         </TabsContent>
@@ -123,9 +207,11 @@ export async function AdminDashboard() {
               <CardDescription>KPIs by Node</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground">
-                [ Bar Chart: Department KPIs ]
-              </div>
+              <ComingSoon feature="Department KPI charts">
+                <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground cursor-pointer hover:bg-muted/20 transition-colors">
+                  [ Bar Chart: Department KPIs ]
+                </div>
+              </ComingSoon>
             </CardContent>
           </Card>
         </TabsContent>

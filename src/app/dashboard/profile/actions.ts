@@ -15,6 +15,11 @@ export async function updateProfile(data: { name: string, skills?: string, portf
     throw new Error("Name must be at least 2 characters long");
   }
 
+  const currentUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { skills: true, role: true }
+  });
+
   await prisma.user.update({
     where: { id: session.user.id },
     data: { 
@@ -27,5 +32,13 @@ export async function updateProfile(data: { name: string, skills?: string, portf
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
   
-  return { success: true, message: "Profile updated successfully" };
+  const skillsChanged = currentUser?.skills !== (data.skills || null);
+  const isStudent = currentUser?.role === "STUDENT";
+
+  let message = "Profile updated successfully";
+  if (isStudent && skillsChanged) {
+    message = "Submitted successfully waiting for approval";
+  }
+  
+  return { success: true, message };
 }

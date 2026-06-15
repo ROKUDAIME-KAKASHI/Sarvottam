@@ -4,23 +4,27 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { createProject } from "@/app/actions/projects";
+import { toast } from "sonner";
 
 export default function CreateProjectForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
 
     const formData = new FormData(e.currentTarget);
-    const result = await createProject(formData);
+    const result = await createProject(null, formData);
 
     if (result.error) {
-      setError(result.error);
+      toast.error("Failed to create project", {
+        description: result.error
+      });
     } else {
+      toast.success("Project created successfully!", {
+        description: "Your new research node is now live."
+      });
       setIsOpen(false);
     }
     
@@ -63,6 +67,18 @@ export default function CreateProjectForm() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Type</label>
+                  <select name="type" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none">
+                    <option value="Software">Software</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Business">Business</option>
+                    <option value="Design">Design</option>
+                    <option value="Research">Research</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
                   <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Difficulty</label>
                   <select name="difficultyLevel" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none">
                     <option value="Beginner">Beginner</option>
@@ -70,15 +86,13 @@ export default function CreateProjectForm() {
                     <option value="Advanced">Advanced</option>
                   </select>
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Duration</label>
-                  <input type="text" name="duration" placeholder="e.g. 3 Months" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground" />
-                </div>
               </div>
-              
-              {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+              <div>
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Duration</label>
+                <input type="text" name="duration" placeholder="e.g. 3 Months" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground" />
+              </div>
 
-              <div className="flex justify-end gap-2 pt-4">
+                  <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

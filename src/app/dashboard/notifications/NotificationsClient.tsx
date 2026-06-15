@@ -2,17 +2,19 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bell, CheckCircle2, MessageSquare, Briefcase, Trash2 } from "lucide-react";
+import { Bell, CheckCircle2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { markAllAsRead, markNotificationAsRead, deleteNotification } from "@/app/actions/notifications";
 import { useTransition } from "react";
+import { toast } from "sonner";
 
-export default function NotificationsClient({ notifications }: { notifications: any[] }) {
+export default function NotificationsClient({ notifications }: { notifications: { id: string, message: string, read: boolean, createdAt: Date | string }[] }) {
   const [isPending, startTransition] = useTransition();
 
   const handleMarkAllAsRead = () => {
     startTransition(async () => {
-      await markAllAsRead();
+      const res = await markAllAsRead();
+      if (res.success) toast.success("All notifications marked as read");
     });
   };
 
@@ -24,7 +26,9 @@ export default function NotificationsClient({ notifications }: { notifications: 
 
   const handleDelete = (id: string) => {
     startTransition(async () => {
-      await deleteNotification(id);
+      const res = await deleteNotification(id);
+      if (res.success) toast.success("Notification deleted");
+      else toast.error("Failed to delete notification");
     });
   };
 

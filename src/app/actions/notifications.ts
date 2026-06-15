@@ -26,8 +26,10 @@ export async function markNotificationAsRead(id: string) {
       data: { read: true }
     });
     revalidatePath("/dashboard/notifications");
+    return { success: true };
   } catch (error) {
     console.error("Failed to mark as read:", error);
+    return { error: "Failed to update" };
   }
 }
 
@@ -37,14 +39,16 @@ export async function deleteNotification(id: string) {
       where: { id }
     });
     revalidatePath("/dashboard/notifications");
+    return { success: true };
   } catch (error) {
     console.error("Failed to delete notification:", error);
+    return { error: "Failed to delete" };
   }
 }
 
 export async function markAllAsRead() {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) return { error: "Unauthorized" };
 
   try {
     await prisma.notification.updateMany({
@@ -52,7 +56,9 @@ export async function markAllAsRead() {
       data: { read: true }
     });
     revalidatePath("/dashboard/notifications");
+    return { success: true };
   } catch (error) {
     console.error("Failed to mark all as read:", error);
+    return { error: "Failed to update all" };
   }
 }

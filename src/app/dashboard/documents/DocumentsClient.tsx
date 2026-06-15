@@ -2,13 +2,14 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Files, FileText, Download, Upload, Image as ImageIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FileText, Download, Upload, Image as ImageIcon } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { uploadDocument } from "@/app/actions/documents";
 import { useTransition, useRef } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
-export default function DocumentsClient({ documents }: { documents: any[] }) {
+export default function DocumentsClient({ documents }: { documents: { id: string, name: string, url: string, createdAt: Date | string }[] }) {
   const [isPending, startTransition] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -20,8 +21,13 @@ export default function DocumentsClient({ documents }: { documents: any[] }) {
     formData.append("file", file);
 
     startTransition(async () => {
-      await uploadDocument(formData);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      const res = await uploadDocument(formData);
+      if (res.success) {
+        toast.success("File uploaded successfully!");
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } else {
+        toast.error(res.error || "Upload failed");
+      }
     });
   };
 
@@ -77,7 +83,7 @@ export default function DocumentsClient({ documents }: { documents: any[] }) {
             {documents.length === 0 ? (
                <div className="text-center py-12 text-muted-foreground">No documents uploaded yet.</div>
             ) : (
-              documents.map((doc, i) => (
+              documents.map((doc) => (
                 <div key={doc.id} className="grid grid-cols-12 items-center p-4 px-6 border-b border-border/10 hover:bg-muted/20 transition-colors group">
                   <div className="col-span-8 flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -89,11 +95,9 @@ export default function DocumentsClient({ documents }: { documents: any[] }) {
                     {new Date(doc.createdAt).toLocaleDateString()}
                   </div>
                   <div className="col-span-1 text-right">
-                    <Button asChild variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground group-hover:text-primary">
-                      <Link href={doc.url} target="_blank" download>
-                        <Download className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <Link href={doc.url} target="_blank" download className={buttonVariants({ variant: "ghost", size: "icon", className: "h-8 w-8 text-muted-foreground group-hover:text-primary" })}>
+                      <Download className="h-4 w-4" />
+                    </Link>
                   </div>
                 </div>
               ))

@@ -6,8 +6,9 @@ import { FileText, Plus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateReport } from "@/app/actions/reports";
 import { useTransition } from "react";
+import { ComingSoon } from "@/components/coming-soon";
 
-export default function ReportsClient({ reports, role }: { reports: any[], role: string }) {
+export default function ReportsClient({ reports, role }: { reports: { id: string, title: string, content: string | null, createdAt: Date | string }[], role: string }) {
   const [isPending, startTransition] = useTransition();
 
   const handleGenerate = () => {
@@ -64,10 +65,12 @@ export default function ReportsClient({ reports, role }: { reports: any[], role:
                       <p className="text-xs text-muted-foreground">Generated on {new Date(report.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF
-                  </Button>
+                  <ComingSoon feature="PDF generation and download">
+                    <Button variant="outline" size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PDF
+                    </Button>
+                  </ComingSoon>
                 </motion.div>
               ))}
             </div>

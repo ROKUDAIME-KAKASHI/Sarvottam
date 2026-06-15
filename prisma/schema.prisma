@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -27,12 +27,43 @@ model User {
   facultyProfile  Faculty?
   industryProfile IndustryPartner?
 
-  applications  Application[]
-  notifications Notification[]
-  submittedProblems Problem[] @relation("SubmittedProblems")
-  assignedProblems  Problem[] @relation("AssignedProblems")
-  createdProjects   Project[] @relation("ProjectCreator")
+  applications        Application[]
+  notifications       Notification[]
+  submittedProblems   Problem[]            @relation("SubmittedProblems")
+  assignedProblems    Problem[]            @relation("AssignedProblems")
+  createdProjects     Project[]            @relation("ProjectCreator")
   impersonationTokens ImpersonationToken[]
+  certificates        Certificate[]
+  
+  // Excellence Framework
+  assessments       AssessmentResult[]   @relation("Assessor")
+  improvementPlans  ImprovementPlan[]    @relation("ImprovementOwner")
+
+  // Organizational Assessment Engine
+  uploadedEvidences AssessmentEvidence[] @relation("EvidenceUploader")
+  orgEvaluations    Evaluator[]          @relation("OrgEvaluator")
+  auditLogs         AuditLog[]           @relation("AuditUser")
+
+  // Certification Ecosystem
+  badges              UserBadge[]          @relation("UserBadges")
+  microCredentials    MicroCredential[]    @relation("UserMicroCredentials")
+
+  // Corporate Training (LMS)
+  trainerProfile      Trainer?             @relation("TrainerProfile")
+  enrollments         Enrollment[]         @relation("UserEnrollments")
+  attendances         Attendance[]         @relation("UserAttendance")
+  feedbacks           Feedback[]           @relation("UserFeedback")
+
+  // Innovation Hub
+  founderProfile      Founder?             @relation("FounderProfile")
+  mentorProfile       Mentor?              @relation("MentorProfile")
+  pitches             PitchSubmission[]    @relation("UserPitches")
+
+  // Sustainability Center
+  managedProjects     SustainabilityProject[] @relation("ProjectManager")
+  recordedESG         ESGMetric[]             @relation("ESGRecorder")
+  recordedCarbon      CarbonMetric[]          @relation("CarbonRecorder")
+  authoredReports     ImpactReport[]          @relation("ReportAuthor")
 }
 
 model Department {
@@ -41,22 +72,23 @@ model Department {
   description String?
   projects    Project[]
   faculties   Faculty[]
+  kpis        KPI[]
 }
 
 model Student {
-  id         String  @id @default(cuid())
-  userId     String  @unique
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skills     String? // Comma-separated or JSON string
-  portfolio  String?
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills    String? // Comma-separated or JSON string
+  portfolio String?
 }
 
 model Faculty {
-  id           String     @id @default(cuid())
-  userId       String     @unique
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  departmentId String?
-  department   Department? @relation(fields: [departmentId], references: [id])
+  id               String      @id @default(cuid())
+  userId           String      @unique
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  departmentId     String?
+  department       Department? @relation(fields: [departmentId], references: [id])
   mentoredProjects Project[]
 }
 
@@ -70,35 +102,42 @@ model IndustryPartner {
 }
 
 model Project {
-  id               String           @id @default(cuid())
-  title            String
-  description      String
-  difficultyLevel  String?
-  duration         String?
-  status           String           @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
-  departmentId     String?
-  department       Department?       @relation(fields: [departmentId], references: [id])
-  mentorId         String?
-  mentor           Faculty?         @relation(fields: [mentorId], references: [id])
-  partnerId        String?
-  partner          IndustryPartner? @relation(fields: [partnerId], references: [id])
-  creatorId        String?
-  creator          User?            @relation("ProjectCreator", fields: [creatorId], references: [id])
-  applications     Application[]
-  documents        Document[]
-  problems         Problem[]
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  id              String           @id @default(cuid())
+  title           String
+  description     String
+  difficultyLevel String?
+  duration        String?
+  type            String?
+  status          String           @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
+  departmentId    String?
+  department      Department?      @relation(fields: [departmentId], references: [id])
+  mentorId        String?
+  mentor          Faculty?         @relation(fields: [mentorId], references: [id])
+  partnerId       String?
+  partner         IndustryPartner? @relation(fields: [partnerId], references: [id])
+  creatorId       String?
+  creator         User?            @relation("ProjectCreator", fields: [creatorId], references: [id])
+  applications    Application[]
+  documents       Document[]
+  problems        Problem[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model Application {
-  id        String   @id @default(cuid())
-  projectId String
-  project   Project  @relation(fields: [projectId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  status    String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  projectId        String
+  project          Project  @relation(fields: [projectId], references: [id])
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  status           String   @default("PENDING") // PENDING, ACCEPTED, REJECTED
+
+  // Granular approvals
+  adminApproved    Boolean  @default(false)
+  facultyApproved  Boolean  @default(false)
+  industryApproved Boolean  @default(false)
+
+  createdAt        DateTime @default(now())
 }
 
 model ResearchPaper {
@@ -128,11 +167,75 @@ model Notification {
   createdAt DateTime @default(now())
 }
 
-model KPI {
+// Upgraded KPI Module
+model KPICategory {
   id          String   @id @default(cuid())
-  metricName  String
+  name        String   @unique // Quality, Innovation, Sustainability, Research, Collaboration
+  description String?
+  kpis        KPI[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model KPI {
+  id            String   @id @default(cuid())
+  metricName    String
+  description   String?
+  categoryId    String
+  category      KPICategory @relation(fields: [categoryId], references: [id])
+  currentValue  Float    @default(0)
+  unit          String?  // e.g., "%", "Count", "$"
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  targets       KPITarget[]
+  history       KPIHistory[]
+  trends        KPITrend[]
+  alerts        KPIAlert[]
+}
+
+model KPITarget {
+  id          String   @id @default(cuid())
+  kpiId       String
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  targetValue Float
+  deadline    DateTime?
+  period      String   @default("ANNUAL") // MONTHLY, QUARTERLY, ANNUAL
+  isAchieved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model KPIHistory {
+  id          String   @id @default(cuid())
+  kpiId       String
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
   value       Float
   date        DateTime @default(now())
+  notes       String?
+}
+
+model KPITrend {
+  id          String   @id @default(cuid())
+  kpiId       String
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  direction   String   // UP, DOWN, FLAT
+  percentage  Float    // Percentage change
+  periodStart DateTime
+  periodEnd   DateTime
+  analyzedAt  DateTime @default(now())
+}
+
+model KPIAlert {
+  id          String   @id @default(cuid())
+  kpiId       String
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  severity    String   @default("LOW") // LOW, MEDIUM, HIGH, CRITICAL
+  message     String
+  isResolved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
 }
 
 model Report {
@@ -142,28 +245,31 @@ model Report {
 }
 
 model Problem {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  area        String   @default("PROCESS") // PEOPLE, PROCESS, TECHNOLOGY, BUSINESS, COMPLIANCE
-  quadrant    String?  // DO_FIRST, SCHEDULE, DELEGATE, ELIMINATE
-  status      String   @default("OPEN") // OPEN, PENDING, APPROVED, ESCALATED, RESOLVED
-  level       String   @default("MEDIUM") // LOW, MEDIUM, HIGH
-  score       Float?   @default(0) // priority score
-  facultyApproved Boolean @default(false)
-  industryApproved Boolean @default(false)
+  id               String   @id @default(cuid())
+  title            String
+  description      String?
+  type             String?
+  area             String   @default("PROCESS") // PEOPLE, PROCESS, TECHNOLOGY, BUSINESS, COMPLIANCE
+  quadrant         String?  // DO_FIRST, SCHEDULE, DELEGATE, ELIMINATE
+  status           String   @default("OPEN") // OPEN, PENDING, APPROVED, ESCALATED, RESOLVED
+  level            String   @default("MEDIUM") // LOW, MEDIUM, HIGH
+  score            Float?   @default(0) // priority score
 
-  submitterId String
-  submitter   User     @relation("SubmittedProblems", fields: [submitterId], references: [id])
-  
-  assigneeId  String?
-  assignee    User?    @relation("AssignedProblems", fields: [assigneeId], references: [id])
+  adminApproved    Boolean  @default(false)
+  facultyApproved  Boolean  @default(false)
+  industryApproved Boolean  @default(false)
 
-  projectId   String?
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  submitterId      String
+  submitter        User     @relation("SubmittedProblems", fields: [submitterId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  assigneeId       String?
+  assignee         User?    @relation("AssignedProblems", fields: [assigneeId], references: [id])
+
+  projectId        String?
+  project          Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model ImpersonationToken {
@@ -171,4 +277,680 @@ model ImpersonationToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Certification Ecosystem
+// ----------------------------------------------------------------------------
+
+model CertificationProgram {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  issuer      String   @default("Sarvottam Ecosystem")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tracks       CertificationTrack[]
+  badges       Badge[]
+  certificates Certificate[]
+}
+
+model CertificationTrack {
+  id          String   @id @default(cuid())
+  programId   String
+  program     CertificationProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  level       String   @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assessments      CertificationAssessment[]
+  microCredentials MicroCredential[]
+  certificates     Certificate[]
+}
+
+model CertificationAssessment {
+  id           String   @id @default(cuid())
+  trackId      String
+  track        CertificationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  passingScore Float    @default(70)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  programId   String
+  program     CertificationProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  earnedBy    UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation("UserBadges", fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model MicroCredential {
+  id          String   @id @default(cuid())
+  trackId     String
+  track       CertificationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("UserMicroCredentials", fields: [userId], references: [id], onDelete: Cascade)
+  status      String   @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  earnedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  issueDate   DateTime @default(now())
+  issuer      String   @default("Sarvottam Ecosystem")
+  url         String?
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  programId   String?
+  program     CertificationProgram? @relation(fields: [programId], references: [id])
+  trackId     String?
+  track       CertificationTrack? @relation(fields: [trackId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  verification CertificateVerification?
+}
+
+model CertificateVerification {
+  id               String      @id @default(cuid())
+  certificateId    String      @unique
+  certificate      Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  verificationCode String      @unique
+  verifiedAt       DateTime?
+  isRevoked        Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Corporate Training (LMS)
+// ----------------------------------------------------------------------------
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   @default("COURSE") // COURSE, WORKSHOP, EXECUTIVE_PROGRAM
+  level       String   @default("BEGINNER")
+  duration    Int?     // duration in minutes or hours
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules     Module[]
+  sessions    Session[]
+  enrollments Enrollment[]
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  moduleId    String
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title       String
+  content     String?  
+  videoUrl    String?
+  duration    Int?     // duration in minutes
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Trainer {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation("TrainerProfile", fields: [userId], references: [id], onDelete: Cascade)
+  expertise   String?
+  bio         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sessions    Session[]
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  trainerId   String
+  trainer     Trainer  @relation(fields: [trainerId], references: [id])
+  title       String
+  startDate   DateTime
+  endDate     DateTime
+  location    String?  
+  capacity    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attendance  Attendance[]
+  feedbacks   Feedback[]
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("UserEnrollments", fields: [userId], references: [id], onDelete: Cascade)
+  status      String   @default("ENROLLED") // ENROLLED, IN_PROGRESS, COMPLETED, DROPPED
+  progress    Float    @default(0) // Percentage 0-100
+  enrolledAt  DateTime @default(now())
+  completedAt DateTime?
+
+  @@unique([courseId, userId])
+}
+
+model Attendance {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("UserAttendance", fields: [userId], references: [id], onDelete: Cascade)
+  status      String   @default("PRESENT") // PRESENT, ABSENT, LATE, EXCUSED
+  notes       String?
+  markedAt    DateTime @default(now())
+
+  @@unique([sessionId, userId])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("UserFeedback", fields: [userId], references: [id], onDelete: Cascade)
+  rating      Int      // 1-5 scale
+  comment     String?
+  submittedAt DateTime @default(now())
+
+  @@unique([sessionId, userId])
+}
+
+// ----------------------------------------------------------------------------
+// Excellence Framework Module
+// ----------------------------------------------------------------------------
+
+model ExcellenceFramework {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "Sarvottam Excellence Model", "EFQM 2020"
+  description String?
+  version     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dimensions     FrameworkDimension[]
+  templates      AssessmentTemplate[]
+  maturityLevels MaturityLevel[]
+}
+
+model FrameworkDimension {
+  id            String   @id @default(cuid())
+  frameworkId   String
+  framework     ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  name          String   // e.g., Leadership, People, Process, Innovation, Sustainability, Results
+  description   String?
+  weightage     Float    @default(0) // Contribution to overall score
+  orderIndex    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  questions     AssessmentQuestion[]
+}
+
+model MaturityLevel {
+  id            String   @id @default(cuid())
+  frameworkId   String
+  framework     ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  level         Int      // e.g., 1 to 5
+  name          String   // e.g., "Initial", "Managed", "Defined", "Quantitatively Managed", "Optimizing"
+  description   String?
+  minScore      Float    // Minimum score required to reach this level
+  maxScore      Float    // Maximum score for this level
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AssessmentTemplate {
+  id            String   @id @default(cuid())
+  frameworkId   String
+  framework     ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  name          String   // e.g., "Annual Organizational Assessment"
+  description   String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  questions     AssessmentQuestion[]
+  results       AssessmentResult[]
+}
+
+model AssessmentQuestion {
+  id            String   @id @default(cuid())
+  templateId    String
+  template      AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  dimensionId   String
+  dimension     FrameworkDimension @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
+  text          String
+  guidance      String?  // Guidance on how to answer
+  type          String   @default("SCALE") // SCALE, BOOLEAN, TEXT
+  maxValue      Int      @default(5)
+  weightage     Float    @default(1.0)
+  orderIndex    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  responses     AssessmentResponse[]
+}
+
+model AssessmentResult {
+  id            String   @id @default(cuid())
+  templateId    String
+  template      AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  assessorId    String
+  assessor      User     @relation("Assessor", fields: [assessorId], references: [id])
+  organizationId String? // Optional: If assessing a specific entity, could be project or department
+  targetType    String   @default("ORGANIZATION") // ORGANIZATION, DEPARTMENT, PROJECT
+  targetId      String?  
+  status        String   @default("DRAFT") // DRAFT, SUBMITTED, REVIEWED, PUBLISHED
+  totalScore    Float    @default(0)
+  normalizedScore Float  @default(0) // e.g., out of 1000 like EFQM
+  maturityScore Int?     // Calculated 1-5 based on MaturityLevel
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  responses        AssessmentResponse[]
+  improvementPlans ImprovementPlan[]
+}
+
+model AssessmentResponse {
+  id            String   @id @default(cuid())
+  resultId      String
+  result        AssessmentResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  numericValue  Float?
+  booleanValue  Boolean?
+  textValue     String?
+  evidenceUrl   String?  // Link to supporting document
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([resultId, questionId])
+}
+
+model ImprovementPlan {
+  id            String   @id @default(cuid())
+  resultId      String
+  result        AssessmentResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  area          String   // Maps to Dimension or specific area
+  priority      String   @default("MEDIUM") // HIGH, MEDIUM, LOW
+  status        String   @default("PLANNED") // PLANNED, IN_PROGRESS, COMPLETED, CANCELLED
+  ownerId       String?
+  owner         User?    @relation("ImprovementOwner", fields: [ownerId], references: [id])
+  dueDate       DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Organizational Assessment Engine
+// ----------------------------------------------------------------------------
+
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  type        String?
+  industry    String?
+  size        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orgAssessments OrgAssessment[]
+}
+
+model OrgAssessment {
+  id             String   @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  status         String   @default("INITIATED") // INITIATED, EVIDENCE_GATHERING, EVALUATION, COMPLETED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  sections        AssessmentSection[]
+  evaluators      Evaluator[]
+  recommendations Recommendation[]
+}
+
+model AssessmentSection {
+  id             String   @id @default(cuid())
+  assessmentId   String
+  assessment     OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  weight         Float    @default(1.0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  evidences      AssessmentEvidence[]
+  scores         EvaluationScore[]
+}
+
+model AssessmentEvidence {
+  id             String   @id @default(cuid())
+  sectionId      String
+  section        AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title          String
+  url            String
+  description    String?
+  uploadedById   String
+  uploadedBy     User     @relation("EvidenceUploader", fields: [uploadedById], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Evaluator {
+  id             String   @id @default(cuid())
+  assessmentId   String
+  assessment     OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User     @relation("OrgEvaluator", fields: [userId], references: [id])
+  role           String   @default("LEAD") // LEAD, REVIEWER
+  createdAt      DateTime @default(now())
+
+  scores         EvaluationScore[]
+}
+
+model EvaluationScore {
+  id             String   @id @default(cuid())
+  sectionId      String
+  section        AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  evaluatorId    String
+  evaluator      Evaluator @relation(fields: [evaluatorId], references: [id], onDelete: Cascade)
+  score          Float
+  feedback       String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Recommendation {
+  id             String   @id @default(cuid())
+  assessmentId   String
+  assessment     OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  title          String
+  description    String
+  priority       String   @default("MEDIUM") // HIGH, MEDIUM, LOW
+  status         String   @default("OPEN") // OPEN, ACCEPTED, IMPLEMENTED, REJECTED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  action         String
+  entityType     String
+  entityId       String
+  userId         String
+  user           User     @relation("AuditUser", fields: [userId], references: [id])
+  details        String?
+  createdAt      DateTime @default(now())
+}
+
+// ----------------------------------------------------------------------------
+// Innovation Hub
+// ----------------------------------------------------------------------------
+
+model Startup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  industry    String?
+  stage       String   @default("IDEA") // IDEA, MVP, EARLY_TRACTION, SCALING
+  website     String?
+  foundedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  founders    Founder[]
+  programs    IncubationProgram[] @relation("StartupPrograms")
+  pitches     PitchSubmission[]
+}
+
+model Founder {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation("FounderProfile", fields: [userId], references: [id], onDelete: Cascade)
+  startupId   String
+  startup     Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  role        String   @default("CEO")
+  createdAt   DateTime @default(now())
+}
+
+model Mentor {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation("MentorProfile", fields: [userId], references: [id], onDelete: Cascade)
+  expertise   String   // e.g., "Marketing, Fundraising"
+  bio         String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IncubationProgram {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("UPCOMING") // UPCOMING, ACTIVE, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  startups    Startup[] @relation("StartupPrograms")
+}
+
+model InnovationChallenge {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  prize       String?
+  deadline    DateTime
+  status      String   @default("OPEN") // OPEN, EVALUATION, CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pitches     PitchSubmission[]
+}
+
+model Hackathon {
+  id          String   @id @default(cuid())
+  title       String
+  theme       String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String?
+  status      String   @default("DRAFT") // DRAFT, REGISTRATION, LIVE, ENDED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PitchSubmission {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  deckUrl       String?
+  startupId     String?
+  startup       Startup? @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  submitterId   String
+  submitter     User     @relation("UserPitches", fields: [submitterId], references: [id], onDelete: Cascade)
+  challengeId   String?
+  challenge     InnovationChallenge? @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  status        String   @default("SUBMITTED") // SUBMITTED, REVIEWING, SHORTLISTED, REJECTED, WINNER
+  score         Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Sustainability Center
+// ----------------------------------------------------------------------------
+
+model SDG {
+  id          String   @id @default(cuid())
+  sdgNumber   Int      @unique // 1 to 17
+  title       String
+  description String?
+  color       String?  
+  createdAt   DateTime @default(now())
+
+  projects    SustainabilityProject[] @relation("ProjectSDGs")
+}
+
+model SustainabilityProject {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  status      String   @default("PLANNING") // PLANNING, ACTIVE, COMPLETED
+  startDate   DateTime?
+  endDate     DateTime?
+  managerId   String
+  manager     User     @relation("ProjectManager", fields: [managerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sdgs        SDG[]    @relation("ProjectSDGs")
+  reports     ImpactReport[]
+}
+
+model ESGMetric {
+  id          String   @id @default(cuid())
+  category    String   // ENVIRONMENTAL, SOCIAL, GOVERNANCE
+  name        String
+  value       Float
+  unit        String   
+  measuredAt  DateTime @default(now())
+  recordedById String
+  recordedBy  User     @relation("ESGRecorder", fields: [recordedById], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model CarbonMetric {
+  id          String   @id @default(cuid())
+  scope       String   // SCOPE_1, SCOPE_2, SCOPE_3
+  source      String   
+  emissions   Float    // metric tons of CO2e
+  measuredAt  DateTime @default(now())
+  recordedById String
+  recordedBy  User     @relation("CarbonRecorder", fields: [recordedById], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model ImpactReport {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String
+  periodStart DateTime
+  periodEnd   DateTime
+  projectId   String?
+  project     SustainabilityProject? @relation(fields: [projectId], references: [id])
+  authorId    String
+  author      User     @relation("ReportAuthor", fields: [authorId], references: [id])
+  documentUrl String?
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ----------------------------------------------------------------------------
+// Knowledge Graph
+// ----------------------------------------------------------------------------
+
+model KnowledgeNode {
+  id          String   @id @default(cuid())
+  type        String   // PROBLEM, PROJECT, PAPER, PATENT, CASE_STUDY, STARTUP
+  entityId    String   
+  label       String   
+  createdAt   DateTime @default(now())
+  
+  sourceEdges KnowledgeEdge[] @relation("SourceNode")
+  targetEdges KnowledgeEdge[] @relation("TargetNode")
+}
+
+model KnowledgeEdge {
+  id          String   @id @default(cuid())
+  sourceId    String
+  source      KnowledgeNode @relation("SourceNode", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetId    String
+  target      KnowledgeNode @relation("TargetNode", fields: [targetId], references: [id], onDelete: Cascade)
+  relation    String   // e.g., "RESOLVED_BY", "PUBLISHED_FROM", "SPAWNED_STARTUP"
+  weight      Float    @default(1.0)
+  createdAt   DateTime @default(now())
+
+  @@unique([sourceId, targetId, relation])
+}
+
+model Patent {
+  id          String   @id @default(cuid())
+  title       String
+  inventors   String
+  status      String   @default("FILED") // FILED, GRANTED
+  filingDate  DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model CaseStudy {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String
+  impact      String?
+  createdAt   DateTime @default(now())
 }

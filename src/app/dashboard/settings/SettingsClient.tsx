@@ -1,25 +1,30 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings as SettingsIcon, Shield, User } from "lucide-react";
+import { Shield, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { updateProfileSettings, updatePassword } from "@/app/actions/settings";
 import { useTransition, useState } from "react";
 
-export default function SettingsClient({ user }: { user: any }) {
+export default function SettingsClient({ user }: { user: { id: string, name: string | null, email: string | null, role: string, skills?: string | null, portfolioUrl?: string | null } }) {
   const [isPending, startTransition] = useTransition();
-  const [message, setMessage] = useState("");
+  const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
+  const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
 
   const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
+      setProfileMessage(null);
       const res = await updateProfileSettings(formData);
-      setMessage(res.error || "Profile updated successfully!");
-      setTimeout(() => setMessage(""), 3000);
+      if (res.success) {
+        setProfileMessage({ type: "success", text: "Changes saved" });
+        setTimeout(() => setProfileMessage(null), 3000);
+      } else {
+        setProfileMessage({ type: "error", text: res.error || "Failed to save changes" });
+      }
     });
   };
 
@@ -28,10 +33,15 @@ export default function SettingsClient({ user }: { user: any }) {
     const formData = new FormData(e.currentTarget);
     const form = e.currentTarget;
     startTransition(async () => {
+      setPasswordMessage(null);
       const res = await updatePassword(formData);
-      setMessage(res.error || "Password updated successfully!");
-      if (res.success) form.reset();
-      setTimeout(() => setMessage(""), 3000);
+      if (res.success) {
+        setPasswordMessage({ type: "success", text: "Changes saved" });
+        form.reset();
+        setTimeout(() => setPasswordMessage(null), 3000);
+      } else {
+        setPasswordMessage({ type: "error", text: res.error || "Failed to save changes" });
+      }
     });
   };
 
@@ -41,12 +51,6 @@ export default function SettingsClient({ user }: { user: any }) {
         <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">Manage your account preferences and configurations.</p>
       </div>
-
-      {message && (
-        <div className="p-3 bg-primary/10 text-primary font-medium rounded-md border border-primary/20">
-          {message}
-        </div>
-      )}
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
@@ -71,7 +75,14 @@ export default function SettingsClient({ user }: { user: any }) {
                 <Label>Portfolio URL</Label>
                 <Input name="portfolioUrl" defaultValue={user.portfolioUrl || ""} placeholder="https://github.com/..." />
               </div>
-              <Button disabled={isPending} type="submit">Save Changes</Button>
+              <div className="flex items-center gap-4">
+                <Button disabled={isPending} type="submit">Save Changes</Button>
+                {profileMessage && (
+                  <span className={`text-sm font-medium ${profileMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}>
+                    {profileMessage.text}
+                  </span>
+                )}
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -94,7 +105,14 @@ export default function SettingsClient({ user }: { user: any }) {
                 <Label>New Password</Label>
                 <Input required type="password" name="newPassword" />
               </div>
-              <Button disabled={isPending} type="submit" variant="destructive">Update Password</Button>
+              <div className="flex items-center gap-4">
+                <Button disabled={isPending} type="submit" variant="destructive">Update Password</Button>
+                {passwordMessage && (
+                  <span className={`text-sm font-medium ${passwordMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}>
+                    {passwordMessage.text}
+                  </span>
+                )}
+              </div>
             </form>
           </CardContent>
         </Card>

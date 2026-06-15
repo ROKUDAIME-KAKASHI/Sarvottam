@@ -1,11 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ArrowRight, CheckCircle, Target, Users, Lightbulb, Activity, BarChart, Database, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle, Target, ShieldCheck, Sprout, Network, BrainCircuit, Rocket } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -24,19 +24,19 @@ export default function LandingPage() {
             className="flex flex-col items-center max-w-4xl"
           >
             <Badge variant="outline" className="mb-8 px-4 py-1.5 text-sm font-medium rounded-full bg-background/50 backdrop-blur-md border-primary/20 text-primary">
-              <Zap className="w-3.5 h-3.5 mr-2 fill-primary/20" />
-              JAIN University & IFQM Collaboration
+              <BrainCircuit className="w-3.5 h-3.5 mr-2 fill-primary/20" />
+              The Next Generation Ecosystem
             </Badge>
             
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-6 leading-[1.1]">
-              A New Era in <br />
+              A Unified Engine for <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-foreground via-foreground/80 to-primary/50">
-                Quality Excellence.
+                Organizational Excellence.
               </span>
             </h1>
             
-            <p className="text-lg md:text-2xl text-muted-foreground/80 font-medium max-w-2xl leading-relaxed mb-10">
-              Bridging the gap between academia and industry. Transforming complex challenges into research-driven solutions.
+            <p className="text-lg md:text-2xl text-muted-foreground/80 font-medium max-w-3xl leading-relaxed mb-10">
+              Seamlessly integrate maturity assessments, continuous learning, innovation hubs, and ESG sustainability tracking powered by an intelligent Knowledge Graph.
             </p>
           </motion.div>
           
@@ -46,73 +46,63 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Link href="/research" className={buttonVariants({ size: "lg", className: "h-14 px-8 text-base rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" })}>
-              Explore Projects <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/dashboard" className={buttonVariants({ size: "lg", className: "h-14 px-8 text-base rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" })}>
+              Enter Dashboard <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-            <Link href="/problems" className={buttonVariants({ variant: "outline", size: "lg", className: "h-14 px-8 text-base rounded-full border-muted-foreground/20 hover:bg-muted/50 transition-all" })}>
-              Become a Partner
+            <Link href="/login" className={buttonVariants({ variant: "outline", size: "lg", className: "h-14 px-8 text-base rounded-full border-muted-foreground/20 hover:bg-muted/50 transition-all" })}>
+              Create Account
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* METRICS SECTION */}
-      <section className="relative z-20 -mt-12 mb-24 container mx-auto px-4 md:px-6">
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-background/60 backdrop-blur-xl border border-white/10 dark:border-white/5 rounded-3xl p-2 shadow-2xl shadow-black/5"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-        >
-          {[
-            { value: "85%", label: "Industry Alignment" },
-            { value: "92%", label: "Student Engagement" },
-            { value: "78%", label: "Partner Satisfaction" }
-          ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center justify-center py-10 px-6 rounded-2xl hover:bg-muted/30 transition-colors">
-              <h3 className="text-5xl font-bold tracking-tight mb-2 text-foreground">{stat.value}</h3>
-              <p className="text-sm font-medium text-muted-foreground tracking-wide">{stat.label}</p>
-            </div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* DEPARTMENT NODES SECTION */}
-      <section className="py-24 relative overflow-hidden">
+      {/* PLATFORM MODULES SECTION */}
+      <section className="py-24 relative overflow-hidden bg-muted/30">
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="flex flex-col mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Department Nodes</h2>
+          <div className="flex flex-col mb-16 text-center items-center">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">A Comprehensive Platform</h2>
             <p className="text-muted-foreground text-lg md:text-xl max-w-2xl">
-              Specialized research centers designed to tackle highly specific industry problems.
+              Everything your organization needs to assess, train, innovate, and grow sustainably.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: "MBA Quality",
-                icon: <Users className="h-5 w-5" />,
-                desc: "Leadership and management research.",
-                topics: ["Quality Management", "Process Improvement"]
+                title: "Excellence Frameworks",
+                icon: <Target className="h-6 w-6" />,
+                desc: "Drive organizational maturity through customizable assessment templates covering Leadership, Process, and Results.",
+                topics: ["Scoring Engine", "Maturity Levels", "Benchmarking"]
               },
               {
-                title: "Data Analytics",
-                icon: <BarChart className="h-5 w-5" />,
-                desc: "Predictive insights from raw data.",
-                topics: ["Machine Learning", "Root Cause Analysis"]
+                title: "Certification & LMS",
+                icon: <ShieldCheck className="h-6 w-6" />,
+                desc: "Deploy corporate training programs with automated credential issuance and verifiable badges.",
+                topics: ["Course Workflows", "Micro Credentials", "Verification Portal"]
               },
               {
-                title: "Engineering",
-                icon: <Activity className="h-5 w-5" />,
-                desc: "Physical process optimization.",
-                topics: ["Six Sigma", "DfQ"]
+                title: "Innovation Hub",
+                icon: <Rocket className="h-6 w-6" />,
+                desc: "Foster internal and external innovation with startup incubation, hackathons, and mentor matching.",
+                topics: ["Startup Registry", "Hackathons", "Pitch Submissions"]
               },
               {
-                title: "Digital Solutions",
-                icon: <Database className="h-5 w-5" />,
-                desc: "Software and hardware tech.",
-                topics: ["AI Defect Detection", "Digital Twins"]
+                title: "Sustainability Center",
+                icon: <Sprout className="h-6 w-6" />,
+                desc: "Track and report on SDG mappings, ESG metrics, and carbon impact transparently.",
+                topics: ["Carbon Tracking", "ESG Reporting", "SDG Mapping"]
+              },
+              {
+                title: "Semantic Knowledge Graph",
+                icon: <Network className="h-6 w-6" />,
+                desc: "Connect problems, research papers, patents, and startups through our advanced relationship mapping.",
+                topics: ["Knowledge Discovery", "Impact Tracking", "Semantic Search"]
+              },
+              {
+                title: "AI Copilot Layer",
+                icon: <BrainCircuit className="h-6 w-6" />,
+                desc: "Leverage machine learning to generate real-time recommendations, skill gap analyses, and talent matching.",
+                topics: ["Faculty Matching", "Skill Analytics", "Predictive Insights"]
               }
             ].map((node, i) => (
               <motion.div 
@@ -124,12 +114,12 @@ export default function LandingPage() {
               >
                 <Card className="h-full bg-background/50 backdrop-blur-sm border-muted-foreground/10 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 rounded-2xl overflow-hidden group">
                   <CardContent className="p-6">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                       {node.icon}
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{node.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-6 line-clamp-2">{node.desc}</p>
-                    <ul className="space-y-3">
+                    <h3 className="text-2xl font-bold mb-3">{node.title}</h3>
+                    <p className="text-base text-muted-foreground mb-6 line-clamp-3">{node.desc}</p>
+                    <ul className="space-y-3 mt-auto">
                       {node.topics.map((topic, j) => (
                         <li key={j} className="flex items-center text-sm font-medium">
                           <CheckCircle className="h-4 w-4 mr-3 text-primary/50" />
@@ -145,6 +135,35 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* METRICS SECTION */}
+      <section className="py-24 relative container mx-auto px-4 md:px-6">
+        <div className="flex flex-col mb-12 text-center items-center">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Driven by Data</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl">
+              Track KPIs across your entire organization with real-time analytics.
+            </p>
+        </div>
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-4 gap-4"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          {[
+            { value: "10+", label: "Integrated Modules" },
+            { value: "360°", label: "Assessment Coverage" },
+            { value: "AI", label: "Powered Matching" },
+            { value: "100%", label: "Real-time Auditing" }
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center justify-center py-10 px-6 rounded-2xl border border-muted-foreground/10 bg-background hover:bg-muted/30 transition-colors shadow-sm">
+              <h3 className="text-5xl font-bold tracking-tight mb-2 text-foreground">{stat.value}</h3>
+              <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">{stat.label}</p>
+            </div>
+          ))}
+        </motion.div>
+      </section>
+
       {/* CALL TO ACTION */}
       <section className="py-32 relative">
         <div className="absolute inset-0 bg-primary/5 border-y border-primary/10" />
@@ -157,17 +176,17 @@ export default function LandingPage() {
             className="max-w-3xl mx-auto"
           >
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-              Ready to solve your quality challenges?
+              Ready to transform your organization?
             </h2>
             <p className="text-muted-foreground text-lg mb-10">
-              Join the Sarvotam ecosystem today as an industry partner to submit your problems, or as a student to start researching solutions.
+              Join the Sarvottam ecosystem today. Deploy assessments, train your workforce, track your environmental footprint, and unleash innovation.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/problems" className={buttonVariants({ size: "lg", className: "h-14 px-8 text-base rounded-full shadow-lg" })}>
-                Submit a Problem
+              <Link href="/dashboard" className={buttonVariants({ size: "lg", className: "h-14 px-8 text-base rounded-full shadow-lg" })}>
+                Access Dashboard
               </Link>
-              <Link href="/research" className={buttonVariants({ variant: "secondary", size: "lg", className: "h-14 px-8 text-base rounded-full" })}>
-                View Research Marketplace
+              <Link href="/login" className={buttonVariants({ variant: "secondary", size: "lg", className: "h-14 px-8 text-base rounded-full" })}>
+                Register Now
               </Link>
             </div>
           </motion.div>

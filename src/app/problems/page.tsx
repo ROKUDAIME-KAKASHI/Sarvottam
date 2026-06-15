@@ -33,7 +33,8 @@ export default function ProblemsPortal() {
     company: "",
     sector: "",
     problem: "",
-    outcome: ""
+    outcome: "",
+    type: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,6 +150,26 @@ export default function ProblemsPortal() {
                       className="bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl"
                     />
                   </div>
+                </div>
+                
+                <div className="space-y-3">
+                  <Label htmlFor="type" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Problem Type *</Label>
+                  <select 
+                    id="type" 
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    required
+                    className="w-full bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl px-3 appearance-none"
+                  >
+                    <option value="" disabled>Select a type...</option>
+                    <option value="Software">Software</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Business">Business</option>
+                    <option value="Design">Design</option>
+                    <option value="Research">Research</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
                 
                 <div className="space-y-3">

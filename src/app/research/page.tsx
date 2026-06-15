@@ -11,6 +11,21 @@ export default async function ResearchMarketplace() {
   const problems = await getMarketplaceProblems();
   const session = await auth();
 
+  const mappedProjects = projects.map(p => ({
+    ...p,
+    difficultyLevel: p.difficultyLevel || undefined,
+    duration: p.duration || undefined,
+    mentor: p.mentor ? { user: p.mentor.user ? { name: p.mentor.user.name } : undefined } : undefined,
+    partner: p.partner ? { companyName: p.partner.companyName } : undefined,
+    creator: p.creator ? { name: p.creator.name, email: p.creator.email } : undefined,
+  }));
+
+  const mappedProblems = problems.map(p => ({
+    ...p,
+    description: p.description || "",
+    submitter: p.submitter ? { name: p.submitter.name, email: p.submitter.email, role: p.submitter.role } : undefined
+  }));
+
   return (
     <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-background">
       {/* PREMIUM BACKGROUND ELEMENTS */}
@@ -42,13 +57,13 @@ export default async function ResearchMarketplace() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
             <Input 
               type="search" 
-              placeholder="Search projects..." 
+              placeholder="Search research..." 
               className="pl-12 h-14 w-full bg-background/60 backdrop-blur-xl border-border/50 rounded-2xl focus:ring-primary/20 focus:border-primary/50 transition-all relative z-10 text-base" 
             />
           </div>
         </div>
 
-        <ResearchList projects={projects} problems={problems} currentUserRole={session?.user?.role} currentUserId={session?.user?.id} />
+        <ResearchList projects={mappedProjects} problems={mappedProblems} currentUserRole={session?.user?.role} />
       </div>
     </div>
   );

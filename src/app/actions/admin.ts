@@ -2,7 +2,6 @@
 
 import { auth, signIn } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 
 export async function impersonateUser(targetUserId: string) {
   const session = await auth();

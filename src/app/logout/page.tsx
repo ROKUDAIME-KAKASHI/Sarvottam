@@ -4,13 +4,13 @@ import { useActionState } from "react";
 import { motion } from "framer-motion";
 import { logOutAction } from "./actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { LogOut, Loader2, ArrowLeft } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { LogOut, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LogoutPage() {
   const [, formAction, isPending] = useActionState(
-    logOutAction as any,
+    logOutAction,
     undefined,
   );
 
@@ -52,15 +52,11 @@ export default function LogoutPage() {
               </Button>
             </form>
             
-            <Link href="/dashboard" className="block w-full">
-              <Button 
-                variant="outline" 
-                className="w-full p-6 text-base rounded-xl bg-background border-border/50 hover:bg-muted/50 transition-all"
-                disabled={isPending}
-              >
+            <Link href="/dashboard" className={buttonVariants({ variant: "outline", className: "w-full p-6 text-base rounded-xl bg-background border-border/50 hover:bg-muted/50 transition-all block text-center" })}>
+              <div className="flex items-center justify-center">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 No, return to dashboard
-              </Button>
+              </div>
             </Link>
           </CardContent>
         </Card>

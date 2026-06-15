@@ -1,13 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, ShieldCheck, MoreHorizontal, Loader2 } from "lucide-react";
+import { Mail, ShieldCheck, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { updateUserRole } from "@/app/actions/users";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { ComingSoon } from "@/components/coming-soon";
 
-export default function UserList({ users }: { users: any[] }) {
+export default function UserList({ users }: { users: { id: string, name: string | null, email: string, role: string, createdAt: Date | string }[] }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -94,9 +95,11 @@ export default function UserList({ users }: { users: any[] }) {
                 </div>
               </td>
               <td className="px-6 py-5 text-right">
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
+                <ComingSoon feature="User management options">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </ComingSoon>
               </td>
             </motion.tr>
           ))}

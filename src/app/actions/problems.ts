@@ -3,12 +3,22 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const createProblemSchema = z.object({
+  company: z.string().min(2, "Company name must be at least 2 characters"),
+  sector: z.string().min(2, "Sector is required"),
+  problem: z.string().min(10, "Problem statement must be at least 10 characters"),
+  outcome: z.string().min(10, "Expected outcome must be at least 10 characters"),
+  type: z.string().min(2, "Type is required"),
+});
 
 export async function createProblem(data: {
   company: string;
   sector: string;
   problem: string;
   outcome: string;
+  type: string;
 }) {
   const session = await auth();
   
@@ -16,14 +26,26 @@ export async function createProblem(data: {
     return { error: "You must be logged in to submit a problem. Please log in first." };
   }
 
+  const validatedFields = createProblemSchema.safeParse(data);
+
+  if (!validatedFields.success) {
+    return {
+      error: "Invalid fields provided.",
+      fieldErrors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { company, sector, problem: problemStatement, outcome, type } = validatedFields.data;
+
   try {
-    const title = `${data.company} - ${data.sector}`;
-    const description = `**Problem Statement:**\n${data.problem}\n\n**Expected Outcome:**\n${data.outcome}`;
+    const title = `${company} - ${sector}`;
+    const description = `**Problem Statement:**\n${problemStatement}\n\n**Expected Outcome:**\n${outcome}`;
 
     const problem = await prisma.problem.create({
       data: {
         title,
         description,
+        type,
         submitterId: session.user.id,
         status: "OPEN",
       },
@@ -45,12 +67,7 @@ export async function getProblems() {
   }
 
   try {
-    // If student, maybe they can see OPEN problems or assigned problems.
-    // Let's just fetch all problems for now so the dashboard is populated.
-    // A more refined ACL can be added later.
-    
     if (session.user.role === "STUDENT") {
-      // Students can see OPEN problems or problems assigned to them
       return await prisma.problem.findMany({
         where: {
           OR: [
@@ -64,7 +81,6 @@ export async function getProblems() {
     }
 
     if (session.user.role === "INDUSTRY_PARTNER") {
-      // Industry partners see only the problems they submitted
       return await prisma.problem.findMany({
         where: { submitterId: session.user.id },
         include: { submitter: true, assignee: true },
@@ -72,7 +88,6 @@ export async function getProblems() {
       });
     }
 
-    // Admins and Faculty can see all problems
     return await prisma.problem.findMany({
       include: { submitter: true, assignee: true },
       orderBy: { createdAt: "desc" }
@@ -97,7 +112,7 @@ export async function getMarketplaceProblems() {
   }
 }
 
-export async function approveProblem(problemId: string, approvalType: "FACULTY" | "INDUSTRY", isApproved: boolean) {
+export async function approveProblem(problemId: string, approvalType: "FACULTY" | "INDUSTRY" | "ADMIN", isApproved: boolean) {
   const session = await auth();
   
   if (!session?.user) {
@@ -105,17 +120,35 @@ export async function approveProblem(problemId: string, approvalType: "FACULTY" 
   }
 
   try {
-    if (approvalType === "FACULTY" && session.user.role !== "FACULTY") {
-      return { error: "Only faculty can approve student problems" };
+    if (approvalType === "FACULTY" && session.user.role !== "FACULTY" && session.user.role !== "SUPERADMIN") {
+      return { error: "Only faculty or admins can approve student problems" };
     }
     
-    if (approvalType === "INDUSTRY" && session.user.role !== "SUPERADMIN") {
-      return { error: "Only super admins can approve industry problems" };
+    if (approvalType === "INDUSTRY" && session.user.role !== "SUPERADMIN" && session.user.role !== "INDUSTRY_PARTNER") {
+      return { error: "Unauthorized to approve industry problems" };
     }
 
-    const dataToUpdate = approvalType === "FACULTY" 
-      ? { facultyApproved: isApproved }
-      : { industryApproved: isApproved };
+    if (approvalType === "ADMIN" && session.user.role !== "SUPERADMIN") {
+      return { error: "Only super admins can provide final admin approval" };
+    }
+
+    const dataToUpdate: any = {};
+    if (approvalType === "FACULTY") dataToUpdate.facultyApproved = isApproved;
+    if (approvalType === "INDUSTRY") dataToUpdate.industryApproved = isApproved;
+    if (approvalType === "ADMIN") dataToUpdate.adminApproved = isApproved;
+
+    const currentProblem = await prisma.problem.findUnique({ where: { id: problemId } });
+    if (!currentProblem) return { error: "Problem not found" };
+
+    const willBeAdminApproved = approvalType === "ADMIN" ? isApproved : currentProblem.adminApproved;
+    const willBeFacultyApproved = approvalType === "FACULTY" ? isApproved : currentProblem.facultyApproved;
+    const willBeIndustryApproved = approvalType === "INDUSTRY" ? isApproved : currentProblem.industryApproved;
+
+    if (willBeAdminApproved || (willBeFacultyApproved && willBeIndustryApproved)) {
+      dataToUpdate.status = "APPROVED";
+    } else {
+      dataToUpdate.status = "PENDING";
+    }
 
     await prisma.problem.update({
       where: { id: problemId },

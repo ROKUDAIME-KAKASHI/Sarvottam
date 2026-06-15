@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 import { 
   LayoutDashboard, Settings, FileText, Users, Briefcase,
   LogOut, Building, Bell, BarChart, User, Files, Inbox,
-  AlertCircle, Menu, ChevronLeft, ChevronRight
+  AlertCircle, Menu, ChevronLeft, Award, ClipboardList, BookOpen, Lightbulb, Leaf, BrainCircuit, Network
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 
 interface SidebarProps {
@@ -43,12 +43,20 @@ export function Sidebar({ role, user }: SidebarProps) {
 
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["ALL"] },
+    { name: "AI Copilot", href: "/dashboard/ai", icon: BrainCircuit, roles: ["ALL"] },
+    { name: "Excellence Framework", href: "/dashboard/excellence", icon: Award, roles: ["ALL"] },
+    { name: "Org Assessments", href: "/dashboard/org-assessments", icon: ClipboardList, roles: ["SUPERADMIN", "FACULTY", "INDUSTRY_PARTNER"] },
+    { name: "Certifications", href: "/dashboard/certifications", icon: Award, roles: ["ALL"] },
+    { name: "Innovation Hub", href: "/dashboard/innovation", icon: Lightbulb, roles: ["ALL"] },
+    { name: "Sustainability Center", href: "/dashboard/sustainability", icon: Leaf, roles: ["ALL"] },
+    { name: "Knowledge Graph", href: "/dashboard/knowledge-graph", icon: Network, roles: ["ALL"] },
+    { name: "Training & Courses", href: "/dashboard/lms", icon: BookOpen, roles: ["ALL"] },
     { name: "User Management", href: "/dashboard/users", icon: Users, roles: ["SUPERADMIN"] },
     { name: "Departments", href: "/dashboard/departments", icon: Building, roles: ["SUPERADMIN"] },
     { name: "KPIs & Analytics", href: "/dashboard/kpis", icon: BarChart, roles: ["SUPERADMIN"] },
-    { name: "Projects", href: "/dashboard/projects", icon: Briefcase, roles: ["STUDENT", "FACULTY", "INDUSTRY_PARTNER"] },
+    { name: "Research", href: "/dashboard/projects", icon: Briefcase, roles: ["STUDENT", "FACULTY", "INDUSTRY_PARTNER"] },
     { name: "Applications", href: "/dashboard/applications", icon: Inbox, roles: ["STUDENT", "FACULTY", "INDUSTRY_PARTNER"] },
-    { name: "Problems", href: "/dashboard/problems", icon: AlertCircle, roles: ["ALL"] },
+    { name: "Projects / Problems", href: "/dashboard/problems", icon: AlertCircle, roles: ["ALL"] },
     { name: "Documents", href: "/dashboard/documents", icon: Files, roles: ["ALL"] },
     { name: "Reports", href: "/dashboard/reports", icon: FileText, roles: ["ALL"] },
     { name: "Notifications", href: "/dashboard/notifications", icon: Bell, roles: ["ALL"] },
@@ -138,15 +146,16 @@ export function Sidebar({ role, user }: SidebarProps) {
             </div>
           )}
         </div>
-        <Link href="/logout" className="block w-full">
-          <Button 
-            variant="outline" 
-            className={`w-full text-muted-foreground hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all ${isCollapsed ? 'px-0 justify-center' : 'justify-start'}`}
-            title={isCollapsed ? "Sign Out" : undefined}
-          >
-            <LogOut className={`h-4 w-4 ${isCollapsed ? '' : 'mr-2'}`} />
-            {!isCollapsed && "Sign Out"}
-          </Button>
+        <Link 
+          href="/logout" 
+          className={buttonVariants({ 
+            variant: "outline", 
+            className: `w-full text-muted-foreground hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all ${isCollapsed ? 'px-0 justify-center' : 'justify-start'}` 
+          })}
+          title={isCollapsed ? "Sign Out" : undefined}
+        >
+          <LogOut className={`h-4 w-4 ${isCollapsed ? '' : 'mr-2'}`} />
+          {!isCollapsed && "Sign Out"}
         </Link>
       </div>
     </motion.aside>

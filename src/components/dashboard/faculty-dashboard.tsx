@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ActionButton } from "@/components/action-button";
 import { Users, FileText, CheckCircle, Activity } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { approveProblem } from "@/app/actions/problems";
+import { approveApplication } from "@/app/actions/applications";
 
 export async function FacultyDashboard() {
   const session = await auth();
@@ -22,7 +24,7 @@ export async function FacultyDashboard() {
   });
 
   const pendingApprovalsCount = mentoredProjects.reduce(
-    (count, project) => count + project.applications.filter(a => a.status === "PENDING").length,
+    (count, project) => count + project.applications.filter(a => a.status === "PENDING" && !a.facultyApproved).length,
     0
   );
 
@@ -110,9 +112,23 @@ export async function FacultyDashboard() {
                   <div key={app.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">{app.projectTitle}</p>
-                      <p className="text-sm text-muted-foreground">{app.user.name || app.user.email} • Submitted {new Date(app.createdAt).toLocaleDateString()}</p>
+                      <p className="text-sm text-muted-foreground">{app.user.name || app.user.email} • {new Date(app.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <Badge variant={app.status === "ACCEPTED" ? "default" : app.status === "REJECTED" ? "destructive" : "secondary"}>{app.status}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={app.facultyApproved ? "default" : "secondary"} className="text-[10px] uppercase">
+                        {app.facultyApproved ? "Faculty OK" : "Pending"}
+                      </Badge>
+                      {app.status === "PENDING" && !app.facultyApproved && (
+                        <ActionButton 
+                          action={async () => { "use server"; return await approveApplication(app.id, "FACULTY", true); }}
+                          successMessage="Application approved successfully"
+                          size="sm" 
+                          className="h-7 text-xs px-2"
+                        >
+                          Approve
+                        </ActionButton>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
@@ -141,16 +157,15 @@ export async function FacultyDashboard() {
                       <Badge variant={problem.facultyApproved ? "default" : "secondary"} className="text-[10px] uppercase">
                         {problem.facultyApproved ? "Approved" : "Pending"}
                       </Badge>
-                      <form action={approveProblem.bind(null, problem.id, "FACULTY", !problem.facultyApproved)}>
-                        <Button 
-                          type="submit" 
-                          size="sm" 
-                          variant={problem.facultyApproved ? "outline" : "default"}
-                          className="h-7 text-xs px-3"
-                        >
-                          {problem.facultyApproved ? "Revoke Approval" : "Approve Problem"}
-                        </Button>
-                      </form>
+                      <ActionButton 
+                        action={async () => { "use server"; return await approveProblem(problem.id, "FACULTY", !problem.facultyApproved); }}
+                        successMessage={problem.facultyApproved ? "Problem approval revoked" : "Problem approved successfully"}
+                        size="sm" 
+                        variant={problem.facultyApproved ? "outline" : "default"}
+                        className="h-7 text-xs px-3"
+                      >
+                        {problem.facultyApproved ? "Revoke Approval" : "Approve Problem"}
+                      </ActionButton>
                     </div>
                   </div>
                 ))

@@ -2,11 +2,14 @@ import { Card } from "@/components/ui/card";
 import { UserPlus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getUsers } from "@/app/actions/users";
+import { prisma } from "@/lib/prisma";
 import UserList from "./UserList";
+import { InviteUserButton } from "./InviteUserButton";
 
 export default async function UsersPage() {
-  const users = await getUsers();
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="space-y-8 pb-12">
@@ -15,12 +18,9 @@ export default async function UsersPage() {
           <h2 className="text-3xl font-black tracking-tight text-foreground">User Management</h2>
           <p className="text-muted-foreground font-medium">Coordinate researchers, partners, and administrators across the ecosystem.</p>
         </div>
-        
+
         <div>
-          <Button className="rounded-xl shadow-lg shadow-primary/20">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Invite User
-          </Button>
+          <InviteUserButton />
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export default async function UsersPage() {
         <Card className="rounded-[2rem] border-border/50 bg-background/40 backdrop-blur-xl overflow-hidden shadow-xl shadow-black/5 relative">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           
-          <UserList users={users} />
+          <UserList users={users.map(u => ({ ...u, email: u.email || "" }))} />
         </Card>
       </div>
     </div>

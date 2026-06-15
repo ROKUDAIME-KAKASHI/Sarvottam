@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 
 export async function registerUser(
-  prevState: any,
+  prevState: unknown,
   formData: FormData
 ) {
   const email = formData.get("email") as string;

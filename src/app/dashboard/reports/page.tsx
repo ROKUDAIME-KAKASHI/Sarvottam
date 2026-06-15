@@ -6,5 +6,10 @@ export default async function ReportsPage() {
   const session = await auth();
   const reports = await getReports();
   
-  return <ReportsClient reports={reports} role={session?.user?.role || "STUDENT"} />;
+  const mappedReports = reports.map(r => ({
+    ...r,
+    content: null,
+  }));
+
+  return <ReportsClient reports={mappedReports} role={session?.user?.role || "STUDENT"} />;
 }

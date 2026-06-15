@@ -94,7 +94,7 @@ export default function LoginPage() {
             </form>
             
             <div className="mt-8 text-center text-sm font-medium text-muted-foreground">
-              <p>Don't have an account? <Link href="/signup" className="text-primary hover:underline">Sign Up</Link></p>
+              <p>Don&apos;t have an account? <Link href="/signup" className="text-primary hover:underline">Sign Up</Link></p>
             </div>
           </CardContent>
         </Card>

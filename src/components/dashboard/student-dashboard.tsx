@@ -22,12 +22,14 @@ export async function StudentDashboard() {
         }
       },
       submittedProblems: true,
+      certificates: true,
     }
   });
 
   const activeProjects = user?.applications.filter(a => a.status === "ACCEPTED") || [];
   const openApplications = user?.applications.filter(a => a.status === "PENDING") || [];
   const submittedProblemsCount = user?.submittedProblems.length || 0;
+  const certificatesCount = user?.certificates.length || 0;
   
   // Skills string to array
   const skillsArray = user?.skills ? user.skills.split(',').map(s => s.trim()).filter(Boolean) : ["No skills added yet"];
@@ -42,7 +44,7 @@ export async function StudentDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
+            <CardTitle className="text-sm font-medium">Active Research</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -52,7 +54,7 @@ export async function StudentDashboard() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Submitted Problems</CardTitle>
+            <CardTitle className="text-sm font-medium">Projects / Problems</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -66,8 +68,8 @@ export async function StudentDashboard() {
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Coming soon</p>
+            <div className="text-2xl font-bold">{certificatesCount}</div>
+            <p className="text-xs text-muted-foreground">Earned achievements</p>
           </CardContent>
         </Card>
         <Card>
@@ -85,7 +87,7 @@ export async function StudentDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Current Projects</CardTitle>
+            <CardTitle>Current Research</CardTitle>
             <CardDescription>Your active participation in industry challenges.</CardDescription>
           </CardHeader>
           <CardContent>
@@ -93,7 +95,7 @@ export async function StudentDashboard() {
               {activeProjects.length === 0 ? (
                 <p className="text-sm text-muted-foreground">You are not participating in any active projects yet.</p>
               ) : (
-                activeProjects.map((app, i) => (
+                activeProjects.map((app) => (
                   <div key={app.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">{app.project.title}</p>

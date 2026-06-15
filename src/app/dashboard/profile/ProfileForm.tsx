@@ -31,13 +31,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
     setMessage(null);
     
     try {
-      const res = await updateProfile({ name, skills, portfolioUrl });
-      setMessage({ type: "success", text: res.message });
-      
-      // Clear success message after 3 seconds
+      await updateProfile({ name, skills, portfolioUrl });
+      setMessage({ type: "success", text: "Changes saved" });
       setTimeout(() => setMessage(null), 3000);
-    } catch (error: any) {
-      setMessage({ type: "error", text: error.message || "Failed to update profile" });
+    } catch (error) {
+      setMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to save changes" });
     } finally {
       setIsPending(false);
     }

@@ -11,5 +11,7 @@ export default async function SettingsPage() {
     where: { id: session.user.id }
   });
 
+  if (!user) return <div>Not signed in</div>;
+
   return <SettingsClient user={user} />;
 }

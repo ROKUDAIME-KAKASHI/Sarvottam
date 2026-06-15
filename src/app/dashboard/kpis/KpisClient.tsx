@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, TrendingUp, Users, Briefcase, FileText, CheckCircle } from "lucide-react";
+import { BarChart, Users, Briefcase, FileText, CheckCircle } from "lucide-react";
 
-export default function KPIsClient({ stats }: { stats: any }) {
+export default function KPIsClient({ stats }: { stats: { totalProjects: number, activeStudents: number, completedProjects: number, totalUsers: number } }) {
   const displayStats = [
     { title: "Total Projects", value: stats.totalProjects, icon: Briefcase },
     { title: "Active Students", value: stats.activeStudents, icon: Users },

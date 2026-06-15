@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { HideOnDashboard } from "@/components/hide-on-dashboard";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 

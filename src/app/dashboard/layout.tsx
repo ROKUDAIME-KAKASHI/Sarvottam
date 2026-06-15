@@ -1,9 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
 import { Sidebar } from "./Sidebar";
+import { Chatbot } from "@/components/chatbot";
 
 export default async function DashboardLayout({
   children,
@@ -18,13 +16,14 @@ export default async function DashboardLayout({
   const role = session.user?.role || "STUDENT";
 
   return (
-    <div className="flex min-h-screen w-full bg-muted/20">
+    <div className="flex min-h-screen w-full bg-muted/20 relative">
       <Sidebar role={role} user={session.user} />
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 p-6 md:p-8 overflow-auto">
           {children}
         </div>
       </main>
+      <Chatbot />
     </div>
   );
 }

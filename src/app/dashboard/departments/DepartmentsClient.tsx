@@ -6,8 +6,9 @@ import { Building, Users, Briefcase, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useTransition } from "react";
 import { createDepartment } from "@/app/actions/departments";
+import { toast } from "sonner";
 
-export default function DepartmentsClient({ departments }: { departments: any[] }) {
+export default function DepartmentsClient({ departments }: { departments: { id: string, name: string, description: string | null, _count?: { faculties: number, projects: number } }[] }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -25,8 +26,13 @@ export default function DepartmentsClient({ departments }: { departments: any[] 
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      await createDepartment(formData);
-      setIsAdding(false);
+      const res = await createDepartment(formData);
+      if (res.success) {
+        toast.success("Department created!");
+        setIsAdding(false);
+      } else {
+        toast.error(res.error || "Failed to create department");
+      }
     });
   };
 
