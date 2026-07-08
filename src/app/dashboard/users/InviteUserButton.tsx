@@ -10,15 +10,12 @@ export function InviteUserButton() {
 
   return (
     <>
-      <Button 
-        onClick={() => setIsOpen(true)}
-        className="rounded-xl shadow-lg shadow-primary/20"
-      >
+      <Button onClick={() => setIsOpen(true)} className="rounded-xl shadow-lg shadow-primary/20">
         <UserPlus className="h-4 w-4 mr-2" />
         Invite User
       </Button>
 
-      <ActionOverlay 
+      <ActionOverlay
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         title="Invite New User"

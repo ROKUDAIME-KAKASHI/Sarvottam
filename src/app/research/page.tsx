@@ -11,19 +11,23 @@ export default async function ResearchMarketplace() {
   const problems = await getMarketplaceProblems();
   const session = await auth();
 
-  const mappedProjects = projects.map(p => ({
+  const mappedProjects = projects.map((p) => ({
     ...p,
     difficultyLevel: p.difficultyLevel || undefined,
     duration: p.duration || undefined,
-    mentor: p.mentor ? { user: p.mentor.user ? { name: p.mentor.user.name } : undefined } : undefined,
+    mentor: p.mentor
+      ? { user: p.mentor.user ? { name: p.mentor.user.name } : undefined }
+      : undefined,
     partner: p.partner ? { companyName: p.partner.companyName } : undefined,
     creator: p.creator ? { name: p.creator.name, email: p.creator.email } : undefined,
   }));
 
-  const mappedProblems = problems.map(p => ({
+  const mappedProblems = problems.map((p) => ({
     ...p,
     description: p.description || "",
-    submitter: p.submitter ? { name: p.submitter.name, email: p.submitter.email, role: p.submitter.role } : undefined
+    submitter: p.submitter
+      ? { name: p.submitter.name, email: p.submitter.email, role: p.submitter.role }
+      : undefined,
   }));
 
   return (
@@ -39,7 +43,10 @@ export default async function ResearchMarketplace() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="space-y-4 max-w-2xl">
             <div>
-              <Badge variant="outline" className="px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full">
+              <Badge
+                variant="outline"
+                className="px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full"
+              >
                 <Sparkles className="w-4 h-4 mr-2 inline-block animate-pulse" />
                 Live Marketplace
               </Badge>
@@ -51,19 +58,23 @@ export default async function ResearchMarketplace() {
               Discover open industry projects and apply to join a specialized research node.
             </p>
           </div>
-          
+
           <div className="relative w-full md:w-80 group">
             <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl group-focus-within:bg-primary/10 transition-colors" />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
-            <Input 
-              type="search" 
-              placeholder="Search research..." 
-              className="pl-12 h-14 w-full bg-background/60 backdrop-blur-xl border-border/50 rounded-2xl focus:ring-primary/20 focus:border-primary/50 transition-all relative z-10 text-base" 
+            <Input
+              type="search"
+              placeholder="Search research..."
+              className="pl-12 h-14 w-full bg-background/60 backdrop-blur-xl border-border/50 rounded-2xl focus:ring-primary/20 focus:border-primary/50 transition-all relative z-10 text-base"
             />
           </div>
         </div>
 
-        <ResearchList projects={mappedProjects} problems={mappedProblems} currentUserRole={session?.user?.role} />
+        <ResearchList
+          projects={mappedProjects}
+          problems={mappedProblems}
+          currentUserRole={session?.user?.role}
+        />
       </div>
     </div>
   );

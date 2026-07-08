@@ -20,6 +20,8 @@ model User {
   role          String    @default("STUDENT") // STUDENT, FACULTY, INDUSTRY_PARTNER, SUPERADMIN
   skills        String?
   portfolioUrl  String?
+  xp            Int       @default(0)
+  level         Int       @default(1)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

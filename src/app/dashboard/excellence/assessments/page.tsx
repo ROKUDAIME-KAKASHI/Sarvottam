@@ -1,6 +1,13 @@
 import { getAssessmentTemplates } from "@/lib/actions/excellence.actions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
@@ -28,9 +35,7 @@ export default async function AssessmentsPage() {
             </CardHeader>
             <CardContent className="flex-1">
               <p className="text-sm text-muted-foreground mb-4">{template.description}</p>
-              <div className="text-sm font-medium">
-                Questions: {template.questions.length}
-              </div>
+              <div className="text-sm font-medium">Questions: {template.questions.length}</div>
             </CardContent>
             <CardFooter>
               <Link href={`/dashboard/excellence/assessments/${template.id}`} className="w-full">

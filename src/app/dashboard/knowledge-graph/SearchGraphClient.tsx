@@ -10,12 +10,12 @@ import { Badge } from "@/components/ui/badge";
 export default function SearchGraphClient() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any[] | null>(null);
+  const [results, setResults] = useState<Record<string, unknown>[] | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    
+
     setLoading(true);
     try {
       const res = await searchGraph(query);
@@ -30,8 +30,8 @@ export default function SearchGraphClient() {
   return (
     <div className="space-y-4">
       <form onSubmit={handleSearch} className="flex space-x-2">
-        <Input 
-          placeholder="e.g. 'Purification' or 'Traffic'" 
+        <Input
+          placeholder="e.g. 'Purification' or 'Traffic'"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -43,20 +43,27 @@ export default function SearchGraphClient() {
 
       {results && (
         <div className="mt-4 space-y-4">
-          <h3 className="font-semibold text-sm text-muted-foreground">Search Results ({results.length})</h3>
-          {results.map(node => (
+          <h3 className="font-semibold text-sm text-muted-foreground">
+            Search Results ({results.length})
+          </h3>
+          {results.map((node) => (
             <div key={node.id} className="border p-4 rounded-md bg-background">
               <div className="flex justify-between items-start mb-2">
                 <span className="font-bold">{node.label}</span>
                 <Badge variant="outline">{node.type}</Badge>
               </div>
-              
+
               {node.sourceEdges.length > 0 && (
                 <div className="mt-3 text-sm">
-                  <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Outbound Links</span>
+                  <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                    Outbound Links
+                  </span>
                   <div className="space-y-1 mt-1">
-                    {node.sourceEdges.map((edge: any) => (
-                      <div key={edge.id} className="flex items-center space-x-2 text-muted-foreground">
+                    {node.sourceEdges.map((edge: unknown) => (
+                      <div
+                        key={edge.id}
+                        className="flex items-center space-x-2 text-muted-foreground"
+                      >
                         <LinkIcon className="w-3 h-3" />
                         <span>--[{edge.relation}]--&gt;</span>
                         <span className="font-medium text-foreground">{edge.target.label}</span>
@@ -68,10 +75,15 @@ export default function SearchGraphClient() {
 
               {node.targetEdges.length > 0 && (
                 <div className="mt-3 text-sm">
-                  <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">Inbound Links</span>
+                  <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                    Inbound Links
+                  </span>
                   <div className="space-y-1 mt-1">
-                    {node.targetEdges.map((edge: any) => (
-                      <div key={edge.id} className="flex items-center space-x-2 text-muted-foreground">
+                    {node.targetEdges.map((edge: unknown) => (
+                      <div
+                        key={edge.id}
+                        className="flex items-center space-x-2 text-muted-foreground"
+                      >
                         <span className="font-medium text-foreground">{edge.source.label}</span>
                         <span>--[{edge.relation}]--&gt;</span>
                         <LinkIcon className="w-3 h-3" />
@@ -80,10 +92,11 @@ export default function SearchGraphClient() {
                   </div>
                 </div>
               )}
-
             </div>
           ))}
-          {results.length === 0 && <p className="text-sm text-muted-foreground">No matching nodes found in the graph.</p>}
+          {results.length === 0 && (
+            <p className="text-sm text-muted-foreground">No matching nodes found in the graph.</p>
+          )}
         </div>
       )}
     </div>

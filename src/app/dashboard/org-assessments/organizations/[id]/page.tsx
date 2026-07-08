@@ -4,7 +4,14 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Link from "next/link";
 import StartAssessmentButton from "./StartAssessmentButton";
 
@@ -29,7 +36,9 @@ export default async function OrganizationDetailPage({ params }: { params: { id:
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{organization.name}</h2>
-          <p className="text-muted-foreground">{organization.industry} | {organization.type} | {organization.size}</p>
+          <p className="text-muted-foreground">
+            {organization.industry} | {organization.type} | {organization.size}
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <StartAssessmentButton orgId={organization.id} />
@@ -61,7 +70,9 @@ export default async function OrganizationDetailPage({ params }: { params: { id:
                   <TableCell>{assessment.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/org-assessments/${assessment.id}`}>View / Evaluate</Link>
+                      <Link href={`/dashboard/org-assessments/${assessment.id}`}>
+                        View / Evaluate
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>

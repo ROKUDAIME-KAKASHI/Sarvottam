@@ -8,7 +8,7 @@ export default async function SettingsPage() {
   if (!session?.user?.id) redirect("/login");
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id }
+    where: { id: session.user.id },
   });
 
   if (!user) return <div>Not signed in</div>;

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import IssueCertificateModal from "./IssueCertificateModal"; // We will create this
 
 export default async function ProgramDetailPage({ params }: { params: { id: string } }) {
@@ -17,7 +17,7 @@ export default async function ProgramDetailPage({ params }: { params: { id: stri
       tracks: { include: { assessments: true } },
       badges: true,
       certificates: { include: { user: true } },
-    }
+    },
   });
 
   if (!program) {
@@ -32,7 +32,9 @@ export default async function ProgramDetailPage({ params }: { params: { id: stri
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" asChild>
-            <Link href="/dashboard/certifications"><ArrowLeft className="h-4 w-4" /></Link>
+            <Link href="/dashboard/certifications">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
           </Button>
           <div>
             <h2 className="text-3xl font-bold tracking-tight">{program.name}</h2>
@@ -53,35 +55,43 @@ export default async function ProgramDetailPage({ params }: { params: { id: stri
             <CardDescription>Structured paths within this program.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {program.tracks.map(track => (
+            {program.tracks.map((track) => (
               <div key={track.id} className="border-b pb-2 last:border-0 text-sm">
                 <div className="flex justify-between font-medium">
                   <span>{track.name}</span>
                   <span className="text-muted-foreground">{track.level}</span>
                 </div>
-                <p className="text-muted-foreground mt-1">Assessments: {track.assessments.length}</p>
+                <p className="text-muted-foreground mt-1">
+                  Assessments: {track.assessments.length}
+                </p>
               </div>
             ))}
-            {program.tracks.length === 0 && <p className="text-sm text-muted-foreground">No tracks configured.</p>}
+            {program.tracks.length === 0 && (
+              <p className="text-sm text-muted-foreground">No tracks configured.</p>
+            )}
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Issued Certificates</CardTitle>
             <CardDescription>Recipients of this credential.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 max-h-[300px] overflow-y-auto">
-            {program.certificates.map(cert => (
+            {program.certificates.map((cert) => (
               <div key={cert.id} className="border-b pb-2 last:border-0 text-sm">
                 <div className="flex justify-between font-medium">
                   <span>{cert.user.name || cert.user.email}</span>
-                  <span className="text-muted-foreground">{cert.issueDate.toLocaleDateString()}</span>
+                  <span className="text-muted-foreground">
+                    {cert.issueDate.toLocaleDateString()}
+                  </span>
                 </div>
                 <p className="text-muted-foreground mt-1">Credential: {cert.title}</p>
               </div>
             ))}
-            {program.certificates.length === 0 && <p className="text-sm text-muted-foreground">No certificates issued yet.</p>}
+            {program.certificates.length === 0 && (
+              <p className="text-sm text-muted-foreground">No certificates issued yet.</p>
+            )}
           </CardContent>
         </Card>
       </div>

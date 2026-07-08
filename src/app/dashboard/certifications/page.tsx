@@ -2,7 +2,14 @@ import { getCertificationPrograms } from "@/lib/actions/certification.actions";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge as BadgeUI } from "@/components/ui/badge";
 import Link from "next/link";
@@ -43,7 +50,7 @@ export default async function CertificationsDashboard() {
             <Route className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{programs.filter(p => p.isActive).length}</div>
+            <div className="text-2xl font-bold">{programs.filter((p) => p.isActive).length}</div>
             <p className="text-xs text-muted-foreground">Learning paths available</p>
           </CardContent>
         </Card>

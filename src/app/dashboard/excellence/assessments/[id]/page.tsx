@@ -15,14 +15,14 @@ export default async function AssessmentDetailPage({ params }: { params: { id: s
     include: {
       questions: {
         include: {
-          dimension: true
+          dimension: true,
         },
         orderBy: {
-          orderIndex: "asc"
-        }
+          orderIndex: "asc",
+        },
       },
-      framework: true
-    }
+      framework: true,
+    },
   });
 
   if (!template) {
@@ -34,8 +34,8 @@ export default async function AssessmentDetailPage({ params }: { params: { id: s
     where: {
       templateId: template.id,
       assessorId: session.user.id as string,
-      status: "DRAFT"
-    }
+      status: "DRAFT",
+    },
   });
 
   if (!result) {
@@ -43,8 +43,8 @@ export default async function AssessmentDetailPage({ params }: { params: { id: s
       data: {
         templateId: template.id,
         assessorId: session.user.id as string,
-        status: "DRAFT"
-      }
+        status: "DRAFT",
+      },
     });
   }
 
@@ -54,7 +54,7 @@ export default async function AssessmentDetailPage({ params }: { params: { id: s
         <h2 className="text-3xl font-bold tracking-tight">{template.name}</h2>
         <p className="text-muted-foreground">{template.description}</p>
       </div>
-      
+
       {/* We use a Client Component for the form to manage state and submission */}
       <AssessmentForm template={template} resultId={result.id} />
     </div>

@@ -8,14 +8,16 @@ import { buttonVariants } from "@/components/ui/button";
 export default async function ProblemsDashboardPage() {
   const session = await auth();
   const problems = await getProblems();
-  
+
   const currentUserId = session?.user?.id;
 
-  const mappedProblems = problems.map(p => ({
+  const mappedProblems = problems.map((p) => ({
     ...p,
     description: p.description || "",
-    submitter: p.submitter ? { name: p.submitter.name, email: p.submitter.email, role: p.submitter.role } : undefined,
-    assignee: p.assignee ? { name: p.assignee.name, email: p.assignee.email } : undefined
+    submitter: p.submitter
+      ? { name: p.submitter.name, email: p.submitter.email, role: p.submitter.role }
+      : undefined,
+    assignee: p.assignee ? { name: p.assignee.name, email: p.assignee.email } : undefined,
   }));
 
   return (
@@ -33,13 +35,20 @@ export default async function ProblemsDashboardPage() {
             View submitted industry challenges and their current resolution status.
           </p>
         </div>
-        <Link href="/problems" className={buttonVariants({ className: "rounded-xl shadow-lg shadow-primary/20" })}>
+        <Link
+          href="/problems"
+          className={buttonVariants({ className: "rounded-xl shadow-lg shadow-primary/20" })}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Submit New Problem
         </Link>
       </div>
 
-      <ProblemList problems={mappedProblems} currentUserId={currentUserId} currentUserRole={session?.user?.role} />
+      <ProblemList
+        problems={mappedProblems}
+        currentUserId={currentUserId}
+        currentUserRole={session?.user?.role}
+      />
     </div>
   );
 }

@@ -19,25 +19,29 @@ export default async function OrgAssessmentDetailPage({ params }: { params: { id
       sections: {
         include: {
           evidences: { include: { uploadedBy: true } },
-          scores: { include: { evaluator: { include: { user: true } } } }
-        }
+          scores: { include: { evaluator: { include: { user: true } } } },
+        },
       },
-      evaluators: { include: { user: true } }
-    }
+      evaluators: { include: { user: true } },
+    },
   });
 
   if (!assessment) {
     return <div className="p-8">Assessment not found.</div>;
   }
 
-  const isEvaluator = assessment.evaluators.some(e => e.userId === session.user.id) || session.user.role === "SUPERADMIN";
+  const isEvaluator =
+    assessment.evaluators.some((e) => e.userId === session.user.id) ||
+    session.user.role === "SUPERADMIN";
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{assessment.title}</h2>
-          <p className="text-muted-foreground">{assessment.organization.name} | Status: {assessment.status}</p>
+          <p className="text-muted-foreground">
+            {assessment.organization.name} | Status: {assessment.status}
+          </p>
         </div>
         <Button variant="outline" asChild>
           <Link href={`/dashboard/org-assessments/organizations/${assessment.organizationId}`}>
@@ -47,24 +51,30 @@ export default async function OrgAssessmentDetailPage({ params }: { params: { id
       </div>
 
       <div className="space-y-8">
-        {assessment.sections.map(section => (
+        {assessment.sections.map((section) => (
           <Card key={section.id}>
             <CardHeader>
               <CardTitle>{section.name}</CardTitle>
               <CardDescription>Weight: {section.weight}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               <div>
                 <h4 className="text-sm font-semibold mb-2">Evidence Provided</h4>
                 {section.evidences.length > 0 ? (
                   <ul className="list-disc pl-5 space-y-1">
-                    {section.evidences.map(ev => (
+                    {section.evidences.map((ev) => (
                       <li key={ev.id} className="text-sm">
-                        <a href={ev.url} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                        <a
+                          href={ev.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary hover:underline"
+                        >
                           {ev.title}
                         </a>
-                        <span className="text-muted-foreground ml-2">by {ev.uploadedBy.name || ev.uploadedBy.email}</span>
+                        <span className="text-muted-foreground ml-2">
+                          by {ev.uploadedBy.name || ev.uploadedBy.email}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -77,7 +87,12 @@ export default async function OrgAssessmentDetailPage({ params }: { params: { id
               {isEvaluator && (
                 <div className="border-t pt-4 mt-4">
                   <h4 className="text-sm font-semibold mb-4">Evaluate Section</h4>
-                  <ScoreSectionForm sectionId={section.id} assessmentId={assessment.id} existingScores={section.scores} currentUserId={session.user.id as string} />
+                  <ScoreSectionForm
+                    sectionId={section.id}
+                    assessmentId={assessment.id}
+                    existingScores={section.scores}
+                    currentUserId={session.user.id as string}
+                  />
                 </div>
               )}
 
@@ -85,9 +100,11 @@ export default async function OrgAssessmentDetailPage({ params }: { params: { id
                 <div className="border-t pt-4 mt-4">
                   <h4 className="text-sm font-semibold mb-2">Current Scores</h4>
                   <ul className="space-y-2">
-                    {section.scores.map(s => (
+                    {section.scores.map((s) => (
                       <li key={s.id} className="text-sm flex justify-between p-2 bg-muted rounded">
-                        <span>{s.evaluator.user.name}: {s.score}</span>
+                        <span>
+                          {s.evaluator.user.name}: {s.score}
+                        </span>
                         <span className="text-muted-foreground italic">{s.feedback}</span>
                       </li>
                     ))}

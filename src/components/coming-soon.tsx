@@ -8,9 +8,9 @@ interface ComingSoonProps {
   feature?: string;
 }
 
-export function ComingSoon({ children, feature = "This function" }: ComingSoonProps) {
+export function ComingSoon({ children }: ComingSoonProps) {
   const router = useRouter();
-  
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

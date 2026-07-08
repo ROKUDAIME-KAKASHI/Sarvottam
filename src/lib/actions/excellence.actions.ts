@@ -13,7 +13,11 @@ export async function getFrameworks() {
   });
 }
 
-export async function createFramework(data: { name: string; description?: string; version?: string }) {
+export async function createFramework(data: {
+  name: string;
+  description?: string;
+  version?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "SUPERADMIN") throw new Error("Forbidden");
@@ -38,7 +42,11 @@ export async function getAssessmentTemplates() {
   });
 }
 
-export async function createAssessmentTemplate(data: { name: string; description?: string; frameworkId: string }) {
+export async function createAssessmentTemplate(data: {
+  name: string;
+  description?: string;
+  frameworkId: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "SUPERADMIN") throw new Error("Forbidden");
@@ -50,11 +58,14 @@ export async function createAssessmentTemplate(data: { name: string; description
   return template;
 }
 
-export async function submitAssessment(resultId: string, responses: { questionId: string; numericValue?: number; textValue?: string; notes?: string }[]) {
+export async function submitAssessment(
+  resultId: string,
+  responses: { questionId: string; numericValue?: number; textValue?: string; notes?: string }[]
+) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const result = await prisma.assessmentResult.update({
+  await prisma.assessmentResult.update({
     where: { id: resultId },
     data: {
       status: "SUBMITTED",

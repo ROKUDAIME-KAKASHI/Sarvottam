@@ -2,7 +2,14 @@ import { getFrameworks } from "@/lib/actions/excellence.actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
@@ -28,7 +35,9 @@ export default async function FrameworksPage() {
       <Card>
         <CardHeader>
           <CardTitle>Excellence Frameworks</CardTitle>
-          <CardDescription>Configure organizational excellence models, dimensions, and maturity levels.</CardDescription>
+          <CardDescription>
+            Configure organizational excellence models, dimensions, and maturity levels.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -57,7 +66,9 @@ export default async function FrameworksPage() {
               ))}
               {frameworks.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center">No frameworks found.</TableCell>
+                  <TableCell colSpan={5} className="text-center">
+                    No frameworks found.
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

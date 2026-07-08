@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Leaf, Globe, Activity, Wind } from "lucide-react";
+import { CarbonChart, ESGChart, CarbonTrendChart } from "./components/SustainabilityCharts";
 
 export default async function SustainabilityDashboardPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const { projects, esgMetrics, carbonMetrics, reports, sdgs } = await getSustainabilityDashboardData();
+  const { projects, esgMetrics, carbonMetrics, reports } = await getSustainabilityDashboardData();
 
   const totalEmissions = carbonMetrics.reduce((acc, curr) => acc + curr.emissions, 0);
-  const activeProjects = projects.filter(p => p.status === "ACTIVE").length;
+  const activeProjects = projects.filter((p) => p.status === "ACTIVE").length;
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -23,8 +24,12 @@ export default async function SustainabilityDashboardPage() {
         <div className="flex space-x-2">
           {session.user.role === "SUPERADMIN" && (
             <>
-              <Button variant="outline" asChild><Link href="/dashboard/sustainability/esg/new">Log ESG Metric</Link></Button>
-              <Button asChild><Link href="/dashboard/sustainability/projects/new">New Project</Link></Button>
+              <Button variant="outline" asChild>
+                <Link href="/dashboard/sustainability/esg/new">Log ESG Metric</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/dashboard/sustainability/projects/new">New Project</Link>
+              </Button>
             </>
           )}
         </div>
@@ -73,31 +78,73 @@ export default async function SustainabilityDashboardPage() {
         </Card>
       </div>
 
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Carbon Emissions by Scope</CardTitle>
+            <CardDescription>Breakdown of tCO2e across all scopes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CarbonChart metrics={carbonMetrics} />
+          </CardContent>
+        </Card>
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Emissions Trend</CardTitle>
+            <CardDescription>Carbon footprint timeline</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CarbonTrendChart metrics={carbonMetrics} />
+          </CardContent>
+        </Card>
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>ESG Logs Overview</CardTitle>
+            <CardDescription>Recorded metrics by category</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ESGChart metrics={esgMetrics} />
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-6">
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Sustainability Projects (SDG Mapped)</CardTitle>
-            <CardDescription>Initiatives tracking towards UN Sustainable Development Goals.</CardDescription>
+            <CardDescription>
+              Initiatives tracking towards UN Sustainable Development Goals.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {projects.map(project => (
+              {projects.map((project) => (
                 <div key={project.id} className="border p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-semibold text-lg">{project.title}</h4>
-                    <Badge variant={project.status === "ACTIVE" ? "default" : "secondary"}>{project.status}</Badge>
+                    <Badge variant={project.status === "ACTIVE" ? "default" : "secondary"}>
+                      {project.status}
+                    </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mb-3">{project.description}</p>
                   <div className="flex flex-wrap gap-2">
-                    {project.sdgs.map(sdg => (
-                      <Badge key={sdg.id} variant="outline" style={{ borderColor: sdg.color || '#ccc', color: sdg.color || '#333' }}>
+                    {project.sdgs.map((sdg) => (
+                      <Badge
+                        key={sdg.id}
+                        variant="outline"
+                        style={{ borderColor: sdg.color || "#ccc", color: sdg.color || "#333" }}
+                      >
                         SDG {sdg.sdgNumber}: {sdg.title}
                       </Badge>
                     ))}
                   </div>
                 </div>
               ))}
-              {projects.length === 0 && <p className="text-muted-foreground text-sm">No sustainability projects currently active.</p>}
+              {projects.length === 0 && (
+                <p className="text-muted-foreground text-sm">
+                  No sustainability projects currently active.
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -110,25 +157,41 @@ export default async function SustainabilityDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {carbonMetrics.slice(0, 3).map(carbon => (
+                {carbonMetrics.slice(0, 3).map((carbon) => (
                   <div key={carbon.id} className="flex justify-between items-center border-b pb-2">
                     <div>
-                      <p className="text-sm font-medium">{carbon.source} <span className="text-xs text-muted-foreground">({carbon.scope})</span></p>
-                      <p className="text-xs text-muted-foreground">{carbon.measuredAt.toLocaleDateString()}</p>
+                      <p className="text-sm font-medium">
+                        {carbon.source}{" "}
+                        <span className="text-xs text-muted-foreground">({carbon.scope})</span>
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {carbon.measuredAt.toLocaleDateString()}
+                      </p>
                     </div>
-                    <span className="text-sm font-bold text-red-600 dark:text-red-400">{carbon.emissions} tCO2e</span>
+                    <span className="text-sm font-bold text-red-600 dark:text-red-400">
+                      {carbon.emissions} tCO2e
+                    </span>
                   </div>
                 ))}
-                {esgMetrics.slice(0, 3).map(esg => (
+                {esgMetrics.slice(0, 3).map((esg) => (
                   <div key={esg.id} className="flex justify-between items-center border-b pb-2">
                     <div>
-                      <p className="text-sm font-medium">{esg.name} <span className="text-xs text-muted-foreground">({esg.category})</span></p>
-                      <p className="text-xs text-muted-foreground">{esg.measuredAt.toLocaleDateString()}</p>
+                      <p className="text-sm font-medium">
+                        {esg.name}{" "}
+                        <span className="text-xs text-muted-foreground">({esg.category})</span>
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {esg.measuredAt.toLocaleDateString()}
+                      </p>
                     </div>
-                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{esg.value} {esg.unit}</span>
+                    <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                      {esg.value} {esg.unit}
+                    </span>
                   </div>
                 ))}
-                {(carbonMetrics.length === 0 && esgMetrics.length === 0) && <p className="text-sm text-muted-foreground">No metrics logged yet.</p>}
+                {carbonMetrics.length === 0 && esgMetrics.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No metrics logged yet.</p>
+                )}
               </div>
             </CardContent>
           </Card>

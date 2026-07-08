@@ -19,23 +19,23 @@ export default function CreateProjectForm() {
 
     if (result.error) {
       toast.error("Failed to create project", {
-        description: result.error
+        description: result.error,
       });
     } else {
       toast.success("Project created successfully!", {
-        description: "Your new research node is now live."
+        description: "Your new research node is now live.",
       });
       setIsOpen(false);
     }
-    
+
     setIsSubmitting(false);
   }
 
   return (
     <>
-      <Button 
+      <Button
         onClick={() => setIsOpen(true)}
-        size="sm" 
+        size="sm"
         className="rounded-xl shadow-lg shadow-primary/20"
       >
         <Plus className="h-4 w-4 mr-2" />
@@ -48,27 +48,36 @@ export default function CreateProjectForm() {
             <h3 className="text-xl font-bold mb-4">Create New Project</h3>
             <form onSubmit={onSubmit} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Title</label>
-                <input 
-                  type="text" 
-                  name="title" 
-                  required 
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  required
                   className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground"
                 />
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Description</label>
-                <textarea 
-                  name="description" 
-                  required 
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  required
                   rows={4}
                   className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Type</label>
-                  <select name="type" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Type
+                  </label>
+                  <select
+                    name="type"
+                    className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none"
+                  >
                     <option value="Software">Software</option>
                     <option value="Hardware">Hardware</option>
                     <option value="Technical">Technical</option>
@@ -79,8 +88,13 @@ export default function CreateProjectForm() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Difficulty</label>
-                  <select name="difficultyLevel" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none">
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Difficulty
+                  </label>
+                  <select
+                    name="difficultyLevel"
+                    className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground appearance-none"
+                  >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Advanced">Advanced</option>
@@ -88,12 +102,21 @@ export default function CreateProjectForm() {
                 </div>
               </div>
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Duration</label>
-                <input type="text" name="duration" placeholder="e.g. 3 Months" className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground" />
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                  Duration
+                </label>
+                <input
+                  type="text"
+                  name="duration"
+                  placeholder="e.g. 3 Months"
+                  className="w-full p-3 mt-1 rounded-xl bg-muted/30 border border-border/50 text-foreground"
+                />
               </div>
 
-                  <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="ghost" onClick={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Create Project

@@ -39,22 +39,27 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v20 or later recommended)
 - npm, yarn, or pnpm
 
 ### 1. Clone the repository
+
 ```bash
 git clone <repository-url>
 cd Sarvottam
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 ### 3. Environment Variables
+
 Create a `.env` file in the root of the project and configure the required variables. Example:
+
 ```env
 # Database configuration (SQLite for local dev)
 DATABASE_URL="file:./prisma/dev.db"
@@ -65,13 +70,16 @@ NEXTAUTH_URL="http://localhost:3000"
 ```
 
 ### 4. Database Setup
+
 Initialize the Prisma database and push the schema:
+
 ```bash
 npm run postinstall    # Generates the Prisma client
 npx prisma db push     # Pushes the schema to the SQLite database
 ```
 
-*(Optional) To seed the database with initial mock data, you can run the provided seed scripts:*
+_(Optional) To seed the database with initial mock data, you can run the provided seed scripts:_
+
 ```bash
 npx tsx scripts/seed.ts
 # or
@@ -79,9 +87,11 @@ npx tsx seed-projects.ts
 ```
 
 ### 5. Start the Development Server
+
 ```bash
 npm run dev
 ```
+
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
 ---
@@ -108,30 +118,35 @@ Sarvottam/
 ## 🏗️ Development Guidelines
 
 ### 1. Architecture & Components
+
 - **Server Components by Default:** Minimize client-side Javascript. Use `"use client"` only when necessary (e.g., for `useState`, `useEffect`, Framer Motion hooks, or context providers).
 - **Protected Routes:** Dashboard pages are nested under `src/app/dashboard` and rely on NextAuth for role-based access control.
 
 ### 2. Styling & UI
+
 - **Tailwind CSS v4:** Utilize `src/app/globals.css` for theme variables defined in the `oklch` color space.
 - **Theme Support:** Ensure components maintain high contrast in both Dark and Light modes.
 - **Link Components:** When combining Next.js `<Link>` with shadcn/ui buttons, avoid invalid HTML nesting. Use `buttonVariants` directly:
   ```tsx
-  import { buttonVariants } from "@/components/ui/button"
-  import Link from "next/link"
+  import { buttonVariants } from "@/components/ui/button";
+  import Link from "next/link";
 
   <Link href="/dashboard" className={buttonVariants({ variant: "default" })}>
     Go to Dashboard
-  </Link>
+  </Link>;
   ```
 
 ### 3. Animations
+
 - **Framer Motion:** Aim for smooth, premium animations. Prefer spring physics (`type: "spring", bounce: 0.15`) instead of linear easing.
 - **Scroll Effects:** Use `whileInView={{ once: true, margin: "-50px" }}` for performant entry animations when elements scroll into the viewport.
 
 ### 4. Hydration Safety
+
 - **Theme Hydration:** When rendering icons or elements conditionally based on the active theme, delay rendering until the component is mounted on the client to prevent hydration mismatches, or use `suppressHydrationWarning`.
 
 ---
 
 ## 📜 License
+
 All rights reserved.

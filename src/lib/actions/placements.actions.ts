@@ -48,9 +48,9 @@ export async function applyToJob(jobId: string, formData: FormData) {
 
     revalidatePath("/dashboard/placements");
     revalidatePath(`/dashboard/placements/${jobId}`);
-    
+
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error applying to job:", error);
     return { success: false, error: error.message || "Failed to apply to job" };
   }
@@ -87,7 +87,7 @@ export async function createJob(formData: FormData) {
 
     revalidatePath("/dashboard/placements");
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating job:", error);
     return { success: false, error: error.message || "Failed to create job" };
   }

@@ -4,7 +4,16 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Users, Briefcase, FileText, CheckCircle } from "lucide-react";
 
-export default function KPIsClient({ stats }: { stats: { totalProjects: number, activeStudents: number, completedProjects: number, totalUsers: number } }) {
+export default function KPIsClient({
+  stats,
+}: {
+  stats: {
+    totalProjects: number;
+    activeStudents: number;
+    completedProjects: number;
+    totalUsers: number;
+  };
+}) {
   const displayStats = [
     { title: "Total Projects", value: stats.totalProjects, icon: Briefcase },
     { title: "Active Students", value: stats.activeStudents, icon: Users },
@@ -15,9 +24,15 @@ export default function KPIsClient({ stats }: { stats: { totalProjects: number, 
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col justify-between items-start gap-4">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-3xl font-black tracking-tight text-foreground">Analytics & KPIs</h2>
-          <p className="text-muted-foreground font-medium">Track platform performance and metrics based on live database data.</p>
+          <p className="text-muted-foreground font-medium">
+            Track platform performance and metrics based on live database data.
+          </p>
         </motion.div>
       </div>
 
@@ -53,8 +68,10 @@ export default function KPIsClient({ stats }: { stats: { totalProjects: number, 
         transition={{ delay: 0.4 }}
       >
         <Card className="rounded-3xl border-border/50 bg-background/40 backdrop-blur-xl shadow-lg min-h-[400px] flex items-center justify-center flex-col gap-4">
-           <BarChart className="h-16 w-16 text-muted-foreground/30" />
-           <p className="text-muted-foreground font-semibold">Live charting will be implemented here as historical data builds up.</p>
+          <BarChart className="h-16 w-16 text-muted-foreground/30" />
+          <p className="text-muted-foreground font-semibold">
+            Live charting will be implemented here as historical data builds up.
+          </p>
         </Card>
       </motion.div>
     </div>

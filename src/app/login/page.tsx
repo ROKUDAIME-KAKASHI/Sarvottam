@@ -10,10 +10,7 @@ import { Loader2, Mail, AlertCircle, Lock } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
+  const [errorMessage, formAction, isPending] = useActionState(authenticate, undefined);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
@@ -41,7 +38,9 @@ export default function LoginPage() {
             <form action={formAction} className="space-y-5">
               <div className="space-y-4">
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Email Address</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Email Address
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <input
@@ -55,7 +54,9 @@ export default function LoginPage() {
                 </div>
 
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Password</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Password
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <input
@@ -70,8 +71,8 @@ export default function LoginPage() {
               </div>
 
               {errorMessage && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   className="flex items-center gap-2 text-sm font-medium text-red-500 bg-red-500/10 p-3 rounded-lg"
                 >
@@ -80,21 +81,22 @@ export default function LoginPage() {
                 </motion.div>
               )}
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isPending}
                 className="w-full p-6 text-base rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all group"
               >
-                {isPending ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  "Sign In"
-                )}
+                {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "Sign In"}
               </Button>
             </form>
-            
+
             <div className="mt-8 text-center text-sm font-medium text-muted-foreground">
-              <p>Don&apos;t have an account? <Link href="/signup" className="text-primary hover:underline">Sign Up</Link></p>
+              <p>
+                Don&apos;t have an account?{" "}
+                <Link href="/signup" className="text-primary hover:underline">
+                  Sign Up
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>

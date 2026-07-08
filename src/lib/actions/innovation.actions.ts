@@ -15,7 +15,13 @@ export async function getStartups() {
   });
 }
 
-export async function createStartup(data: { name: string; industry?: string; description?: string; stage: string; website?: string }) {
+export async function createStartup(data: {
+  name: string;
+  industry?: string;
+  description?: string;
+  stage: string;
+  website?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
@@ -23,11 +29,9 @@ export async function createStartup(data: { name: string; industry?: string; des
     data: {
       ...data,
       founders: {
-        create: [
-          { userId: session.user.id as string, role: "Founder" }
-        ]
-      }
-    }
+        create: [{ userId: session.user.id as string, role: "Founder" }],
+      },
+    },
   });
 
   revalidatePath("/dashboard/innovation");
@@ -37,18 +41,24 @@ export async function createStartup(data: { name: string; industry?: string; des
 export async function getIncubationPrograms() {
   return await prisma.incubationProgram.findMany({
     include: { startups: true },
-    orderBy: { startDate: "desc" }
+    orderBy: { startDate: "desc" },
   });
 }
 
 export async function getInnovationChallenges() {
   return await prisma.innovationChallenge.findMany({
     include: { pitches: true },
-    orderBy: { deadline: "asc" }
+    orderBy: { deadline: "asc" },
   });
 }
 
-export async function submitPitch(data: { title: string; description: string; deckUrl?: string; challengeId?: string; startupId?: string }) {
+export async function submitPitch(data: {
+  title: string;
+  description: string;
+  deckUrl?: string;
+  challengeId?: string;
+  startupId?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
@@ -56,7 +66,7 @@ export async function submitPitch(data: { title: string; description: string; de
     data: {
       ...data,
       submitterId: session.user.id as string,
-    }
+    },
   });
 
   revalidatePath("/dashboard/innovation");

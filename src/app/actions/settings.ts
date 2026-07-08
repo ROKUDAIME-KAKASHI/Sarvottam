@@ -16,7 +16,7 @@ export async function updateProfileSettings(formData: FormData) {
   try {
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { name, skills, portfolioUrl }
+      data: { name, skills, portfolioUrl },
     });
     revalidatePath("/dashboard/settings");
     revalidatePath("/dashboard/profile");
@@ -48,7 +48,7 @@ export async function updatePassword(formData: FormData) {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { password: hashedPassword }
+      data: { password: hashedPassword },
     });
 
     return { success: true };

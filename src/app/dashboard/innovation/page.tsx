@@ -1,11 +1,15 @@
-import { getStartups, getIncubationPrograms, getInnovationChallenges } from "@/lib/actions/innovation.actions";
+import {
+  getStartups,
+  getIncubationPrograms,
+  getInnovationChallenges,
+} from "@/lib/actions/innovation.actions";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Rocket, Lightbulb, Users, Trophy } from "lucide-react";
+import { Rocket, Lightbulb, Trophy } from "lucide-react";
 
 export default async function InnovationHubDashboard() {
   const session = await auth();
@@ -56,7 +60,9 @@ export default async function InnovationHubDashboard() {
             <Trophy className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{challenges.filter(c => c.status === "OPEN").length}</div>
+            <div className="text-2xl font-bold">
+              {challenges.filter((c) => c.status === "OPEN").length}
+            </div>
             <p className="text-xs text-muted-foreground">Seeking solutions</p>
           </CardContent>
         </Card>
@@ -70,14 +76,21 @@ export default async function InnovationHubDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {startups.map(startup => (
-                <div key={startup.id} className="flex justify-between items-start border p-4 rounded-lg">
+              {startups.map((startup) => (
+                <div
+                  key={startup.id}
+                  className="flex justify-between items-start border p-4 rounded-lg"
+                >
                   <div>
                     <h4 className="font-semibold text-lg">{startup.name}</h4>
-                    <p className="text-sm text-muted-foreground">{startup.industry || "Unspecified Industry"}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {startup.industry || "Unspecified Industry"}
+                    </p>
                     <div className="flex gap-2 mt-2">
                       <Badge variant="outline">{startup.stage}</Badge>
-                      <span className="text-xs text-muted-foreground py-1">{startup.founders.length} Founders</span>
+                      <span className="text-xs text-muted-foreground py-1">
+                        {startup.founders.length} Founders
+                      </span>
                     </div>
                   </div>
                   <Button variant="ghost" asChild>
@@ -85,7 +98,9 @@ export default async function InnovationHubDashboard() {
                   </Button>
                 </div>
               ))}
-              {startups.length === 0 && <p className="text-muted-foreground">No startups registered yet.</p>}
+              {startups.length === 0 && (
+                <p className="text-muted-foreground">No startups registered yet.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -98,22 +113,32 @@ export default async function InnovationHubDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {challenges.map(challenge => (
+                {challenges.map((challenge) => (
                   <div key={challenge.id} className="border-b pb-4 last:border-0 last:pb-0">
                     <div className="flex justify-between items-start">
                       <h5 className="font-medium">{challenge.title}</h5>
-                      <Badge variant={challenge.status === "OPEN" ? "default" : "secondary"}>{challenge.status}</Badge>
+                      <Badge variant={challenge.status === "OPEN" ? "default" : "secondary"}>
+                        {challenge.status}
+                      </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{challenge.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                      {challenge.description}
+                    </p>
                     <div className="flex justify-between items-center mt-3">
-                      <span className="text-xs font-semibold text-green-600">Prize: {challenge.prize || "TBA"}</span>
+                      <span className="text-xs font-semibold text-green-600">
+                        Prize: {challenge.prize || "TBA"}
+                      </span>
                       <Button size="sm" variant="outline" asChild>
-                        <Link href={`/dashboard/innovation/challenges/${challenge.id}`}>Details</Link>
+                        <Link href={`/dashboard/innovation/challenges/${challenge.id}`}>
+                          Details
+                        </Link>
                       </Button>
                     </div>
                   </div>
                 ))}
-                {challenges.length === 0 && <p className="text-muted-foreground text-sm">No challenges available.</p>}
+                {challenges.length === 0 && (
+                  <p className="text-muted-foreground text-sm">No challenges available.</p>
+                )}
               </div>
             </CardContent>
           </Card>

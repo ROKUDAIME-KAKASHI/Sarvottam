@@ -5,8 +5,8 @@ import ReportsClient from "./ReportsClient";
 export default async function ReportsPage() {
   const session = await auth();
   const reports = await getReports();
-  
-  const mappedReports = reports.map(r => ({
+
+  const mappedReports = reports.map((r) => ({
     ...r,
     content: null,
   }));

@@ -10,7 +10,7 @@ export async function getDocuments() {
   try {
     return await prisma.document.findMany({
       orderBy: { createdAt: "desc" },
-      include: { project: true }
+      include: { project: true },
     });
   } catch (error) {
     console.error("Failed to fetch documents:", error);
@@ -36,7 +36,7 @@ export async function uploadDocument(formData: FormData) {
     const fileExtension = path.extname(file.name);
     const fileNameWithoutExt = path.basename(file.name, fileExtension);
     const safeFileName = `${fileNameWithoutExt.replace(/[^a-zA-Z0-9]/g, "_")}_${Date.now()}${fileExtension}`;
-    
+
     // Convert File to Buffer and save
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -49,7 +49,7 @@ export async function uploadDocument(formData: FormData) {
       data: {
         name: file.name,
         url: fileUrl,
-      }
+      },
     });
 
     revalidatePath("/dashboard/documents");

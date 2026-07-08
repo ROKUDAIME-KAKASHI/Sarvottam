@@ -2,31 +2,79 @@
 
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Clock, Building, User, ChevronDown, ChevronUp, CheckCircle2, Filter } from "lucide-react";
+import {
+  AlertCircle,
+  Clock,
+  Building,
+  User,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  Filter,
+} from "lucide-react";
 import { useState, useTransition } from "react";
 import { approveProblem } from "@/app/actions/problems";
 
-export default function ProblemList({ problems, currentUserId, currentUserRole }: { problems: { id: string, title: string, description: string, status: string, submitterId: string, createdAt: Date | string, facultyApproved: boolean, industryApproved: boolean, adminApproved?: boolean, submitter?: { name: string | null, email: string | null, role: string }, assignee?: { name: string | null, email: string | null }, type?: string | null }[], currentUserId?: string, currentUserRole?: string }) {
+export default function ProblemList({
+  problems,
+  currentUserId,
+  currentUserRole,
+}: {
+  problems: {
+    id: string;
+    title: string;
+    description: string;
+    status: string;
+    submitterId: string;
+    createdAt: Date | string;
+    facultyApproved: boolean;
+    industryApproved: boolean;
+    adminApproved?: boolean;
+    submitter?: { name: string | null; email: string | null; role: string };
+    assignee?: { name: string | null; email: string | null };
+    type?: string | null;
+  }[];
+  currentUserId?: string;
+  currentUserRole?: string;
+}) {
   const [isPending, startTransition] = useTransition();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>("All");
 
-  const types = ["All", "Software", "Hardware", "Technical", "Business", "Design", "Research", "Other", "Uncategorized"];
+  const types = [
+    "All",
+    "Software",
+    "Hardware",
+    "Technical",
+    "Business",
+    "Design",
+    "Research",
+    "Other",
+    "Uncategorized",
+  ];
 
-  const filteredProblems = filterType === "All" 
-    ? problems 
-    : problems.filter(p => filterType === "Uncategorized" ? !p.type : p.type === filterType);
+  const filteredProblems =
+    filterType === "All"
+      ? problems
+      : problems.filter((p) => (filterType === "Uncategorized" ? !p.type : p.type === filterType));
 
   const container = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
@@ -51,13 +99,15 @@ export default function ProblemList({ problems, currentUserId, currentUserRole }
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <select 
-            value={filterType} 
+          <select
+            value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="p-2.5 rounded-xl border border-border/50 bg-background/50 text-sm focus:ring-2 focus:ring-primary/20 outline-none min-w-[200px]"
           >
-            {types.map(t => (
-              <option key={t} value={t}>{t === "All" ? "All Types" : t}</option>
+            {types.map((t) => (
+              <option key={t} value={t}>
+                {t === "All" ? "All Types" : t}
+              </option>
             ))}
           </select>
         </div>
@@ -68,7 +118,7 @@ export default function ProblemList({ problems, currentUserId, currentUserRole }
           No problems found for the selected type.
         </div>
       ) : (
-        <motion.div 
+        <motion.div
           variants={container}
           initial="hidden"
           animate="show"
@@ -76,109 +126,140 @@ export default function ProblemList({ problems, currentUserId, currentUserRole }
         >
           {filteredProblems.map((p) => {
             const isExpanded = expandedId === p.id;
-        return (
-        <motion.div key={p.id} variants={item} layout>
-          <Card className="group h-full rounded-3xl border-border/50 bg-background/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden relative flex flex-col">
-            <CardHeader className="p-6 pb-4">
-              <div className="flex justify-between items-start mb-4">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20">
-                  <AlertCircle className="h-5 w-5" />
-                </div>
-                <Badge 
-                  variant="secondary"
-                  className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
-                    p.status === "RESOLVED" ? "bg-emerald-500/10 text-emerald-500" : 
-                    p.status === "IN_PROGRESS" ? "bg-amber-500/10 text-amber-500" : 
-                    "bg-blue-500/10 text-blue-500"
-                  }`}
-                >
-                  {p.status}
-                </Badge>
-              </div>
-              <div className="flex flex-col">
-                <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">
-                  {p.title}
-                </CardTitle>
-                {p.type && (
-                  <span className="text-xs font-bold text-primary bg-primary/10 w-fit px-2 py-0.5 rounded-md mt-2">
-                    {p.type}
-                  </span>
-                )}
-              </div>
-              <CardDescription className="text-xs font-bold text-muted-foreground/60 tracking-widest uppercase mt-3">
-                ID: {p.id.slice(-6)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6 pt-0 space-y-4 flex-1 flex flex-col relative z-10">
-              <div className="flex-1">
-                <motion.div layout="position" className={`text-sm text-muted-foreground leading-relaxed font-medium ${isExpanded ? '' : 'line-clamp-4'} whitespace-pre-wrap`}>
-                  {p.description}
-                </motion.div>
-              </div>
-              
-              <div className="pt-4 border-t border-border/50 space-y-2">
-                <div className="flex items-center text-xs font-medium text-muted-foreground">
-                  <Building className="h-3.5 w-3.5 mr-2 opacity-70" />
-                  Submitter: {p.submitter?.name || p.submitter?.email} 
-                  {p.submitterId === currentUserId && " (You)"}
-                </div>
-                {p.assignee && (
-                  <div className="flex items-center text-xs font-medium text-muted-foreground">
-                    <User className="h-3.5 w-3.5 mr-2 opacity-70" />
-                    Assignee: {p.assignee.name || p.assignee.email}
-                  </div>
-                )}
-                <div suppressHydrationWarning className="flex items-center text-xs font-medium text-muted-foreground">
-                  <Clock className="h-3.5 w-3.5 mr-2 opacity-70" />
-                  {new Date(p.createdAt).toLocaleDateString()}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
-                <Badge variant="outline" className={`text-[10px] uppercase font-bold ${p.facultyApproved ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}>
-                  {p.facultyApproved && <CheckCircle2 className="w-3 h-3 mr-1 inline-block" />}
-                  Faculty: {p.facultyApproved ? 'Approved' : 'Not Approved'}
-                </Badge>
-                <Badge variant="outline" className={`text-[10px] uppercase font-bold ${p.adminApproved ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}>
-                  {p.adminApproved && <CheckCircle2 className="w-3 h-3 mr-1 inline-block" />}
-                  Admin: {p.adminApproved ? 'Approved' : 'Not Approved'}
-                </Badge>
-              </div>
-            </CardContent>
-            
-            <CardFooter className="p-6 pt-0 relative z-10 flex flex-col gap-2">
-              {currentUserRole === 'FACULTY' && p.submitter?.role === 'STUDENT' && !p.facultyApproved && (
-                <Button 
-                  onClick={() => startTransition(async () => { await approveProblem(p.id, "FACULTY", true); })}
-                  disabled={isPending}
-                  className="w-full h-10 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white transition-all"
-                >
-                  Approve (Faculty)
-                </Button>
-              )}
-              {currentUserRole === 'SUPERADMIN' && !p.adminApproved && (
-                <Button 
-                  onClick={() => startTransition(async () => { await approveProblem(p.id, "ADMIN", true); })}
-                  disabled={isPending}
-                  className="w-full h-10 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all"
-                >
-                  Approve (Admin)
-                </Button>
-              )}
-              <Button 
-                variant="outline" 
-                className="w-full h-10 rounded-xl font-bold text-sm border-primary/20 hover:bg-primary/5 transition-all"
-                onClick={() => setExpandedId(isExpanded ? null : p.id)}
-              >
-                {isExpanded ? (
-                  <>Show Less <ChevronUp className="ml-2 h-4 w-4" /></>
-                ) : (
-                  <>Read Full Problem <ChevronDown className="ml-2 h-4 w-4" /></>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
-      )})}
+            return (
+              <motion.div key={p.id} variants={item} layout>
+                <Card className="group h-full rounded-3xl border-border/50 bg-background/40 backdrop-blur-xl hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 overflow-hidden relative flex flex-col">
+                  <CardHeader className="p-6 pb-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary ring-1 ring-primary/20">
+                        <AlertCircle className="h-5 w-5" />
+                      </div>
+                      <Badge
+                        variant="secondary"
+                        className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
+                          p.status === "RESOLVED"
+                            ? "bg-emerald-500/10 text-emerald-500"
+                            : p.status === "IN_PROGRESS"
+                              ? "bg-amber-500/10 text-amber-500"
+                              : "bg-blue-500/10 text-blue-500"
+                        }`}
+                      >
+                        {p.status}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col">
+                      <CardTitle className="text-xl font-bold leading-tight group-hover:text-primary transition-colors">
+                        {p.title}
+                      </CardTitle>
+                      {p.type && (
+                        <span className="text-xs font-bold text-primary bg-primary/10 w-fit px-2 py-0.5 rounded-md mt-2">
+                          {p.type}
+                        </span>
+                      )}
+                    </div>
+                    <CardDescription className="text-xs font-bold text-muted-foreground/60 tracking-widest uppercase mt-3">
+                      ID: {p.id.slice(-6)}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6 pt-0 space-y-4 flex-1 flex flex-col relative z-10">
+                    <div className="flex-1">
+                      <motion.div
+                        layout="position"
+                        className={`text-sm text-muted-foreground leading-relaxed font-medium ${isExpanded ? "" : "line-clamp-4"} whitespace-pre-wrap`}
+                      >
+                        {p.description}
+                      </motion.div>
+                    </div>
+
+                    <div className="pt-4 border-t border-border/50 space-y-2">
+                      <div className="flex items-center text-xs font-medium text-muted-foreground">
+                        <Building className="h-3.5 w-3.5 mr-2 opacity-70" />
+                        Submitter: {p.submitter?.name || p.submitter?.email}
+                        {p.submitterId === currentUserId && " (You)"}
+                      </div>
+                      {p.assignee && (
+                        <div className="flex items-center text-xs font-medium text-muted-foreground">
+                          <User className="h-3.5 w-3.5 mr-2 opacity-70" />
+                          Assignee: {p.assignee.name || p.assignee.email}
+                        </div>
+                      )}
+                      <div
+                        suppressHydrationWarning
+                        className="flex items-center text-xs font-medium text-muted-foreground"
+                      >
+                        <Clock className="h-3.5 w-3.5 mr-2 opacity-70" />
+                        {new Date(p.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-4 border-t border-border/50">
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] uppercase font-bold ${p.facultyApproved ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}`}
+                      >
+                        {p.facultyApproved && (
+                          <CheckCircle2 className="w-3 h-3 mr-1 inline-block" />
+                        )}
+                        Faculty: {p.facultyApproved ? "Approved" : "Not Approved"}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] uppercase font-bold ${p.adminApproved ? "bg-blue-500/10 text-blue-600 border-blue-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}`}
+                      >
+                        {p.adminApproved && <CheckCircle2 className="w-3 h-3 mr-1 inline-block" />}
+                        Admin: {p.adminApproved ? "Approved" : "Not Approved"}
+                      </Badge>
+                    </div>
+                  </CardContent>
+
+                  <CardFooter className="p-6 pt-0 relative z-10 flex flex-col gap-2">
+                    {currentUserRole === "FACULTY" &&
+                      p.submitter?.role === "STUDENT" &&
+                      !p.facultyApproved && (
+                        <Button
+                          onClick={() =>
+                            startTransition(async () => {
+                              await approveProblem(p.id, "FACULTY", true);
+                            })
+                          }
+                          disabled={isPending}
+                          className="w-full h-10 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white transition-all"
+                        >
+                          Approve (Faculty)
+                        </Button>
+                      )}
+                    {currentUserRole === "SUPERADMIN" && !p.adminApproved && (
+                      <Button
+                        onClick={() =>
+                          startTransition(async () => {
+                            await approveProblem(p.id, "ADMIN", true);
+                          })
+                        }
+                        disabled={isPending}
+                        className="w-full h-10 rounded-xl font-bold text-sm bg-blue-600 hover:bg-blue-700 text-white transition-all"
+                      >
+                        Approve (Admin)
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      className="w-full h-10 rounded-xl font-bold text-sm border-primary/20 hover:bg-primary/5 transition-all"
+                      onClick={() => setExpandedId(isExpanded ? null : p.id)}
+                    >
+                      {isExpanded ? (
+                        <>
+                          Show Less <ChevronUp className="ml-2 h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          Read Full Problem <ChevronDown className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            );
+          })}
         </motion.div>
       )}
     </div>

@@ -7,15 +7,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ManageKPIsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ metricName: "", description: "", categoryId: "", unit: "" });
+  const [categories, setCategories] = useState<Record<string, unknown>[]>([]);
+  const [formData, setFormData] = useState({
+    metricName: "",
+    description: "",
+    categoryId: "",
+    unit: "",
+  });
 
   useEffect(() => {
     async function fetchCats() {
@@ -51,53 +69,61 @@ export default function ManageKPIsPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="metricName">Metric Name</Label>
-              <Input 
-                id="metricName" 
-                required 
-                value={formData.metricName} 
-                onChange={(e) => setFormData({ ...formData, metricName: e.target.value })} 
-                placeholder="e.g., Number of Publications" 
+              <Input
+                id="metricName"
+                required
+                value={formData.metricName}
+                onChange={(e) => setFormData({ ...formData, metricName: e.target.value })}
+                placeholder="e.g., Number of Publications"
               />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="categoryId">Category</Label>
-                <Select onValueChange={(val: any) => setFormData({ ...formData, categoryId: val })}>
+                <Select
+                  onValueChange={(val: unknown) => setFormData({ ...formData, categoryId: val })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select pillar..." />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="unit">Unit (Optional)</Label>
-                <Input 
-                  id="unit" 
-                  value={formData.unit} 
-                  onChange={(e) => setFormData({ ...formData, unit: e.target.value })} 
-                  placeholder="e.g., %, Count, $" 
+                <Input
+                  id="unit"
+                  value={formData.unit}
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                  placeholder="e.g., %, Count, $"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea 
-                id="description" 
-                value={formData.description} 
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
-                placeholder="Details about what this metric measures..." 
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Details about what this metric measures..."
               />
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" type="button" onClick={() => router.back()}>Cancel</Button>
-            <Button type="submit" disabled={loading || !formData.categoryId}>{loading ? "Creating..." : "Create KPI"}</Button>
+            <Button variant="outline" type="button" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading || !formData.categoryId}>
+              {loading ? "Creating..." : "Create KPI"}
+            </Button>
           </CardFooter>
         </form>
       </Card>

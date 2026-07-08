@@ -6,15 +6,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Upload } from "lucide-react";
 
-export default function SubmitPitchModal({ challengeId, myStartups }: { challengeId: string, myStartups: any[] }) {
+export default function SubmitPitchModal({
+  challengeId,
+  myStartups,
+}: {
+  challengeId: string;
+  myStartups: unknown[];
+}) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({ title: "", description: "", deckUrl: "", startupId: "none" });
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    deckUrl: "",
+    startupId: "none",
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +50,7 @@ export default function SubmitPitchModal({ challengeId, myStartups }: { challeng
         description: formData.description,
         deckUrl: formData.deckUrl || undefined,
         challengeId,
-        startupId: formData.startupId === "none" ? undefined : formData.startupId
+        startupId: formData.startupId === "none" ? undefined : formData.startupId,
       };
       await submitPitch(payload);
       toast.success("Pitch submitted successfully!");
@@ -40,7 +65,13 @@ export default function SubmitPitchModal({ challengeId, myStartups }: { challeng
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button className="w-full"><Upload className="w-4 h-4 mr-2" /> Submit Pitch</Button>} />
+      <DialogTrigger
+        render={
+          <Button className="w-full">
+            <Upload className="w-4 h-4 mr-2" /> Submit Pitch
+          </Button>
+        }
+      />
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -50,24 +81,29 @@ export default function SubmitPitchModal({ challengeId, myStartups }: { challeng
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Project / Pitch Title</Label>
-              <Input 
-                required 
-                value={formData.title} 
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })} 
+              <Input
+                required
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g., AI-Driven Supply Chain Optimizer"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label>Link to existing Startup (Optional)</Label>
-              <Select onValueChange={(val: any) => setFormData({ ...formData, startupId: val })} defaultValue={formData.startupId}>
+              <Select
+                onValueChange={(val: unknown) => setFormData({ ...formData, startupId: val })}
+                defaultValue={formData.startupId}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select startup..." />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No Startup / Individual Submission</SelectItem>
                   {myStartups.map((startup) => (
-                    <SelectItem key={startup.id} value={startup.id}>{startup.name}</SelectItem>
+                    <SelectItem key={startup.id} value={startup.id}>
+                      {startup.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -75,27 +111,29 @@ export default function SubmitPitchModal({ challengeId, myStartups }: { challeng
 
             <div className="space-y-2">
               <Label>Pitch Deck URL (Optional)</Label>
-              <Input 
+              <Input
                 type="url"
-                value={formData.deckUrl} 
-                onChange={(e) => setFormData({ ...formData, deckUrl: e.target.value })} 
+                value={formData.deckUrl}
+                onChange={(e) => setFormData({ ...formData, deckUrl: e.target.value })}
                 placeholder="https://..."
               />
             </div>
 
             <div className="space-y-2">
               <Label>Description</Label>
-              <Textarea 
+              <Textarea
                 required
-                value={formData.description} 
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Explain your approach..."
                 className="h-32"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
             <Button type="submit" disabled={loading || !formData.title || !formData.description}>
               {loading ? "Submitting..." : "Submit Pitch"}
             </Button>

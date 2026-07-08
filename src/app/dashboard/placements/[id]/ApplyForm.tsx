@@ -17,7 +17,7 @@ export function ApplyForm({ jobId }: { jobId: string }) {
     setIsPending(true);
 
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       const res = await applyToJob(jobId, formData);
       if (res.success) {
@@ -25,7 +25,7 @@ export function ApplyForm({ jobId }: { jobId: string }) {
       } else {
         toast.error(res.error || "Failed to submit application");
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred.");
     } finally {
       setIsPending(false);
@@ -39,15 +39,17 @@ export function ApplyForm({ jobId }: { jobId: string }) {
           <LinkIcon className="w-4 h-4 text-primary" />
           Resume Link / Portfolio
         </Label>
-        <Input 
-          id="resumeUrl" 
-          name="resumeUrl" 
-          type="url" 
-          placeholder="https://your-portfolio.com or Google Drive link" 
-          required 
+        <Input
+          id="resumeUrl"
+          name="resumeUrl"
+          type="url"
+          placeholder="https://your-portfolio.com or Google Drive link"
+          required
           className="bg-background/50"
         />
-        <p className="text-xs text-muted-foreground">Provide a link to your resume, LinkedIn, or personal portfolio.</p>
+        <p className="text-xs text-muted-foreground">
+          Provide a link to your resume, LinkedIn, or personal portfolio.
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -55,17 +57,21 @@ export function ApplyForm({ jobId }: { jobId: string }) {
           <FileText className="w-4 h-4 text-primary" />
           Cover Letter / Pitch
         </Label>
-        <Textarea 
-          id="coverLetter" 
-          name="coverLetter" 
-          placeholder="Why are you a good fit for this role?" 
-          rows={5} 
+        <Textarea
+          id="coverLetter"
+          name="coverLetter"
+          placeholder="Why are you a good fit for this role?"
+          rows={5}
           required
           className="bg-background/50 resize-y"
         />
       </div>
 
-      <Button type="submit" disabled={isPending} className="w-full rounded-full shadow-lg shadow-primary/20">
+      <Button
+        type="submit"
+        disabled={isPending}
+        className="w-full rounded-full shadow-lg shadow-primary/20"
+      >
         {isPending ? (
           <>
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />

@@ -17,7 +17,7 @@ export async function createDepartment(formData: FormData) {
 
   try {
     await prisma.department.create({
-      data: { name, description }
+      data: { name, description },
     });
     revalidatePath("/dashboard/departments");
     return { success: true };
@@ -32,9 +32,9 @@ export async function getDepartments() {
     return await prisma.department.findMany({
       include: {
         _count: {
-          select: { faculties: true, projects: true }
-        }
-      }
+          select: { faculties: true, projects: true },
+        },
+      },
     });
   } catch (error) {
     console.error("Failed to fetch departments:", error);

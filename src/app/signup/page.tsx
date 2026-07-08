@@ -10,10 +10,7 @@ import { Loader2, Mail, AlertCircle, Lock, User, Briefcase } from "lucide-react"
 import Link from "next/link";
 
 export default function SignupPage() {
-  const [state, formAction, isPending] = useActionState(
-    registerUser,
-    { error: "" }
-  );
+  const [state, formAction, isPending] = useActionState(registerUser, { error: "" });
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden py-12">
@@ -40,9 +37,10 @@ export default function SignupPage() {
           <CardContent className="p-8 pt-0">
             <form action={formAction} className="space-y-5">
               <div className="space-y-4">
-                
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Full Name</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Full Name
+                  </label>
                   <div className="relative">
                     <User className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <input
@@ -56,7 +54,9 @@ export default function SignupPage() {
                 </div>
 
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Email Address</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Email Address
+                  </label>
                   <div className="relative">
                     <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <input
@@ -70,7 +70,9 @@ export default function SignupPage() {
                 </div>
 
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Password</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Password
+                  </label>
                   <div className="relative">
                     <Lock className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <input
@@ -85,7 +87,9 @@ export default function SignupPage() {
                 </div>
 
                 <div className="space-y-2 relative">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">Select Role</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider pl-1">
+                    Select Role
+                  </label>
                   <div className="relative">
                     <Briefcase className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground/60" />
                     <select
@@ -93,19 +97,20 @@ export default function SignupPage() {
                       required
                       className="w-full pl-11 p-3.5 rounded-xl bg-muted/30 border border-border/50 font-medium text-foreground focus:ring-2 focus:ring-primary/50 focus:bg-background outline-none transition-all appearance-none"
                     >
-                      <option value="" disabled selected>Select your role...</option>
+                      <option value="" disabled selected>
+                        Select your role...
+                      </option>
                       <option value="STUDENT">Student / Researcher</option>
                       <option value="FACULTY">Faculty / Mentor</option>
                       <option value="INDUSTRY_PARTNER">Industry Partner</option>
                     </select>
                   </div>
                 </div>
-
               </div>
 
               {state?.error && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   className="flex items-center gap-2 text-sm font-medium text-red-500 bg-red-500/10 p-3 rounded-lg"
                 >
@@ -114,21 +119,22 @@ export default function SignupPage() {
                 </motion.div>
               )}
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isPending}
                 className="w-full p-6 text-base rounded-xl shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all group"
               >
-                {isPending ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  "Create Account"
-                )}
+                {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "Create Account"}
               </Button>
             </form>
-            
+
             <div className="mt-6 text-center text-sm font-medium text-muted-foreground">
-              <p>Already have an account? <Link href="/login" className="text-primary hover:underline">Sign In</Link></p>
+              <p>
+                Already have an account?{" "}
+                <Link href="/login" className="text-primary hover:underline">
+                  Sign In
+                </Link>
+              </p>
             </div>
           </CardContent>
         </Card>

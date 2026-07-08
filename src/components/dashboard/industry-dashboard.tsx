@@ -17,7 +17,7 @@ export async function IndustryDashboard() {
   const problems = await prisma.problem.findMany({
     where: { submitterId: userId },
     orderBy: { createdAt: "desc" },
-    include: { assignee: true }
+    include: { assignee: true },
   });
 
   const projects = await prisma.project.findMany({
@@ -25,12 +25,14 @@ export async function IndustryDashboard() {
     include: {
       applications: {
         where: { status: "PENDING" },
-        include: { user: true }
-      }
-    }
+        include: { user: true },
+      },
+    },
   });
 
-  const pendingApplications = projects.flatMap(p => p.applications.map(a => ({ ...a, projectTitle: p.title })));
+  const pendingApplications = projects.flatMap((p) =>
+    p.applications.map((a) => ({ ...a, projectTitle: p.title }))
+  );
   const ongoingProjectsCount = projects.length;
 
   return (
@@ -38,7 +40,9 @@ export async function IndustryDashboard() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Partner Dashboard</h2>
-          <p className="text-muted-foreground">Monitor your submitted problems and research outcomes.</p>
+          <p className="text-muted-foreground">
+            Monitor your submitted problems and research outcomes.
+          </p>
         </div>
         <Link href="/problems" className={buttonVariants()}>
           <Plus className="mr-2 h-4 w-4" /> Submit New Problem
@@ -89,13 +93,26 @@ export async function IndustryDashboard() {
           <CardContent>
             <div className="space-y-6">
               {problems.length === 0 ? (
-                <p className="text-sm text-muted-foreground">You have not submitted any problems yet.</p>
+                <p className="text-sm text-muted-foreground">
+                  You have not submitted any problems yet.
+                </p>
               ) : (
                 problems.map((item) => (
-                  <div key={item.id} className="flex flex-col space-y-2 border-b pb-4 last:border-0 last:pb-0">
+                  <div
+                    key={item.id}
+                    className="flex flex-col space-y-2 border-b pb-4 last:border-0 last:pb-0"
+                  >
                     <div className="flex items-center justify-between">
                       <span className="font-semibold">{item.title}</span>
-                      <Badge variant={item.status === "RESOLVED" ? "default" : item.status === "OPEN" ? "destructive" : "secondary"}>
+                      <Badge
+                        variant={
+                          item.status === "RESOLVED"
+                            ? "default"
+                            : item.status === "OPEN"
+                              ? "destructive"
+                              : "secondary"
+                        }
+                      >
                         {item.status}
                       </Badge>
                     </div>
@@ -104,9 +121,16 @@ export async function IndustryDashboard() {
                       <span>Assignee: {item.assignee?.name || "Unassigned"}</span>
                     </div>
                     <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary" 
-                        style={{ width: item.status === "RESOLVED" ? '100%' : item.status === "IN_PROGRESS" ? '50%' : '10%' }} 
+                      <div
+                        className="h-full bg-primary"
+                        style={{
+                          width:
+                            item.status === "RESOLVED"
+                              ? "100%"
+                              : item.status === "IN_PROGRESS"
+                                ? "50%"
+                                : "10%",
+                        }}
                       />
                     </div>
                   </div>
@@ -119,27 +143,48 @@ export async function IndustryDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Pending Node Applications</CardTitle>
-            <CardDescription>Review students applying to work on your industry challenges</CardDescription>
+            <CardDescription>
+              Review students applying to work on your industry challenges
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {pendingApplications.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No pending applications for your projects.</p>
+                <p className="text-sm text-muted-foreground">
+                  No pending applications for your projects.
+                </p>
               ) : (
                 pendingApplications.map((app) => (
-                  <div key={app.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0 gap-4">
+                  <div
+                    key={app.id}
+                    className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0 gap-4"
+                  >
                     <div className="space-y-1 flex-1">
                       <p className="text-sm font-bold leading-tight">{app.projectTitle}</p>
-                      <p className="text-xs text-muted-foreground">By {app.user.name || app.user.email}</p>
-                      <p className="text-xs italic text-muted-foreground line-clamp-1">Skills: {app.user.skills || "N/A"}</p>
+                      <p className="text-xs text-muted-foreground">
+                        By {app.user.name || app.user.email}
+                      </p>
+                      <p className="text-xs italic text-muted-foreground line-clamp-1">
+                        Skills: {app.user.skills || "N/A"}
+                      </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <Badge variant={app.industryApproved ? "default" : "secondary"} className="text-[10px] uppercase">
+                      <Badge
+                        variant={app.industryApproved ? "default" : "secondary"}
+                        className="text-[10px] uppercase"
+                      >
                         {app.industryApproved ? "Partner OK" : "Pending"}
                       </Badge>
                       {!app.industryApproved && (
-                        <form action={async () => { "use server"; await approveApplication(app.id, "INDUSTRY", true); }}>
-                          <Button size="sm" className="h-7 text-xs px-3">Authorize</Button>
+                        <form
+                          action={async () => {
+                            "use server";
+                            await approveApplication(app.id, "INDUSTRY", true);
+                          }}
+                        >
+                          <Button size="sm" className="h-7 text-xs px-3">
+                            Authorize
+                          </Button>
                         </form>
                       )}
                     </div>

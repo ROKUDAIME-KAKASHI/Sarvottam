@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { getStudentRecommendations, getFacultyRecommendations, getIndustryRecommendations, getAdminInsights } from "@/lib/ai/engine";
+import {
+  getStudentRecommendations,
+  getFacultyRecommendations,
+  getIndustryRecommendations,
+  getAdminInsights,
+} from "@/lib/ai/engine";
 
 export async function POST(request: Request) {
   try {

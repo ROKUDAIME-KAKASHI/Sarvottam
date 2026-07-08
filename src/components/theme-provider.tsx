@@ -1,18 +1,21 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 // Suppress the React 19 script injection warning in development
 if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-  if (!(window as any).__theme_provider_patched) {
-    (window as any).__theme_provider_patched = true;
+  if (!(window as unknown as { __theme_provider_patched?: boolean }).__theme_provider_patched) {
+    (window as unknown as { __theme_provider_patched?: boolean }).__theme_provider_patched = true;
     const originalError = console.error;
     console.error = (...args: unknown[]) => {
       if (typeof args[0] === "string" && args[0].includes("at script")) {
         return;
       }
-      if (typeof args[0] === "string" && args[0].includes("Encountered a script tag while rendering React component")) {
+      if (
+        typeof args[0] === "string" &&
+        args[0].includes("Encountered a script tag while rendering React component")
+      ) {
         return;
       }
       originalError(...args);
@@ -24,5 +27,5 @@ export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }

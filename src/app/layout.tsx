@@ -31,7 +31,10 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex min-h-screen flex-col bg-background text-foreground" suppressHydrationWarning>
+          <div
+            className="flex min-h-screen flex-col bg-background text-foreground"
+            suppressHydrationWarning
+          >
             <HideOnDashboard>
               <Navbar />
             </HideOnDashboard>
@@ -39,7 +42,11 @@ export default async function RootLayout({
             <HideOnDashboard>
               <Footer />
             </HideOnDashboard>
-            {session && <Chatbot />}
+            {session?.user && (
+              <Chatbot
+                user={{ name: session.user.name, role: (session.user as { role?: string }).role }}
+              />
+            )}
             <Toaster />
           </div>
         </ThemeProvider>

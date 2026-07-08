@@ -2,9 +2,16 @@ import { getDashboardKPIs, getKPICategories } from "@/lib/actions/kpi.actions";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, TrendingUp, TrendingDown, Target, CheckCircle2 } from "lucide-react";
+import { AlertCircle, TrendingUp, Target, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import UpdateKPIButton from "./UpdateKPIButton"; // we will create this
 
@@ -16,7 +23,7 @@ export default async function KPIDashboardPage() {
   const categories = await getKPICategories();
 
   const totalAlerts = kpis.reduce((acc, kpi) => acc + kpi.alerts.length, 0);
-  const achievedTargets = kpis.filter(kpi => kpi.targets[0]?.isAchieved).length;
+  const achievedTargets = kpis.filter((kpi) => kpi.targets[0]?.isAchieved).length;
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -69,10 +76,9 @@ export default async function KPIDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {kpis.length > 0 
-                ? `${Math.round(kpis.filter(k => k.targets[0] && (k.currentValue >= k.targets[0].targetValue)).length / kpis.length * 100)}%`
-                : "N/A"
-              }
+              {kpis.length > 0
+                ? `${Math.round((kpis.filter((k) => k.targets[0] && k.currentValue >= k.targets[0].targetValue).length / kpis.length) * 100)}%`
+                : "N/A"}
             </div>
             <p className="text-xs text-muted-foreground">Overall target completion</p>
           </CardContent>
@@ -111,10 +117,14 @@ export default async function KPIDashboardPage() {
                       <TableCell className="font-bold">
                         {kpi.currentValue} {kpi.unit}
                       </TableCell>
-                      <TableCell>{target ? `${target.targetValue} ${kpi.unit}` : "No Target"}</TableCell>
+                      <TableCell>
+                        {target ? `${target.targetValue} ${kpi.unit}` : "No Target"}
+                      </TableCell>
                       <TableCell>
                         {target?.isAchieved ? (
-                          <span className="text-green-600 font-medium flex items-center"><CheckCircle2 className="mr-1 h-3 w-3"/> Achieved</span>
+                          <span className="text-green-600 font-medium flex items-center">
+                            <CheckCircle2 className="mr-1 h-3 w-3" /> Achieved
+                          </span>
                         ) : (
                           <span className="text-amber-600 font-medium">In Progress</span>
                         )}
@@ -141,7 +151,7 @@ export default async function KPIDashboardPage() {
             </Table>
           </CardContent>
         </Card>
-        
+
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Category Analytics</CardTitle>
@@ -157,7 +167,9 @@ export default async function KPIDashboardPage() {
                   </div>
                 </div>
               ))}
-              {categories.length === 0 && <p className="text-sm text-muted-foreground">No categories defined.</p>}
+              {categories.length === 0 && (
+                <p className="text-sm text-muted-foreground">No categories defined.</p>
+              )}
             </div>
           </CardContent>
         </Card>

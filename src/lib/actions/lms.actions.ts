@@ -15,7 +15,12 @@ export async function getCourses() {
   });
 }
 
-export async function createCourse(data: { title: string; description?: string; type: string; level: string }) {
+export async function createCourse(data: {
+  title: string;
+  description?: string;
+  type: string;
+  level: string;
+}) {
   const session = await auth();
   if (!session?.user || session.user.role !== "SUPERADMIN") throw new Error("Unauthorized");
 
@@ -23,11 +28,9 @@ export async function createCourse(data: { title: string; description?: string; 
     data: {
       ...data,
       modules: {
-        create: [
-          { title: "Introduction", description: "Getting started" }
-        ]
-      }
-    }
+        create: [{ title: "Introduction", description: "Getting started" }],
+      },
+    },
   });
 
   revalidatePath("/dashboard/lms");
@@ -42,7 +45,7 @@ export async function enrollUser(courseId: string) {
     data: {
       courseId,
       userId: session.user.id as string,
-    }
+    },
   });
 
   revalidatePath("/dashboard/lms");
@@ -58,7 +61,7 @@ export async function getTrainerSessions(trainerId: string) {
       attendance: true,
       feedbacks: true,
     },
-    orderBy: { startDate: "asc" }
+    orderBy: { startDate: "asc" },
   });
 }
 
@@ -67,17 +70,17 @@ export async function markAttendance(sessionId: string, userId: string, status: 
   if (!session?.user) throw new Error("Unauthorized");
 
   // In a real app, verify that session.user is the trainer of the session or an admin.
-  
+
   const attendance = await prisma.attendance.upsert({
     where: {
-      sessionId_userId: { sessionId, userId }
+      sessionId_userId: { sessionId, userId },
     },
     update: { status },
     create: {
       sessionId,
       userId,
-      status
-    }
+      status,
+    },
   });
 
   revalidatePath(`/dashboard/lms/sessions/${sessionId}`);

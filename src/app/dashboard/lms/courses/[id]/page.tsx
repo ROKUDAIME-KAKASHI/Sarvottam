@@ -17,8 +17,8 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
     include: {
       modules: { include: { lessons: true } },
       enrollments: { where: { userId: session.user.id } },
-      sessions: { include: { trainer: { include: { user: true } } } }
-    }
+      sessions: { include: { trainer: { include: { user: true } } } },
+    },
   });
 
   if (!course) return <div className="p-8">Course not found.</div>;
@@ -30,7 +30,9 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center space-x-4 mb-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/dashboard/lms"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link href="/dashboard/lms">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
         </Button>
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{course.title}</h2>
@@ -48,33 +50,52 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
               <CardTitle>Course Overview</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">{course.description || "No detailed description available."}</p>
+              <p className="text-muted-foreground">
+                {course.description || "No detailed description available."}
+              </p>
             </CardContent>
           </Card>
 
           <h3 className="text-xl font-bold mt-8 mb-4">Syllabus</h3>
-          {course.modules.length > 0 ? course.modules.map(mod => (
-            <Card key={mod.id} className="mb-4">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{mod.title}</CardTitle>
-                <CardDescription>{mod.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 mt-2">
-                  {mod.lessons.map(lesson => (
-                    <div key={lesson.id} className="flex items-center justify-between p-3 border rounded-md">
-                      <div className="flex items-center space-x-3">
-                        {lesson.videoUrl ? <Video className="text-blue-500 w-5 h-5" /> : <Book className="text-orange-500 w-5 h-5" />}
-                        <span className="font-medium">{lesson.title}</span>
+          {course.modules.length > 0 ? (
+            course.modules.map((mod) => (
+              <Card key={mod.id} className="mb-4">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">{mod.title}</CardTitle>
+                  <CardDescription>{mod.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 mt-2">
+                    {mod.lessons.map((lesson) => (
+                      <div
+                        key={lesson.id}
+                        className="flex items-center justify-between p-3 border rounded-md"
+                      >
+                        <div className="flex items-center space-x-3">
+                          {lesson.videoUrl ? (
+                            <Video className="text-blue-500 w-5 h-5" />
+                          ) : (
+                            <Book className="text-orange-500 w-5 h-5" />
+                          )}
+                          <span className="font-medium">{lesson.title}</span>
+                        </div>
+                        {lesson.duration && (
+                          <span className="text-xs text-muted-foreground">
+                            {lesson.duration} mins
+                          </span>
+                        )}
                       </div>
-                      {lesson.duration && <span className="text-xs text-muted-foreground">{lesson.duration} mins</span>}
-                    </div>
-                  ))}
-                  {mod.lessons.length === 0 && <p className="text-sm text-muted-foreground italic">No lessons in this module.</p>}
-                </div>
-              </CardContent>
-            </Card>
-          )) : (
+                    ))}
+                    {mod.lessons.length === 0 && (
+                      <p className="text-sm text-muted-foreground italic">
+                        No lessons in this module.
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
                 Syllabus is currently being built.
@@ -101,16 +122,23 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                       <span>{enrollment.progress}%</span>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full" style={{ width: `${enrollment.progress}%` }}></div>
+                      <div
+                        className="bg-green-500 h-2 rounded-full"
+                        style={{ width: `${enrollment.progress}%` }}
+                      ></div>
                     </div>
                   </div>
                   <Button className="w-full" asChild>
-                    <Link href={`/dashboard/lms/courses/${course.id}/learn`}><PlayCircle className="w-4 h-4 mr-2"/> Continue Learning</Link>
+                    <Link href={`/dashboard/lms/courses/${course.id}/learn`}>
+                      <PlayCircle className="w-4 h-4 mr-2" /> Continue Learning
+                    </Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <p className="text-sm text-muted-foreground mb-4">Join this course to access the materials and track your progress.</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Join this course to access the materials and track your progress.
+                  </p>
                   <EnrollButton courseId={course.id} />
                 </>
               )}
@@ -123,7 +151,7 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
                 <CardTitle>Live Sessions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {course.sessions.map(session => (
+                {course.sessions.map((session) => (
                   <div key={session.id} className="border-b pb-2 last:border-0 text-sm">
                     <div className="font-medium">{session.title}</div>
                     <div className="text-muted-foreground text-xs mt-1">

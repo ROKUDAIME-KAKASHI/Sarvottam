@@ -6,7 +6,14 @@ import { createOrganization } from "@/lib/actions/org-assessment.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 
 export default function NewOrganizationPage() {
@@ -40,47 +47,51 @@ export default function NewOrganizationPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Organization Name</Label>
-              <Input 
-                id="name" 
-                required 
-                value={formData.name} 
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                placeholder="e.g., Tech Corp Inc." 
+              <Input
+                id="name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Tech Corp Inc."
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
-              <Input 
-                id="industry" 
-                value={formData.industry} 
-                onChange={(e) => setFormData({ ...formData, industry: e.target.value })} 
-                placeholder="e.g., Software, Manufacturing, Healthcare" 
+              <Input
+                id="industry"
+                value={formData.industry}
+                onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                placeholder="e.g., Software, Manufacturing, Healthcare"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="type">Entity Type</Label>
-                <Input 
-                  id="type" 
-                  value={formData.type} 
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })} 
-                  placeholder="e.g., Public, Private, NGO" 
+                <Input
+                  id="type"
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  placeholder="e.g., Public, Private, NGO"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="size">Size / Employees</Label>
-                <Input 
-                  id="size" 
-                  value={formData.size} 
-                  onChange={(e) => setFormData({ ...formData, size: e.target.value })} 
-                  placeholder="e.g., 50-200, 1000+" 
+                <Input
+                  id="size"
+                  value={formData.size}
+                  onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                  placeholder="e.g., 50-200, 1000+"
                 />
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" type="button" onClick={() => router.back()}>Cancel</Button>
-            <Button type="submit" disabled={loading}>{loading ? "Adding..." : "Add Organization"}</Button>
+            <Button variant="outline" type="button" onClick={() => router.back()}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Adding..." : "Add Organization"}
+            </Button>
           </CardFooter>
         </form>
       </Card>

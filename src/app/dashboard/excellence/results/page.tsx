@@ -1,7 +1,14 @@
 import { getResults } from "@/lib/actions/excellence.actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {} from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -17,7 +24,9 @@ export default async function ResultsPage() {
       <Card>
         <CardHeader>
           <CardTitle>All Results</CardTitle>
-          <CardDescription>View scores and benchmarking data across all completed assessments.</CardDescription>
+          <CardDescription>
+            View scores and benchmarking data across all completed assessments.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -39,13 +48,13 @@ export default async function ResultsPage() {
                   <TableCell>{result.template.framework.name}</TableCell>
                   <TableCell>{result.assessor.name || result.assessor.email}</TableCell>
                   <TableCell className="font-bold">{result.totalScore}</TableCell>
-                  <TableCell>
-                    {result.status}
-                  </TableCell>
+                  <TableCell>{result.status}</TableCell>
                   <TableCell>{result.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/excellence/results/${result.id}`}>View Scorecard</Link>
+                      <Link href={`/dashboard/excellence/results/${result.id}`}>
+                        View Scorecard
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>

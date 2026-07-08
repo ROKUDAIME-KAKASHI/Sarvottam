@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
-import { handlers } from "@/auth"
+import { handlers } from "@/auth";
 
 const stripMaxAgeFromSessionCookie = (res: Response) => {
   const setCookie = res.headers.getSetCookie();
   if (setCookie && setCookie.length > 0) {
     const newHeaders = new Headers(res.headers);
     newHeaders.delete("set-cookie");
-    
+
     setCookie.forEach((cookie) => {
       if (cookie.includes("authjs.session-token") || cookie.includes("next-auth.session-token")) {
         // Remove Max-Age and Expires to make it a browser session cookie
@@ -17,7 +17,7 @@ const stripMaxAgeFromSessionCookie = (res: Response) => {
         newHeaders.append("set-cookie", cookie);
       }
     });
-    
+
     return new Response(res.body, {
       status: res.status,
       statusText: res.statusText,

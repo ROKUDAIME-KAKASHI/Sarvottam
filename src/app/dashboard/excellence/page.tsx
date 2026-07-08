@@ -34,7 +34,9 @@ export default async function ExcellenceDashboard() {
             <CardTitle className="text-sm font-medium">Assessments Completed</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{results.filter(r => r.status === 'SUBMITTED').length}</div>
+            <div className="text-2xl font-bold">
+              {results.filter((r) => r.status === "SUBMITTED").length}
+            </div>
             <p className="text-xs text-muted-foreground">Organizational evaluations</p>
           </CardContent>
         </Card>
@@ -44,8 +46,10 @@ export default async function ExcellenceDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {results.length > 0 
-                ? (results.reduce((acc, curr) => acc + (curr.totalScore || 0), 0) / results.length).toFixed(1) 
+              {results.length > 0
+                ? (
+                    results.reduce((acc, curr) => acc + (curr.totalScore || 0), 0) / results.length
+                  ).toFixed(1)
                 : "N/A"}
             </div>
             <p className="text-xs text-muted-foreground">Across all departments</p>
@@ -81,7 +85,9 @@ export default async function ExcellenceDashboard() {
                   <div className="ml-auto font-medium">Score: {result.totalScore}</div>
                 </div>
               ))}
-              {results.length === 0 && <p className="text-sm text-muted-foreground">No assessments yet.</p>}
+              {results.length === 0 && (
+                <p className="text-sm text-muted-foreground">No assessments yet.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -94,16 +100,22 @@ export default async function ExcellenceDashboard() {
           <CardContent>
             <div className="space-y-4">
               {frameworks.map((framework) => (
-                <div key={framework.id} className="flex items-center border-b pb-4 last:border-0 last:pb-0">
+                <div
+                  key={framework.id}
+                  className="flex items-center border-b pb-4 last:border-0 last:pb-0"
+                >
                   <div className="ml-4 space-y-1">
                     <p className="text-sm font-medium leading-none">{framework.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {framework.dimensions.length} Dimensions | {framework.maturityLevels.length} Levels
+                      {framework.dimensions.length} Dimensions | {framework.maturityLevels.length}{" "}
+                      Levels
                     </p>
                   </div>
                 </div>
               ))}
-              {frameworks.length === 0 && <p className="text-sm text-muted-foreground">No frameworks configured.</p>}
+              {frameworks.length === 0 && (
+                <p className="text-sm text-muted-foreground">No frameworks configured.</p>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -15,7 +15,7 @@ interface ProfileFormProps {
     role: string;
     skills: string | null;
     portfolioUrl: string | null;
-  }
+  };
 }
 
 export function ProfileForm({ user }: ProfileFormProps) {
@@ -23,19 +23,22 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const [skills, setSkills] = useState(user.skills || "");
   const [portfolioUrl, setPortfolioUrl] = useState(user.portfolioUrl || "");
   const [isPending, setIsPending] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
     setMessage(null);
-    
+
     try {
       await updateProfile({ name, skills, portfolioUrl });
       setMessage({ type: "success", text: "Changes saved" });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
-      setMessage({ type: "error", text: error instanceof Error ? error.message : "Failed to save changes" });
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Failed to save changes",
+      });
     } finally {
       setIsPending(false);
     }
@@ -44,15 +47,21 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <div className="space-y-8 pb-12 max-w-4xl mx-auto">
       <div className="flex flex-col justify-between items-start gap-4">
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-3xl font-black tracking-tight text-foreground">My Profile</h2>
-          <p className="text-muted-foreground font-medium">Manage your personal information and preferences.</p>
+          <p className="text-muted-foreground font-medium">
+            Manage your personal information and preferences.
+          </p>
         </motion.div>
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }} 
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <Card className="rounded-3xl border-border/50 bg-background/40 backdrop-blur-xl shadow-xl">
@@ -72,16 +81,20 @@ export function ProfileForm({ user }: ProfileFormProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email Address</label>
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Email Address
+                  </label>
                   <div className="p-3 rounded-xl bg-muted/30 border border-border/50 font-medium text-foreground truncate">
                     {user.email}
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Full Name</label>
-                  <input 
-                    type="text" 
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your full name"
@@ -90,22 +103,26 @@ export function ProfileForm({ user }: ProfileFormProps) {
                     minLength={2}
                   />
                 </div>
-                
+
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Skills</label>
-                  <input 
-                    type="text" 
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Skills
+                  </label>
+                  <input
+                    type="text"
                     value={skills}
                     onChange={(e) => setSkills(e.target.value)}
                     placeholder="e.g. React, Node.js, Python"
                     className="w-full p-3 rounded-xl bg-background border border-border/50 font-medium text-foreground focus:ring-2 focus:ring-primary/50 outline-none transition-all"
                   />
                 </div>
-                
+
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Portfolio URL</label>
-                  <input 
-                    type="url" 
+                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Portfolio URL
+                  </label>
+                  <input
+                    type="url"
                     value={portfolioUrl}
                     onChange={(e) => setPortfolioUrl(e.target.value)}
                     placeholder="https://example.com"
@@ -117,8 +134,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
               <div className="flex items-center justify-between pt-6 border-t border-border/50">
                 <div className="flex-1">
                   {message && (
-                    <motion.div 
-                      initial={{ opacity: 0, x: -10 }} 
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       className={`text-sm font-medium flex items-center gap-2 ${
                         message.type === "success" ? "text-emerald-500" : "text-red-500"
@@ -129,9 +146,14 @@ export function ProfileForm({ user }: ProfileFormProps) {
                     </motion.div>
                   )}
                 </div>
-                <Button 
-                  type="submit" 
-                  disabled={isPending || (name === user.name && skills === user.skills && portfolioUrl === user.portfolioUrl)}
+                <Button
+                  type="submit"
+                  disabled={
+                    isPending ||
+                    (name === user.name &&
+                      skills === user.skills &&
+                      portfolioUrl === user.portfolioUrl)
+                  }
                   className="rounded-xl shadow-lg shadow-primary/20 min-w-[140px]"
                 >
                   {isPending ? (

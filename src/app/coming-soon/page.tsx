@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
+import {} from "@/components/logo";
 import { Hammer, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -35,10 +35,11 @@ export default function ComingSoonPage() {
           </CardHeader>
           <CardContent className="p-8 pt-0 text-center space-y-6">
             <p className="text-muted-foreground font-medium text-sm">
-              We are working hard to bring this feature to you as soon as possible. Please check back later!
+              We are working hard to bring this feature to you as soon as possible. Please check
+              back later!
             </p>
-            
-            <Button 
+
+            <Button
               onClick={() => router.back()}
               variant="outline"
               className="w-full p-6 text-base rounded-xl border-border/50 hover:bg-muted/50 transition-all group"

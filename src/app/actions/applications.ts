@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { addXP } from "@/lib/actions/gamification";
 
 export async function applyForProject(formData: FormData) {
   const session = await auth();
@@ -22,7 +23,7 @@ export async function applyForProject(formData: FormData) {
     if (skills) {
       await prisma.user.update({
         where: { id: session.user.id },
-        data: { skills }
+        data: { skills },
       });
     }
 
@@ -31,7 +32,7 @@ export async function applyForProject(formData: FormData) {
       where: {
         projectId,
         userId: session.user.id,
-      }
+      },
     });
 
     if (existing) {
@@ -46,6 +47,9 @@ export async function applyForProject(formData: FormData) {
       },
     });
 
+    // Gamification Hook: Reward for applying
+    await addXP(session.user.id, 20);
+
     // Notify Admin, Faculty, Industry (simplified for now via a revalidate)
     revalidatePath("/research");
     revalidatePath("/dashboard/applications");
@@ -57,30 +61,42 @@ export async function applyForProject(formData: FormData) {
   }
 }
 
-export async function approveApplication(applicationId: string, approvalType: "FACULTY" | "INDUSTRY" | "ADMIN", isApproved: boolean) {
+export async function approveApplication(
+  applicationId: string,
+  approvalType: "FACULTY" | "INDUSTRY" | "ADMIN",
+  isApproved: boolean
+) {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
 
   try {
     const app = await prisma.application.findUnique({
       where: { id: applicationId },
-      include: { project: true }
+      include: { project: true },
     });
 
     if (!app) return { error: "Application not found" };
 
     // Check permissions
-    if (approvalType === "FACULTY" && session.user.role !== "FACULTY" && session.user.role !== "SUPERADMIN") {
+    if (
+      approvalType === "FACULTY" &&
+      session.user.role !== "FACULTY" &&
+      session.user.role !== "SUPERADMIN"
+    ) {
       return { error: "Only faculty can approve" };
     }
-    if (approvalType === "INDUSTRY" && session.user.role !== "INDUSTRY_PARTNER" && session.user.role !== "SUPERADMIN") {
+    if (
+      approvalType === "INDUSTRY" &&
+      session.user.role !== "INDUSTRY_PARTNER" &&
+      session.user.role !== "SUPERADMIN"
+    ) {
       return { error: "Only industry partners can approve" };
     }
     if (approvalType === "ADMIN" && session.user.role !== "SUPERADMIN") {
       return { error: "Only admins can provide final approval" };
     }
 
-    const dataToUpdate: any = {};
+    const dataToUpdate: unknown = {};
     if (approvalType === "FACULTY") dataToUpdate.facultyApproved = isApproved;
     if (approvalType === "INDUSTRY") dataToUpdate.industryApproved = isApproved;
     if (approvalType === "ADMIN") dataToUpdate.adminApproved = isApproved;
@@ -92,11 +108,11 @@ export async function approveApplication(applicationId: string, approvalType: "F
     // Logic: Admin override OR (Faculty AND Industry)
     if (willBeAdminApproved || (willBeFacultyApproved && willBeIndustryApproved)) {
       dataToUpdate.status = "ACCEPTED";
-      
-      // If accepted, we might want to update the project status if it's full, 
+
+      // If accepted, we might want to update the project status if it's full,
       // but for now we just mark the application as accepted.
     } else if (!isApproved) {
-      // If any party explicitly rejects? (The user didn't specify rejection logic, 
+      // If any party explicitly rejects? (The user didn't specify rejection logic,
       // but usually if one rejects it might stay pending or be rejected).
       // Let's keep it pending unless it's a "REJECT" status.
     }
@@ -122,49 +138,45 @@ export async function getApplications() {
   try {
     if (session.user.role === "STUDENT") {
       return await prisma.application.findMany({
-        where: { 
-          OR: [
-            { userId: session.user.id },
-            { project: { creatorId: session.user.id } }
-          ]
+        where: {
+          OR: [{ userId: session.user.id }, { project: { creatorId: session.user.id } }],
         },
         include: { project: true, user: true },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
       });
     }
-    
+
     if (session.user.role === "FACULTY") {
       return await prisma.application.findMany({
-        where: { 
+        where: {
           OR: [
             { project: { mentorId: session.user.id } },
-            { project: { creatorId: session.user.id } }
-          ]
+            { project: { creatorId: session.user.id } },
+          ],
         },
         include: { project: true, user: true },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
       });
     }
 
     if (session.user.role === "INDUSTRY_PARTNER") {
       return await prisma.application.findMany({
-        where: { 
+        where: {
           OR: [
             { project: { partnerId: session.user.id } },
-            { project: { creatorId: session.user.id } }
-          ]
+            { project: { creatorId: session.user.id } },
+          ],
         },
         include: { project: true, user: true },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
       });
     }
 
     // Superadmin sees all
     return await prisma.application.findMany({
       include: { project: true, user: true },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
     });
-
   } catch (error) {
     console.error("Failed to fetch applications:", error);
     return [];
@@ -180,12 +192,12 @@ export async function updateApplicationStatus(applicationId: string, status: str
   try {
     const app = await prisma.application.findUnique({
       where: { id: applicationId },
-      include: { project: true }
+      include: { project: true },
     });
 
     if (!app) return { error: "Application not found" };
 
-    const canUpdate = 
+    const canUpdate =
       session.user.role === "SUPERADMIN" ||
       app.project.creatorId === session.user.id ||
       app.project.mentorId === session.user.id ||

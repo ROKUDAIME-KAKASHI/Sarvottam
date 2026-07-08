@@ -8,10 +8,27 @@ import { Label } from "@/components/ui/label";
 import { updateProfileSettings, updatePassword } from "@/app/actions/settings";
 import { useTransition, useState } from "react";
 
-export default function SettingsClient({ user }: { user: { id: string, name: string | null, email: string | null, role: string, skills?: string | null, portfolioUrl?: string | null } }) {
+export default function SettingsClient({
+  user,
+}: {
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    role: string;
+    skills?: string | null;
+    portfolioUrl?: string | null;
+  };
+}) {
   const [isPending, startTransition] = useTransition();
-  const [profileMessage, setProfileMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
-  const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error", text: string } | null>(null);
+  const [profileMessage, setProfileMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+  const [passwordMessage, setPasswordMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,16 +86,28 @@ export default function SettingsClient({ user }: { user: { id: string, name: str
               </div>
               <div className="space-y-2">
                 <Label>Skills (Comma-separated)</Label>
-                <Input name="skills" defaultValue={user.skills || ""} placeholder="React, Node.js, Python" />
+                <Input
+                  name="skills"
+                  defaultValue={user.skills || ""}
+                  placeholder="React, Node.js, Python"
+                />
               </div>
               <div className="space-y-2">
                 <Label>Portfolio URL</Label>
-                <Input name="portfolioUrl" defaultValue={user.portfolioUrl || ""} placeholder="https://github.com/..." />
+                <Input
+                  name="portfolioUrl"
+                  defaultValue={user.portfolioUrl || ""}
+                  placeholder="https://github.com/..."
+                />
               </div>
               <div className="flex items-center gap-4">
-                <Button disabled={isPending} type="submit">Save Changes</Button>
+                <Button disabled={isPending} type="submit">
+                  Save Changes
+                </Button>
                 {profileMessage && (
-                  <span className={`text-sm font-medium ${profileMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}>
+                  <span
+                    className={`text-sm font-medium ${profileMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}
+                  >
                     {profileMessage.text}
                   </span>
                 )}
@@ -106,9 +135,13 @@ export default function SettingsClient({ user }: { user: { id: string, name: str
                 <Input required type="password" name="newPassword" />
               </div>
               <div className="flex items-center gap-4">
-                <Button disabled={isPending} type="submit" variant="destructive">Update Password</Button>
+                <Button disabled={isPending} type="submit" variant="destructive">
+                  Update Password
+                </Button>
                 {passwordMessage && (
-                  <span className={`text-sm font-medium ${passwordMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}>
+                  <span
+                    className={`text-sm font-medium ${passwordMessage.type === "success" ? "text-emerald-500" : "text-red-500"}`}
+                  >
                     {passwordMessage.text}
                   </span>
                 )}

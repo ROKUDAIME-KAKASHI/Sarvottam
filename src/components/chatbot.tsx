@@ -6,20 +6,21 @@ import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-
 type Message = {
   id: string;
   role: "user" | "assistant";
   content: string;
 };
 
-export function Chatbot() {
+export function Chatbot({ user }: { user?: { name?: string | null; role?: string | null } }) {
   const [isOpen, setIsOpen] = useState(false);
+  const userName = user?.name ? user.name.split(" ")[0] : "there";
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
       role: "assistant",
-      content: "Welcome to the Sarvottam Ecosystem. I am your AI Copilot. How may I assist you with your professional goals, academic projects, or platform navigation today?",
+      content: `Welcome back, ${userName}! I am your AI Copilot. How may I assist you with your professional goals, academic projects, or platform navigation today?`,
     },
   ]);
   const [input, setInput] = useState("");
@@ -45,6 +46,7 @@ export function Chatbot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          userContext: user,
           messages: [...messages, userMessage].map((m) => ({ role: m.role, content: m.content })),
         }),
       });
@@ -59,7 +61,7 @@ export function Chatbot() {
         ...prev,
         { id: Date.now().toString(), role: "assistant", content: data.reply },
       ]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setMessages((prev) => [
         ...prev,
         { id: Date.now().toString(), role: "assistant", content: `Error: ${error.message}` },
@@ -98,7 +100,12 @@ export function Chatbot() {
                   <p className="text-xs text-primary-foreground/80">Online & Ready</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground rounded-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+                className="text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground rounded-full"
+              >
                 <X className="w-5 h-5" />
               </Button>
             </div>
@@ -110,8 +117,14 @@ export function Chatbot() {
                   key={msg.id}
                   className={`flex gap-3 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                 >
-                  <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border"}`}>
-                    {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                  <div
+                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground border"}`}
+                  >
+                    {msg.role === "user" ? (
+                      <User className="w-4 h-4" />
+                    ) : (
+                      <Bot className="w-4 h-4" />
+                    )}
                   </div>
                   <div
                     className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${

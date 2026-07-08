@@ -17,10 +17,13 @@ type ActionState = {
   success?: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
-  project?: any;
+  project?: unknown;
 };
 
-export async function createProject(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
+export async function createProject(
+  prevState: ActionState | null,
+  formData: FormData
+): Promise<ActionState> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "You must be logged in to create a project." };
@@ -78,7 +81,7 @@ export async function createProject(prevState: ActionState | null, formData: For
 
     revalidatePath("/dashboard/projects");
     revalidatePath("/research");
-    
+
     return { success: true, project };
   } catch (error) {
     console.error("Failed to create project:", error);

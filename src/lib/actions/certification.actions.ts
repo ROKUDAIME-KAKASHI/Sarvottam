@@ -26,9 +26,9 @@ export async function createCertificationProgram(data: { name: string; descripti
         create: [
           { name: "Foundations", level: "BEGINNER" },
           { name: "Advanced Applications", level: "ADVANCED" },
-        ]
-      }
-    }
+        ],
+      },
+    },
   });
 
   revalidatePath("/dashboard/certifications");
@@ -42,11 +42,17 @@ export async function getUserCertifications(userId: string) {
       badges: { include: { badge: true } },
       microCredentials: { include: { track: { include: { program: true } } } },
       certificates: { include: { program: true, track: true, verification: true } },
-    }
+    },
   });
 }
 
-export async function issueCertificate(data: { title: string; userId: string; programId: string; trackId: string; description?: string }) {
+export async function issueCertificate(data: {
+  title: string;
+  userId: string;
+  programId: string;
+  trackId: string;
+  description?: string;
+}) {
   const session = await auth();
   if (!session?.user || !["SUPERADMIN", "FACULTY"].includes(session.user.role as string)) {
     throw new Error("Unauthorized");
@@ -65,10 +71,10 @@ export async function issueCertificate(data: { title: string; userId: string; pr
       verification: {
         create: {
           verificationCode,
-        }
-      }
+        },
+      },
     },
-    include: { verification: true }
+    include: { verification: true },
   });
 
   revalidatePath("/dashboard/certifications");
@@ -79,8 +85,8 @@ export async function verifyCertificate(code: string) {
   const verification = await prisma.certificateVerification.findUnique({
     where: { verificationCode: code },
     include: {
-      certificate: { include: { user: true, program: true, track: true } }
-    }
+      certificate: { include: { user: true, program: true, track: true } },
+    },
   });
 
   if (!verification) {
@@ -101,7 +107,7 @@ export async function awardBadge(userId: string, badgeId: string) {
   }
 
   const userBadge = await prisma.userBadge.create({
-    data: { userId, badgeId }
+    data: { userId, badgeId },
   });
 
   revalidatePath("/dashboard/certifications");

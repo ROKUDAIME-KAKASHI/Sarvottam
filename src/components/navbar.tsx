@@ -13,33 +13,64 @@ export default async function Navbar() {
         <div className="flex items-center gap-6 md:gap-8">
           <Link href="/" className="flex items-center space-x-2 group">
             <Logo className="h-6 w-6 transition-transform group-hover:scale-105" />
-            <span className="font-bold text-lg tracking-tight inline-block text-foreground">Sarvottam</span>
+            <span className="font-bold text-lg tracking-tight inline-block text-foreground">
+              Sarvottam
+            </span>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/framework" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+            <Link
+              href="/framework"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
               Framework
             </Link>
-            <Link href="/problems" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+            <Link
+              href="/problems"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
               Problems
             </Link>
-            <Link href="/research" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+            <Link
+              href="/research"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            >
               Research
             </Link>
           </nav>
         </div>
-        
+
         <div className="flex items-center space-x-3">
           <ThemeToggle />
           {session ? (
-            <Link href="/dashboard" className={buttonVariants({ variant: "default", size: "sm", className: "rounded-full shadow-sm" })}>
+            <Link
+              href="/dashboard"
+              className={buttonVariants({
+                variant: "default",
+                size: "sm",
+                className: "rounded-full shadow-sm",
+              })}
+            >
               Dashboard
             </Link>
           ) : (
             <>
-              <Link href="/login" className={buttonVariants({ variant: "ghost", size: "sm", className: "rounded-full hidden sm:inline-flex" })}>
+              <Link
+                href="/login"
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "sm",
+                  className: "rounded-full hidden sm:inline-flex",
+                })}
+              >
                 Log in
               </Link>
-              <Link href="/login" className={buttonVariants({ size: "sm", className: "rounded-full shadow-md shadow-primary/20" })}>
+              <Link
+                href="/login"
+                className={buttonVariants({
+                  size: "sm",
+                  className: "rounded-full shadow-md shadow-primary/20",
+                })}
+              >
                 Get Started
               </Link>
             </>

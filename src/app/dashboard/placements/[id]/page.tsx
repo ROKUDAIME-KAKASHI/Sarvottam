@@ -37,28 +37,33 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <Link href="/dashboard/placements" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+      <Link
+        href="/dashboard/placements"
+        className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+      >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Jobs
       </Link>
 
       <div className="bg-card rounded-3xl border border-border/50 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-        
+
         <div className="p-6 md:p-8 space-y-6 relative z-10">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
-              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">{job.type.replace("_", " ")}</Badge>
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
+                {job.type.replace("_", " ")}
+              </Badge>
               <span className="text-xs font-medium text-muted-foreground flex items-center">
                 <Clock className="w-3.5 h-3.5 mr-1" />
                 Posted on {new Date(job.createdAt).toLocaleDateString()}
               </span>
             </div>
-            
+
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-foreground">
               {job.title}
             </h1>
-            
+
             <div className="flex flex-wrap items-center gap-6 text-muted-foreground font-medium">
               <span className="flex items-center text-foreground/80">
                 <Building className="w-5 h-5 text-primary mr-2 shrink-0" />

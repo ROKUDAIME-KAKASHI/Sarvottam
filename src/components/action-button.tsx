@@ -11,18 +11,18 @@ interface ActionButtonProps extends ButtonProps {
   errorMessage?: string;
 }
 
-export function ActionButton({ 
-  action, 
-  successMessage = "Action completed successfully", 
-  errorMessage = "Something went wrong", 
+export function ActionButton({
+  action,
+  successMessage = "Action completed successfully",
+  errorMessage = "Something went wrong",
   children,
-  ...props 
+  ...props
 }: ActionButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <Button 
-      {...props} 
+    <Button
+      {...props}
       disabled={isPending || props.disabled}
       onClick={() => {
         startTransition(async () => {
@@ -35,7 +35,7 @@ export function ActionButton({
             } else {
               toast.success(successMessage);
             }
-          } catch (e) {
+          } catch {
             toast.error(errorMessage);
           }
         });

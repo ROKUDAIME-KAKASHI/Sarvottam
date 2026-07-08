@@ -34,7 +34,7 @@ export default async function OrgAssessmentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {assessments.filter(a => a.status !== 'COMPLETED').length}
+              {assessments.filter((a) => a.status !== "COMPLETED").length}
             </div>
             <p className="text-xs text-muted-foreground">Evaluations in progress</p>
           </CardContent>
@@ -45,7 +45,7 @@ export default async function OrgAssessmentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {assessments.filter(a => a.status === 'COMPLETED').length}
+              {assessments.filter((a) => a.status === "COMPLETED").length}
             </div>
             <p className="text-xs text-muted-foreground">Evaluations finished</p>
           </CardContent>
@@ -56,7 +56,7 @@ export default async function OrgAssessmentDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(assessments.flatMap(a => a.evaluators.map(e => e.userId))).size}
+              {new Set(assessments.flatMap((a) => a.evaluators.map((e) => e.userId))).size}
             </div>
             <p className="text-xs text-muted-foreground">Unique active evaluators</p>
           </CardContent>
@@ -72,7 +72,10 @@ export default async function OrgAssessmentDashboard() {
           <CardContent>
             <div className="space-y-8">
               {assessments.slice(0, 5).map((assessment) => (
-                <div key={assessment.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div
+                  key={assessment.id}
+                  className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                >
                   <div className="space-y-1">
                     <p className="text-sm font-medium leading-none">{assessment.title}</p>
                     <p className="text-sm text-muted-foreground">
@@ -87,7 +90,9 @@ export default async function OrgAssessmentDashboard() {
                   </div>
                 </div>
               ))}
-              {assessments.length === 0 && <p className="text-sm text-muted-foreground">No assessments initiated yet.</p>}
+              {assessments.length === 0 && (
+                <p className="text-sm text-muted-foreground">No assessments initiated yet.</p>
+              )}
             </div>
           </CardContent>
         </Card>

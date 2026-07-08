@@ -19,7 +19,7 @@ export function NewJobForm() {
     setIsPending(true);
 
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       const res = await createJob(formData);
       if (res.success) {
@@ -28,7 +28,7 @@ export function NewJobForm() {
       } else {
         toast.error(res.error || "Failed to post job");
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred.");
     } finally {
       setIsPending(false);
@@ -39,11 +39,11 @@ export function NewJobForm() {
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="title">Job Title</Label>
-        <Input 
-          id="title" 
-          name="title" 
-          placeholder="e.g. Junior Frontend Developer" 
-          required 
+        <Input
+          id="title"
+          name="title"
+          placeholder="e.g. Junior Frontend Developer"
+          required
           className="bg-background/50"
         />
       </div>
@@ -51,22 +51,22 @@ export function NewJobForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="company">Company / Organization</Label>
-          <Input 
-            id="company" 
-            name="company" 
-            placeholder="e.g. TechFlow Innovations" 
-            required 
+          <Input
+            id="company"
+            name="company"
+            placeholder="e.g. TechFlow Innovations"
+            required
             className="bg-background/50"
           />
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="location">Location</Label>
-          <Input 
-            id="location" 
-            name="location" 
-            placeholder="e.g. Remote, Bangalore, etc." 
-            required 
+          <Input
+            id="location"
+            name="location"
+            placeholder="e.g. Remote, Bangalore, etc."
+            required
             className="bg-background/50"
           />
         </div>
@@ -74,10 +74,10 @@ export function NewJobForm() {
 
       <div className="space-y-2">
         <Label htmlFor="type">Job Type</Label>
-        <select 
-          id="type" 
-          name="type" 
-          required 
+        <select
+          id="type"
+          name="type"
+          required
           className="flex h-10 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="FULL_TIME">Full Time</option>
@@ -89,26 +89,30 @@ export function NewJobForm() {
 
       <div className="space-y-2">
         <Label htmlFor="description">Job Description</Label>
-        <Textarea 
-          id="description" 
-          name="description" 
-          placeholder="Describe the role, responsibilities, and requirements..." 
-          rows={8} 
+        <Textarea
+          id="description"
+          name="description"
+          placeholder="Describe the role, responsibilities, and requirements..."
+          rows={8}
           required
           className="bg-background/50 resize-y"
         />
       </div>
 
       <div className="pt-4 border-t border-border/50 flex justify-end gap-4">
-        <Button 
-          type="button" 
-          variant="ghost" 
+        <Button
+          type="button"
+          variant="ghost"
           onClick={() => router.push("/dashboard/placements")}
           disabled={isPending}
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isPending} className="rounded-full shadow-lg shadow-primary/20 px-8">
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="rounded-full shadow-lg shadow-primary/20 px-8"
+        >
           {isPending ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

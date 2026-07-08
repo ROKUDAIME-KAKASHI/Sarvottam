@@ -39,13 +39,16 @@ export default function FrameworkPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.15 }}
           >
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full">
+            <Badge
+              variant="outline"
+              className="mb-6 px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full"
+            >
               <Workflow className="w-4 h-4 mr-2 inline-block animate-pulse" />
               Methodology
             </Badge>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -53,14 +56,15 @@ export default function FrameworkPage() {
           >
             The Sarvottam Framework
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="text-xl text-muted-foreground mt-4 max-w-2xl mx-auto text-balance font-medium leading-relaxed"
           >
-            A structured, collaborative approach to solving industry-scale quality challenges through targeted academic research.
+            A structured, collaborative approach to solving industry-scale quality challenges
+            through targeted academic research.
           </motion.p>
         </div>
       </section>
@@ -79,7 +83,7 @@ export default function FrameworkPage() {
                 icon: <Target className="h-6 w-6" />,
                 desc: "Industry partners submit real-world quality and process challenges into the ecosystem.",
                 color: "text-blue-500",
-                bg: "bg-blue-500/10"
+                bg: "bg-blue-500/10",
               },
               {
                 step: "02",
@@ -87,7 +91,7 @@ export default function FrameworkPage() {
                 icon: <Settings className="h-6 w-6" />,
                 desc: "Academic faculty and students form specialized nodes to analyze root causes and design models.",
                 color: "text-primary",
-                bg: "bg-primary/10"
+                bg: "bg-primary/10",
               },
               {
                 step: "03",
@@ -95,10 +99,10 @@ export default function FrameworkPage() {
                 icon: <Zap className="h-6 w-6" />,
                 desc: "Prototypes and frameworks are deployed back to the industry partner for measurable validation.",
                 color: "text-emerald-500",
-                bg: "bg-emerald-500/10"
-              }
+                bg: "bg-emerald-500/10",
+              },
             ].map((stage, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -107,9 +111,13 @@ export default function FrameworkPage() {
                 className="relative group h-full"
               >
                 <Card className="h-full rounded-3xl border-border/50 bg-background/60 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden relative">
-                  <div className={`absolute top-0 right-0 w-32 h-32 ${stage.bg} rounded-full blur-3xl -mr-10 -mt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div
+                    className={`absolute top-0 right-0 w-32 h-32 ${stage.bg} rounded-full blur-3xl -mr-10 -mt-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                  />
                   <CardHeader className="p-8 pb-4 relative z-10 flex flex-row items-center justify-between">
-                    <div className={`h-14 w-14 rounded-2xl ${stage.bg} flex items-center justify-center ${stage.color} ring-1 ring-border/50 group-hover:scale-110 transition-transform duration-500`}>
+                    <div
+                      className={`h-14 w-14 rounded-2xl ${stage.bg} flex items-center justify-center ${stage.color} ring-1 ring-border/50 group-hover:scale-110 transition-transform duration-500`}
+                    >
                       {stage.icon}
                     </div>
                     <span className="text-4xl font-black text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors">
@@ -132,14 +140,24 @@ export default function FrameworkPage() {
       {/* CTA SECTION */}
       <section className="relative z-10 py-24 bg-muted/20 border-t border-border/40 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <FadeUpText text="Ready to experience the framework?" className="text-3xl md:text-4xl font-black tracking-tight mb-8" />
+          <FadeUpText
+            text="Ready to experience the framework?"
+            className="text-3xl md:text-4xl font-black tracking-tight mb-8"
+          />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <Link href="/login" className={buttonVariants({ size: "lg", className: "h-14 px-8 text-base rounded-full shadow-xl shadow-primary/20 hover:scale-105 transition-all duration-300" })}>
+            <Link
+              href="/login"
+              className={buttonVariants({
+                size: "lg",
+                className:
+                  "h-14 px-8 text-base rounded-full shadow-xl shadow-primary/20 hover:scale-105 transition-all duration-300",
+              })}
+            >
               Join the Ecosystem <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>

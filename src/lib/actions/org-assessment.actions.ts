@@ -25,16 +25,21 @@ export async function getOrganizations() {
   });
 }
 
-export async function createOrganization(data: { name: string; type?: string; industry?: string; size?: string }) {
+export async function createOrganization(data: {
+  name: string;
+  type?: string;
+  industry?: string;
+  size?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "SUPERADMIN") throw new Error("Forbidden");
 
   const org = await prisma.organization.create({ data });
-  
+
   await logAudit("CREATE", "Organization", org.id, `Created organization ${org.name}`);
   revalidatePath("/dashboard/org-assessments/organizations");
-  
+
   return org;
 }
 
@@ -51,7 +56,11 @@ export async function getOrgAssessments(organizationId?: string) {
   });
 }
 
-export async function createOrgAssessment(data: { organizationId: string; title: string; description?: string }) {
+export async function createOrgAssessment(data: {
+  organizationId: string;
+  title: string;
+  description?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (session.user.role !== "SUPERADMIN") throw new Error("Forbidden");
@@ -69,13 +78,23 @@ export async function createOrgAssessment(data: { organizationId: string; title:
     },
   });
 
-  await logAudit("CREATE", "OrgAssessment", assessment.id, `Created assessment ${assessment.title}`);
+  await logAudit(
+    "CREATE",
+    "OrgAssessment",
+    assessment.id,
+    `Created assessment ${assessment.title}`
+  );
   revalidatePath("/dashboard/org-assessments");
 
   return assessment;
 }
 
-export async function addEvidence(data: { sectionId: string; title: string; url: string; description?: string }) {
+export async function addEvidence(data: {
+  sectionId: string;
+  title: string;
+  url: string;
+  description?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
@@ -86,23 +105,33 @@ export async function addEvidence(data: { sectionId: string; title: string; url:
     },
   });
 
-  await logAudit("ADD_EVIDENCE", "AssessmentSection", data.sectionId, `Added evidence ${data.title}`);
+  await logAudit(
+    "ADD_EVIDENCE",
+    "AssessmentSection",
+    data.sectionId,
+    `Added evidence ${data.title}`
+  );
   revalidatePath("/dashboard/org-assessments/[id]", "page");
 
   return evidence;
 }
 
-export async function submitEvaluationScore(data: { sectionId: string; assessmentId: string; score: number; feedback?: string }) {
+export async function submitEvaluationScore(data: {
+  sectionId: string;
+  assessmentId: string;
+  score: number;
+  feedback?: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
   let evaluator = await prisma.evaluator.findFirst({
-    where: { assessmentId: data.assessmentId, userId: session.user.id as string }
+    where: { assessmentId: data.assessmentId, userId: session.user.id as string },
   });
 
   if (!evaluator) {
     evaluator = await prisma.evaluator.create({
-      data: { assessmentId: data.assessmentId, userId: session.user.id as string }
+      data: { assessmentId: data.assessmentId, userId: session.user.id as string },
     });
   }
 

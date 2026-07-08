@@ -25,7 +25,7 @@ export async function seedSDGs() {
     { sdgNumber: 14, title: "Life Below Water", color: "#0a97d9" },
     { sdgNumber: 15, title: "Life on Land", color: "#56c02b" },
     { sdgNumber: 16, title: "Peace and Justice Strong Institutions", color: "#00689d" },
-    { sdgNumber: 17, title: "Partnerships to achieve the Goal", color: "#19486a" }
+    { sdgNumber: 17, title: "Partnerships to achieve the Goal", color: "#19486a" },
   ];
 
   await prisma.sDG.createMany({ data: sdgs });
@@ -33,19 +33,23 @@ export async function seedSDGs() {
 
 export async function getSustainabilityDashboardData() {
   await seedSDGs(); // ensure seeded
-  
+
   const [projects, esgMetrics, carbonMetrics, reports, sdgs] = await Promise.all([
     prisma.sustainabilityProject.findMany({ include: { sdgs: true, manager: true } }),
-    prisma.eSGMetric.findMany({ orderBy: { measuredAt: 'desc' } }),
-    prisma.carbonMetric.findMany({ orderBy: { measuredAt: 'desc' } }),
+    prisma.eSGMetric.findMany({ orderBy: { measuredAt: "desc" } }),
+    prisma.carbonMetric.findMany({ orderBy: { measuredAt: "desc" } }),
     prisma.impactReport.findMany({ include: { author: true } }),
-    prisma.sDG.findMany({ orderBy: { sdgNumber: 'asc' } })
+    prisma.sDG.findMany({ orderBy: { sdgNumber: "asc" } }),
   ]);
 
   return { projects, esgMetrics, carbonMetrics, reports, sdgs };
 }
 
-export async function createProject(data: { title: string; description: string; sdgIds: string[] }) {
+export async function createProject(data: {
+  title: string;
+  description: string;
+  sdgIds: string[];
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
@@ -55,24 +59,29 @@ export async function createProject(data: { title: string; description: string; 
       description: data.description,
       managerId: session.user.id as string,
       sdgs: {
-        connect: data.sdgIds.map(id => ({ id }))
-      }
-    }
+        connect: data.sdgIds.map((id) => ({ id })),
+      },
+    },
   });
 
   revalidatePath("/dashboard/sustainability");
   return project;
 }
 
-export async function logESGMetric(data: { category: string; name: string; value: number; unit: string }) {
+export async function logESGMetric(data: {
+  category: string;
+  name: string;
+  value: number;
+  unit: string;
+}) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
   const metric = await prisma.eSGMetric.create({
     data: {
       ...data,
-      recordedById: session.user.id as string
-    }
+      recordedById: session.user.id as string,
+    },
   });
 
   revalidatePath("/dashboard/sustainability");
@@ -86,8 +95,8 @@ export async function logCarbonMetric(data: { scope: string; source: string; emi
   const metric = await prisma.carbonMetric.create({
     data: {
       ...data,
-      recordedById: session.user.id as string
-    }
+      recordedById: session.user.id as string,
+    },
   });
 
   revalidatePath("/dashboard/sustainability");

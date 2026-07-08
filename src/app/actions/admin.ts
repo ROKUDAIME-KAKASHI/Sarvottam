@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function impersonateUser(targetUserId: string) {
   const session = await auth();
-  
+
   if (!session || session.user?.role !== "SUPERADMIN") {
     throw new Error("Unauthorized: Only super admins can impersonate users");
   }
@@ -13,20 +13,20 @@ export async function impersonateUser(targetUserId: string) {
   // Generate a secure one-time token in the database
   const token = await prisma.impersonationToken.create({
     data: {
-      userId: targetUserId
-    }
+      userId: targetUserId,
+    },
   });
 
   // Call NextAuth signIn with this token
-  await signIn("credentials", { 
-    impersonationToken: token.id, 
-    redirectTo: "/dashboard" 
+  await signIn("credentials", {
+    impersonationToken: token.id,
+    redirectTo: "/dashboard",
   });
 }
 
 export async function getUsersForImpersonation() {
   const session = await auth();
-  
+
   if (!session || session.user?.role !== "SUPERADMIN") {
     throw new Error("Unauthorized");
   }
@@ -37,8 +37,8 @@ export async function getUsersForImpersonation() {
       name: true,
       email: true,
       role: true,
-      createdAt: true
+      createdAt: true,
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "desc" },
   });
 }

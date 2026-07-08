@@ -12,7 +12,15 @@ import { useState } from "react";
 import { createProblem } from "@/app/actions/problems";
 import { useRouter } from "next/navigation";
 
-const FadeUpText = ({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) => {
+const FadeUpText = ({
+  text,
+  className,
+  delay = 0,
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+}) => {
   return (
     <motion.h2
       initial={{ opacity: 0, y: 30 }}
@@ -34,14 +42,14 @@ export default function ProblemsPortal() {
     sector: "",
     problem: "",
     outcome: "",
-    type: ""
+    type: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
     setError(null);
-    
+
     if (!formData.company || !formData.sector || !formData.problem) {
       setError("Please fill in all required fields.");
       setIsPending(false);
@@ -49,7 +57,7 @@ export default function ProblemsPortal() {
     }
 
     const res = await createProblem(formData);
-    
+
     if (res.error) {
       if (res.error.includes("log in")) {
         router.push("/login?callbackUrl=/problems");
@@ -78,23 +86,27 @@ export default function ProblemsPortal() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
           >
-            <Badge variant="outline" className="mb-4 px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full">
+            <Badge
+              variant="outline"
+              className="mb-4 px-4 py-1.5 text-sm font-medium border-primary/30 bg-primary/10 text-primary backdrop-blur-md shadow-sm rounded-full"
+            >
               <Factory className="w-4 h-4 mr-2 inline-block animate-pulse" />
               Industry Node
             </Badge>
           </motion.div>
-          
-          <FadeUpText 
-            text="Industry Problem Portal" 
+
+          <FadeUpText
+            text="Industry Problem Portal"
             className="text-4xl md:text-6xl font-black tracking-tight text-foreground"
           />
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl text-muted-foreground font-medium max-w-2xl mx-auto"
           >
-            Submit your quality challenges and let our specialized academic nodes develop research-driven solutions.
+            Submit your quality challenges and let our specialized academic nodes develop
+            research-driven solutions.
           </motion.p>
         </div>
 
@@ -105,7 +117,7 @@ export default function ProblemsPortal() {
         >
           <Card className="rounded-[2rem] border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl relative overflow-hidden">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-            
+
             <CardHeader className="p-8 md:p-12 pb-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-primary/10 rounded-lg text-primary">
@@ -114,10 +126,11 @@ export default function ProblemsPortal() {
                 <CardTitle className="text-3xl font-bold">Submit a Challenge</CardTitle>
               </div>
               <CardDescription className="text-base font-medium">
-                Provide comprehensive details about your process or quality issue to begin the research workflow.
+                Provide comprehensive details about your process or quality issue to begin the
+                research workflow.
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent className="p-8 md:p-12 pt-0">
               <form onSubmit={handleSubmit} className="space-y-8">
                 {error && (
@@ -125,43 +138,60 @@ export default function ProblemsPortal() {
                     {error}
                   </div>
                 )}
-                
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label htmlFor="company" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Company Name *</Label>
+                    <Label
+                      htmlFor="company"
+                      className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                    >
+                      Company Name *
+                    </Label>
                     <div className="relative group">
                       <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      <Input 
-                        id="company" 
+                      <Input
+                        id="company"
                         value={formData.company}
-                        onChange={(e) => setFormData({...formData, company: e.target.value})}
-                        placeholder="e.g. BuildIt Steel Ltd." 
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        placeholder="e.g. BuildIt Steel Ltd."
                         className="pl-10 bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl"
                       />
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="sector" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Industry Sector *</Label>
-                    <Input 
-                      id="sector" 
+                    <Label
+                      htmlFor="sector"
+                      className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                    >
+                      Industry Sector *
+                    </Label>
+                    <Input
+                      id="sector"
                       value={formData.sector}
-                      onChange={(e) => setFormData({...formData, sector: e.target.value})}
-                      placeholder="e.g. Advanced Manufacturing" 
+                      onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                      placeholder="e.g. Advanced Manufacturing"
                       className="bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl"
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
-                  <Label htmlFor="type" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Problem Type *</Label>
-                  <select 
-                    id="type" 
+                  <Label
+                    htmlFor="type"
+                    className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Problem Type *
+                  </Label>
+                  <select
+                    id="type"
                     value={formData.type}
-                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                     required
                     className="w-full bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all h-11 rounded-xl px-3 appearance-none"
                   >
-                    <option value="" disabled>Select a type...</option>
+                    <option value="" disabled>
+                      Select a type...
+                    </option>
                     <option value="Software">Software</option>
                     <option value="Hardware">Hardware</option>
                     <option value="Technical">Technical</option>
@@ -171,31 +201,46 @@ export default function ProblemsPortal() {
                     <option value="Other">Other</option>
                   </select>
                 </div>
-                
+
                 <div className="space-y-3">
-                  <Label htmlFor="problem" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Problem Statement *</Label>
-                  <Textarea 
-                    id="problem" 
+                  <Label
+                    htmlFor="problem"
+                    className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Problem Statement *
+                  </Label>
+                  <Textarea
+                    id="problem"
                     value={formData.problem}
-                    onChange={(e) => setFormData({...formData, problem: e.target.value})}
-                    placeholder="Describe the quality issue, its current impact, and any data points you have already collected..." 
+                    onChange={(e) => setFormData({ ...formData, problem: e.target.value })}
+                    placeholder="Describe the quality issue, its current impact, and any data points you have already collected..."
                     className="min-h-[160px] bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-2xl p-4 leading-relaxed"
                   />
                 </div>
-                
+
                 <div className="space-y-3">
-                  <Label htmlFor="outcome" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Expected Outcome</Label>
-                  <Textarea 
-                    id="outcome" 
+                  <Label
+                    htmlFor="outcome"
+                    className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Expected Outcome
+                  </Label>
+                  <Textarea
+                    id="outcome"
                     value={formData.outcome}
-                    onChange={(e) => setFormData({...formData, outcome: e.target.value})}
-                    placeholder="What does a successful resolution look like for your team?" 
+                    onChange={(e) => setFormData({ ...formData, outcome: e.target.value })}
+                    placeholder="What does a successful resolution look like for your team?"
                     className="min-h-[100px] bg-background/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-2xl p-4 leading-relaxed"
                   />
                 </div>
-                
+
                 <div className="space-y-3">
-                  <Label htmlFor="file" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Supporting Documents (Optional)</Label>
+                  <Label
+                    htmlFor="file"
+                    className="text-sm font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Supporting Documents (Optional)
+                  </Label>
                   <div className="relative group">
                     <div className="absolute inset-0 bg-primary/5 rounded-2xl border-2 border-dashed border-border/50 group-hover:border-primary/50 transition-colors pointer-events-none" />
                     <div className="flex flex-col items-center justify-center py-8 text-center px-6 relative z-10">
@@ -203,14 +248,20 @@ export default function ProblemsPortal() {
                       <p className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                         Click to upload or drag and drop
                       </p>
-                      <p className="text-xs text-muted-foreground/60 mt-1">PDF, DOCX, or Excel files up to 10MB</p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">
+                        PDF, DOCX, or Excel files up to 10MB
+                      </p>
                     </div>
-                    <Input id="file" type="file" className="opacity-0 absolute inset-0 cursor-pointer h-full w-full" />
+                    <Input
+                      id="file"
+                      type="file"
+                      className="opacity-0 absolute inset-0 cursor-pointer h-full w-full"
+                    />
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isPending}
                   className="w-full h-14 text-lg font-bold rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all group"
                 >

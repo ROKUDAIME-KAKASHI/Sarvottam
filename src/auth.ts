@@ -1,9 +1,9 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "@/lib/prisma"
-import type { DefaultSession } from "next-auth"
-import bcrypt from "bcryptjs"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import type { DefaultSession } from "next-auth";
+import bcrypt from "bcryptjs";
 
 declare module "next-auth" {
   interface User {
@@ -12,7 +12,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       role?: string;
-    } & DefaultSession["user"]
+    } & DefaultSession["user"];
   }
 }
 
@@ -24,15 +24,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email", placeholder: "student@jain.edu" },
         password: { label: "Password", type: "password" },
-        impersonationToken: { label: "Impersonation Token", type: "text" }
+        impersonationToken: { label: "Impersonation Token", type: "text" },
       },
       async authorize(credentials) {
         if (credentials?.impersonationToken) {
           const tokenRecord = await prisma.impersonationToken.findUnique({
             where: { id: credentials.impersonationToken as string },
-            include: { user: true }
+            include: { user: true },
           });
-          
+
           if (!tokenRecord) {
             throw new Error("Invalid impersonation token");
           }
@@ -48,30 +48,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         if (!credentials?.email || !credentials?.password) return null;
-        
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
+          where: { email: credentials.email as string },
         });
 
         if (!user || !user.password) {
           throw new Error("Invalid credentials");
         }
-        
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+
+        const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password);
 
         if (!isPasswordValid) {
           throw new Error("Invalid credentials");
         }
-        
+
         return user;
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: "jwt"
+    strategy: "jwt",
   },
   pages: {
     signIn: "/login",
@@ -91,6 +88,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.id = token.id as string;
       }
       return session;
-    }
-  }
-})
+    },
+  },
+});

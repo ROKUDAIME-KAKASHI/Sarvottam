@@ -16,7 +16,7 @@ export default function StartAssessmentButton({ orgId }: { orgId: string }) {
       const assessment = await createOrgAssessment({
         organizationId: orgId,
         title: `Assessment - ${new Date().getFullYear()}`,
-        description: "Standard organizational health evaluation."
+        description: "Standard organizational health evaluation.",
       });
       toast.success("Assessment initiated");
       router.push(`/dashboard/org-assessments/${assessment.id}`);

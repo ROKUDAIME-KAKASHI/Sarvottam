@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 export async function getReports() {
   try {
     return await prisma.report.findMany({
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
     });
   } catch (error) {
     console.error("Failed to fetch reports:", error);
@@ -23,7 +23,7 @@ export async function generateReport(title: string) {
 
   try {
     const report = await prisma.report.create({
-      data: { title }
+      data: { title },
     });
     revalidatePath("/dashboard/reports");
     return { success: true, report };

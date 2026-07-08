@@ -8,7 +8,13 @@ import { generateReport } from "@/app/actions/reports";
 import { useTransition } from "react";
 import { ComingSoon } from "@/components/coming-soon";
 
-export default function ReportsClient({ reports, role }: { reports: { id: string, title: string, content: string | null, createdAt: Date | string }[], role: string }) {
+export default function ReportsClient({
+  reports,
+  role,
+}: {
+  reports: { id: string; title: string; content: string | null; createdAt: Date | string }[];
+  role: string;
+}) {
   const [isPending, startTransition] = useTransition();
 
   const handleGenerate = () => {
@@ -26,7 +32,12 @@ export default function ReportsClient({ reports, role }: { reports: { id: string
           <p className="text-muted-foreground">View analytics and generated system reports.</p>
         </div>
         {role === "SUPERADMIN" && (
-          <Button onClick={handleGenerate} disabled={isPending} size="sm" className="shadow-lg shadow-primary/20">
+          <Button
+            onClick={handleGenerate}
+            disabled={isPending}
+            size="sm"
+            className="shadow-lg shadow-primary/20"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Generate New Report
           </Button>
@@ -40,16 +51,20 @@ export default function ReportsClient({ reports, role }: { reports: { id: string
             <CardTitle>Generated Reports</CardTitle>
           </div>
           <CardDescription>
-            {reports.length === 0 ? "No reports have been generated yet." : "Recent snapshots of system activity."}
+            {reports.length === 0
+              ? "No reports have been generated yet."
+              : "Recent snapshots of system activity."}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Reports will appear here once your projects reach the evaluation stage.</p>
+            <p className="text-sm text-muted-foreground">
+              Reports will appear here once your projects reach the evaluation stage.
+            </p>
           ) : (
             <div className="space-y-2">
               {reports.map((report, i) => (
-                <motion.div 
+                <motion.div
                   key={report.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -62,7 +77,9 @@ export default function ReportsClient({ reports, role }: { reports: { id: string
                     </div>
                     <div>
                       <p className="font-bold text-sm">{report.title}</p>
-                      <p className="text-xs text-muted-foreground">Generated on {new Date(report.createdAt).toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Generated on {new Date(report.createdAt).toLocaleString()}
+                      </p>
                     </div>
                   </div>
                   <ComingSoon feature="PDF generation and download">

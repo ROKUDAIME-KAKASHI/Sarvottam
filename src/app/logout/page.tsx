@@ -9,10 +9,7 @@ import { LogOut, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LogoutPage() {
-  const [, formAction, isPending] = useActionState(
-    logOutAction,
-    undefined,
-  );
+  const [, formAction, isPending] = useActionState(logOutAction, undefined);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
@@ -38,21 +35,24 @@ export default function LogoutPage() {
           </CardHeader>
           <CardContent className="p-8 pt-0 space-y-4">
             <form action={formAction}>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 variant="destructive"
                 disabled={isPending}
                 className="w-full p-6 text-base rounded-xl shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all group"
               >
-                {isPending ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  "Yes, sign me out"
-                )}
+                {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "Yes, sign me out"}
               </Button>
             </form>
-            
-            <Link href="/dashboard" className={buttonVariants({ variant: "outline", className: "w-full p-6 text-base rounded-xl bg-background border-border/50 hover:bg-muted/50 transition-all block text-center" })}>
+
+            <Link
+              href="/dashboard"
+              className={buttonVariants({
+                variant: "outline",
+                className:
+                  "w-full p-6 text-base rounded-xl bg-background border-border/50 hover:bg-muted/50 transition-all block text-center",
+              })}
+            >
               <div className="flex items-center justify-center">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 No, return to dashboard

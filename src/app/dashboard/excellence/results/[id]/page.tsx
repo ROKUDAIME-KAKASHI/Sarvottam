@@ -2,7 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -16,14 +23,14 @@ export default async function ScorecardPage({ params }: { params: { id: string }
     where: { id: params.id },
     include: {
       template: {
-        include: { framework: true }
+        include: { framework: true },
       },
       responses: {
-        include: { question: { include: { dimension: true } } }
+        include: { question: { include: { dimension: true } } },
       },
       assessor: true,
-      improvementPlans: true
-    }
+      improvementPlans: true,
+    },
   });
 
   if (!result) {
@@ -32,18 +39,20 @@ export default async function ScorecardPage({ params }: { params: { id: string }
 
   // Calculate scores per dimension
   const dimensionScores: Record<string, { total: number; max: number; percentage: number }> = {};
-  
-  result.responses.forEach(r => {
+
+  result.responses.forEach((r) => {
     const dim = r.question.dimension.name;
     if (!dimensionScores[dim]) {
       dimensionScores[dim] = { total: 0, max: 0, percentage: 0 };
     }
-    dimensionScores[dim].total += (r.numericValue || 0);
-    dimensionScores[dim].max += (r.question.maxValue || 5);
+    dimensionScores[dim].total += r.numericValue || 0;
+    dimensionScores[dim].max += r.question.maxValue || 5;
   });
 
-  Object.keys(dimensionScores).forEach(dim => {
-    dimensionScores[dim].percentage = Math.round((dimensionScores[dim].total / dimensionScores[dim].max) * 100);
+  Object.keys(dimensionScores).forEach((dim) => {
+    dimensionScores[dim].percentage = Math.round(
+      (dimensionScores[dim].total / dimensionScores[dim].max) * 100
+    );
   });
 
   return (
@@ -61,11 +70,15 @@ export default async function ScorecardPage({ params }: { params: { id: string }
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Overall Score</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Overall Score
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold">{result.totalScore}</div>
-            <p className="text-xs text-muted-foreground mt-1">Normalized: {result.normalizedScore}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Normalized: {result.normalizedScore}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -84,7 +97,9 @@ export default async function ScorecardPage({ params }: { params: { id: string }
             <CardTitle className="text-sm font-medium text-muted-foreground">Assessor</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold truncate">{result.assessor.name || result.assessor.email}</div>
+            <div className="text-xl font-bold truncate">
+              {result.assessor.name || result.assessor.email}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">{result.assessor.role}</p>
           </CardContent>
         </Card>
@@ -101,13 +116,12 @@ export default async function ScorecardPage({ params }: { params: { id: string }
               <div key={dim} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{dim}</span>
-                  <span className="text-sm text-muted-foreground">{scores.total} / {scores.max} ({scores.percentage}%)</span>
+                  <span className="text-sm text-muted-foreground">
+                    {scores.total} / {scores.max} ({scores.percentage}%)
+                  </span>
                 </div>
                 <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-primary" 
-                    style={{ width: `${scores.percentage}%` }}
-                  />
+                  <div className="h-full bg-primary" style={{ width: `${scores.percentage}%` }} />
                 </div>
               </div>
             ))}
@@ -134,7 +148,9 @@ export default async function ScorecardPage({ params }: { params: { id: string }
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.question.dimension.name}</TableCell>
                   <TableCell>{r.question.text}</TableCell>
-                  <TableCell className="font-bold">{r.numericValue} / {r.question.maxValue}</TableCell>
+                  <TableCell className="font-bold">
+                    {r.numericValue} / {r.question.maxValue}
+                  </TableCell>
                   <TableCell className="text-sm text-muted-foreground">{r.notes || "-"}</TableCell>
                 </TableRow>
               ))}

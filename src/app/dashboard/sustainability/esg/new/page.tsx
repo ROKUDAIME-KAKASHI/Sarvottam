@@ -6,18 +6,29 @@ import { logESGMetric, logCarbonMetric } from "@/lib/actions/sustainability.acti
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function LogMetricsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  
+
   // ESG State
-  const [esgData, setEsgData] = useState({ category: "ENVIRONMENTAL", name: "", value: "", unit: "" });
-  
+  const [esgData, setEsgData] = useState({
+    category: "ENVIRONMENTAL",
+    name: "",
+    value: "",
+    unit: "",
+  });
+
   // Carbon State
   const [carbonData, setCarbonData] = useState({ scope: "SCOPE_1", source: "", emissions: "" });
 
@@ -27,7 +38,7 @@ export default function LogMetricsPage() {
     try {
       await logESGMetric({
         ...esgData,
-        value: parseFloat(esgData.value)
+        value: parseFloat(esgData.value),
       });
       toast.success("ESG Metric Logged Successfully");
       router.push("/dashboard/sustainability");
@@ -45,7 +56,7 @@ export default function LogMetricsPage() {
     try {
       await logCarbonMetric({
         ...carbonData,
-        emissions: parseFloat(carbonData.emissions)
+        emissions: parseFloat(carbonData.emissions),
       });
       toast.success("Carbon Emissions Logged Successfully");
       router.push("/dashboard/sustainability");
@@ -70,12 +81,15 @@ export default function LogMetricsPage() {
               <TabsTrigger value="esg">ESG Metric</TabsTrigger>
               <TabsTrigger value="carbon">Carbon Footprint</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="esg">
               <form onSubmit={handleEsgSubmit} className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select onValueChange={(val: any) => setEsgData({ ...esgData, category: val })} defaultValue={esgData.category}>
+                  <Select
+                    onValueChange={(val: unknown) => setEsgData({ ...esgData, category: val })}
+                    defaultValue={esgData.category}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
@@ -86,31 +100,52 @@ export default function LogMetricsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>Metric Name</Label>
-                  <Input required value={esgData.name} onChange={e => setEsgData({ ...esgData, name: e.target.value })} placeholder="e.g. Diversity Ratio, Energy Saved" />
+                  <Input
+                    required
+                    value={esgData.name}
+                    onChange={(e) => setEsgData({ ...esgData, name: e.target.value })}
+                    placeholder="e.g. Diversity Ratio, Energy Saved"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Value</Label>
-                    <Input required type="number" step="any" value={esgData.value} onChange={e => setEsgData({ ...esgData, value: e.target.value })} />
+                    <Input
+                      required
+                      type="number"
+                      step="any"
+                      value={esgData.value}
+                      onChange={(e) => setEsgData({ ...esgData, value: e.target.value })}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Unit</Label>
-                    <Input required value={esgData.unit} onChange={e => setEsgData({ ...esgData, unit: e.target.value })} placeholder="e.g. %, kWh" />
+                    <Input
+                      required
+                      value={esgData.unit}
+                      onChange={(e) => setEsgData({ ...esgData, unit: e.target.value })}
+                      placeholder="e.g. %, kWh"
+                    />
                   </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>Log ESG Data</Button>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  Log ESG Data
+                </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="carbon">
               <form onSubmit={handleCarbonSubmit} className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <Label>Emissions Scope</Label>
-                  <Select onValueChange={(val: any) => setCarbonData({ ...carbonData, scope: val })} defaultValue={carbonData.scope}>
+                  <Select
+                    onValueChange={(val: unknown) => setCarbonData({ ...carbonData, scope: val })}
+                    defaultValue={carbonData.scope}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Scope" />
                     </SelectTrigger>
@@ -121,17 +156,31 @@ export default function LogMetricsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>Source Description</Label>
-                  <Input required value={carbonData.source} onChange={e => setCarbonData({ ...carbonData, source: e.target.value })} placeholder="e.g. Fleet Vehicles, Purchased Electricity" />
+                  <Input
+                    required
+                    value={carbonData.source}
+                    onChange={(e) => setCarbonData({ ...carbonData, source: e.target.value })}
+                    placeholder="e.g. Fleet Vehicles, Purchased Electricity"
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Emissions (tCO2e)</Label>
-                  <Input required type="number" step="any" value={carbonData.emissions} onChange={e => setCarbonData({ ...carbonData, emissions: e.target.value })} placeholder="Metric tons of CO2 equivalent" />
+                  <Input
+                    required
+                    type="number"
+                    step="any"
+                    value={carbonData.emissions}
+                    onChange={(e) => setCarbonData({ ...carbonData, emissions: e.target.value })}
+                    placeholder="Metric tons of CO2 equivalent"
+                  />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>Log Carbon Data</Button>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  Log Carbon Data
+                </Button>
               </form>
             </TabsContent>
           </Tabs>

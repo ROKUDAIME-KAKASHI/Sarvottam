@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 
 export async function getUsers() {
   const session = await auth();
-  
+
   // Only SUPERADMIN can see all users
   if (session?.user?.role !== "SUPERADMIN") {
     return [];
@@ -20,7 +20,7 @@ export async function getUsers() {
         email: true,
         role: true,
         createdAt: true,
-      }
+      },
     });
     return users;
   } catch (error) {
@@ -31,7 +31,7 @@ export async function getUsers() {
 
 export async function updateUserRole(userId: string, newRole: string) {
   const session = await auth();
-  
+
   if (session?.user?.role !== "SUPERADMIN") {
     return { error: "Unauthorized" };
   }
@@ -39,9 +39,9 @@ export async function updateUserRole(userId: string, newRole: string) {
   try {
     await prisma.user.update({
       where: { id: userId },
-      data: { role: newRole }
+      data: { role: newRole },
     });
-    
+
     return { success: true };
   } catch (error) {
     console.error("Failed to update user role:", error);

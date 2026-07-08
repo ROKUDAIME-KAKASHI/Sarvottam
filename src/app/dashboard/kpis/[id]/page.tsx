@@ -16,10 +16,10 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
     include: {
       category: true,
       department: true,
-      targets: { orderBy: { createdAt: 'desc' } },
-      history: { orderBy: { date: 'asc' } },
-      alerts: { orderBy: { createdAt: 'desc' } }
-    }
+      targets: { orderBy: { createdAt: "desc" } },
+      history: { orderBy: { date: "asc" } },
+      alerts: { orderBy: { createdAt: "desc" } },
+    },
   });
 
   if (!kpi) {
@@ -27,17 +27,21 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
   }
 
   const latestTarget = kpi.targets[0];
-  const activeAlerts = kpi.alerts.filter(a => !a.isResolved);
+  const activeAlerts = kpi.alerts.filter((a) => !a.isResolved);
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center space-x-4 mb-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/dashboard/kpis"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link href="/dashboard/kpis">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
         </Button>
         <div>
           <h2 className="text-3xl font-bold tracking-tight">{kpi.metricName}</h2>
-          <p className="text-muted-foreground">{kpi.category.name} | Unit: {kpi.unit || "N/A"}</p>
+          <p className="text-muted-foreground">
+            {kpi.category.name} | Unit: {kpi.unit || "N/A"}
+          </p>
         </div>
       </div>
 
@@ -47,10 +51,12 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
             <CardTitle className="text-sm font-medium">Current Value</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{kpi.currentValue} {kpi.unit}</div>
+            <div className="text-3xl font-bold">
+              {kpi.currentValue} {kpi.unit}
+            </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Target</CardTitle>
@@ -59,7 +65,9 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
           <CardContent>
             {latestTarget ? (
               <>
-                <div className="text-3xl font-bold">{latestTarget.targetValue} {kpi.unit}</div>
+                <div className="text-3xl font-bold">
+                  {latestTarget.targetValue} {kpi.unit}
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Status: {latestTarget.isAchieved ? "Achieved" : "In Progress"}
                 </p>
@@ -73,10 +81,14 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Alerts</CardTitle>
-            <AlertCircle className={`h-4 w-4 ${activeAlerts.length > 0 ? "text-red-500" : "text-green-500"}`} />
+            <AlertCircle
+              className={`h-4 w-4 ${activeAlerts.length > 0 ? "text-red-500" : "text-green-500"}`}
+            />
           </CardHeader>
           <CardContent>
-            <div className={`text-3xl font-bold ${activeAlerts.length > 0 ? "text-red-500" : "text-green-500"}`}>
+            <div
+              className={`text-3xl font-bold ${activeAlerts.length > 0 ? "text-red-500" : "text-green-500"}`}
+            >
               {activeAlerts.length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">Active risk alerts</p>
@@ -94,23 +106,30 @@ export default async function KPIDetailPage({ params }: { params: { id: string }
             <KPITrendChart history={kpi.history} />
           </CardContent>
         </Card>
-        
+
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle>Recent History & Notes</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-[300px] overflow-y-auto">
-              {kpi.history.slice().reverse().map(h => (
-                <div key={h.id} className="border-b pb-2 last:border-0 text-sm">
-                  <div className="flex justify-between font-medium">
-                    <span>{h.value} {kpi.unit}</span>
-                    <span className="text-muted-foreground">{h.date.toLocaleDateString()}</span>
+              {kpi.history
+                .slice()
+                .reverse()
+                .map((h) => (
+                  <div key={h.id} className="border-b pb-2 last:border-0 text-sm">
+                    <div className="flex justify-between font-medium">
+                      <span>
+                        {h.value} {kpi.unit}
+                      </span>
+                      <span className="text-muted-foreground">{h.date.toLocaleDateString()}</span>
+                    </div>
+                    {h.notes && <p className="text-muted-foreground mt-1">{h.notes}</p>}
                   </div>
-                  {h.notes && <p className="text-muted-foreground mt-1">{h.notes}</p>}
-                </div>
-              ))}
-              {kpi.history.length === 0 && <p className="text-muted-foreground">No history logged.</p>}
+                ))}
+              {kpi.history.length === 0 && (
+                <p className="text-muted-foreground">No history logged.</p>
+              )}
             </div>
           </CardContent>
         </Card>

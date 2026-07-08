@@ -34,7 +34,7 @@ export function ActionOverlay({
   loadingText = "Processing...",
   successMessage = "Action completed successfully",
   errorMessage = "Something went wrong",
-  themeColor = "primary"
+  themeColor = "primary",
 }: ActionOverlayProps) {
   const [isPending, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
@@ -44,26 +44,29 @@ export function ActionOverlay({
       bg: "bg-primary/10",
       text: "text-primary",
       ring: "ring-primary/20",
-      button: "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20 hover:shadow-primary/40",
+      button:
+        "bg-primary hover:bg-primary/90 text-primary-foreground shadow-primary/20 hover:shadow-primary/40",
       blob1: "bg-primary/10",
-      blob2: "bg-blue-500/10"
+      blob2: "bg-blue-500/10",
     },
     red: {
       bg: "bg-red-500/10",
       text: "text-red-500",
       ring: "ring-red-500/20",
-      button: "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-red-500/20 hover:shadow-red-500/40",
+      button:
+        "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-red-500/20 hover:shadow-red-500/40",
       blob1: "bg-red-500/10",
-      blob2: "bg-orange-500/10"
+      blob2: "bg-orange-500/10",
     },
     emerald: {
       bg: "bg-emerald-500/10",
       text: "text-emerald-500",
       ring: "ring-emerald-500/20",
-      button: "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20 hover:shadow-emerald-500/40",
+      button:
+        "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20 hover:shadow-emerald-500/40",
       blob1: "bg-emerald-500/10",
-      blob2: "bg-teal-500/10"
-    }
+      blob2: "bg-teal-500/10",
+    },
   };
 
   const theme = themeConfig[themeColor];
@@ -86,7 +89,7 @@ export function ActionOverlay({
             onClose();
           }, 1500); // close after 1.5s showing success state
         }
-      } catch (e) {
+      } catch {
         toast.error(errorMessage);
         onClose();
       }
@@ -103,8 +106,12 @@ export function ActionOverlay({
           className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md overflow-hidden"
         >
           {/* Background decorations */}
-          <div className={`absolute top-1/4 right-1/4 w-96 h-96 rounded-full blur-[100px] pointer-events-none ${theme.blob1}`} />
-          <div className={`absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full blur-[100px] pointer-events-none ${theme.blob2}`} />
+          <div
+            className={`absolute top-1/4 right-1/4 w-96 h-96 rounded-full blur-[100px] pointer-events-none ${theme.blob1}`}
+          />
+          <div
+            className={`absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full blur-[100px] pointer-events-none ${theme.blob2}`}
+          />
 
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -115,33 +122,31 @@ export function ActionOverlay({
           >
             <Card className="rounded-[2rem] border-border/50 bg-background/80 backdrop-blur-2xl shadow-2xl overflow-hidden relative">
               <CardHeader className="p-8 pb-6 text-center">
-                <div className={`mx-auto mb-4 h-16 w-16 rounded-2xl flex items-center justify-center ring-1 ${theme.bg} ${theme.text} ${theme.ring} transition-all duration-300`}>
+                <div
+                  className={`mx-auto mb-4 h-16 w-16 rounded-2xl flex items-center justify-center ring-1 ${theme.bg} ${theme.text} ${theme.ring} transition-all duration-300`}
+                >
                   {isSuccess ? <CheckCircle2 className="h-8 w-8" /> : icon}
                 </div>
                 <CardTitle className="text-2xl font-black tracking-tight">
                   {isSuccess ? "Success!" : title}
                 </CardTitle>
                 <CardDescription className="text-sm font-medium mt-2">
-                  {isSuccess ? successMessage : (isPending ? loadingText : description)}
+                  {isSuccess ? successMessage : isPending ? loadingText : description}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8 pt-0 space-y-4">
                 {!isSuccess && (
                   <>
-                    <Button 
+                    <Button
                       onClick={handleConfirm}
                       disabled={isPending}
                       className={`w-full p-6 text-base rounded-xl shadow-lg transition-all group ${theme.button}`}
                     >
-                      {isPending ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        confirmText
-                      )}
+                      {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : confirmText}
                     </Button>
-                    
-                    <Button 
-                      variant="outline" 
+
+                    <Button
+                      variant="outline"
                       onClick={onClose}
                       className="w-full p-6 text-base rounded-xl bg-background border-border/50 hover:bg-muted/50 transition-all"
                       disabled={isPending}

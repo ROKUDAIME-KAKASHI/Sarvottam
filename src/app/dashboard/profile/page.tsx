@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
   const session = await auth();
-  
+
   if (!session?.user?.id) {
     redirect("/login");
   }
@@ -20,7 +20,7 @@ export default async function ProfilePage() {
       role: true,
       skills: true,
       portfolioUrl: true,
-    }
+    },
   });
 
   if (!user) {

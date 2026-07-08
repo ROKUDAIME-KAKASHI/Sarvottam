@@ -1,11 +1,11 @@
 "use server";
 
 import { auth } from "@/auth";
-import { 
-  getStudentRecommendations, 
-  getFacultyRecommendations, 
-  getIndustryRecommendations, 
-  getAdminInsights 
+import {
+  getStudentRecommendations,
+  getFacultyRecommendations,
+  getIndustryRecommendations,
+  getAdminInsights,
 } from "@/lib/ai/engine";
 
 export async function getDashboardAI() {
