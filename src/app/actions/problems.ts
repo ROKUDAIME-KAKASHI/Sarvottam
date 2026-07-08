@@ -145,7 +145,7 @@ export async function approveProblem(
       return { error: "Only super admins can provide final admin approval" };
     }
 
-    const dataToUpdate: unknown = {};
+    const dataToUpdate: Record<string, boolean | string> = {};
     if (approvalType === "FACULTY") dataToUpdate.facultyApproved = isApproved;
     if (approvalType === "INDUSTRY") dataToUpdate.industryApproved = isApproved;
     if (approvalType === "ADMIN") dataToUpdate.adminApproved = isApproved;

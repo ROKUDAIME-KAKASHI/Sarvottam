@@ -4,7 +4,7 @@ import {} from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { prisma } from "@/lib/prisma";
 import UserList from "./UserList";
-import { InviteUser } from "./InviteUser";
+import { InviteUserButton } from "./InviteUserButton";
 
 export default async function UsersPage() {
   const users = await prisma.user.findMany({
@@ -22,7 +22,7 @@ export default async function UsersPage() {
         </div>
 
         <div>
-          <InviteUser />
+          <InviteUserButton />
         </div>
       </div>
 
