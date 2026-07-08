@@ -73,7 +73,7 @@ export default function NewCoursePage() {
               <div className="space-y-2">
                 <Label>Type</Label>
                 <Select
-                  onValueChange={(val: unknown) => setFormData({ ...formData, type: val })}
+                  onValueChange={(val: any) => setFormData({ ...formData, type: val })}
                   defaultValue={formData.type}
                 >
                   <SelectTrigger>
@@ -89,7 +89,7 @@ export default function NewCoursePage() {
               <div className="space-y-2">
                 <Label>Level</Label>
                 <Select
-                  onValueChange={(val: unknown) => setFormData({ ...formData, level: val })}
+                  onValueChange={(val: any) => setFormData({ ...formData, level: val })}
                   defaultValue={formData.level}
                 >
                   <SelectTrigger>

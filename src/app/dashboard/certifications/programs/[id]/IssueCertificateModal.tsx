@@ -80,7 +80,7 @@ export default function IssueCertificateModal({
 
             <div className="space-y-2">
               <Label>Recipient (User)</Label>
-              <Select onValueChange={(val: string) => setFormData({ ...formData, userId: val })}>
+              <Select onValueChange={(val: any) => setFormData({ ...formData, userId: val || "" })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select user..." />
                 </SelectTrigger>
@@ -96,7 +96,9 @@ export default function IssueCertificateModal({
 
             <div className="space-y-2">
               <Label>Associated Track</Label>
-              <Select onValueChange={(val: string) => setFormData({ ...formData, trackId: val })}>
+              <Select
+                onValueChange={(val: any) => setFormData({ ...formData, trackId: val || "" })}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select track..." />
                 </SelectTrigger>

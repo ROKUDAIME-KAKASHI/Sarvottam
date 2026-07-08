@@ -17,7 +17,7 @@ type ActionState = {
   success?: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
-  project?: unknown;
+  project?: any;
 };
 
 export async function createProject(

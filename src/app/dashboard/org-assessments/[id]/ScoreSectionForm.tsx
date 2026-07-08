@@ -15,7 +15,7 @@ export default function ScoreSectionForm({
 }: {
   sectionId: string;
   assessmentId: string;
-  existingScores: unknown[];
+  existingScores: any[];
   currentUserId: string;
 }) {
   const existingMyScore = existingScores.find((s) => s.evaluator.userId === currentUserId);

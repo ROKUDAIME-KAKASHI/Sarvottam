@@ -87,7 +87,7 @@ export default function LogMetricsPage() {
                 <div className="space-y-2">
                   <Label>Category</Label>
                   <Select
-                    onValueChange={(val: unknown) => setEsgData({ ...esgData, category: val })}
+                    onValueChange={(val: any) => setEsgData({ ...esgData, category: val })}
                     defaultValue={esgData.category}
                   >
                     <SelectTrigger>
@@ -143,7 +143,7 @@ export default function LogMetricsPage() {
                 <div className="space-y-2">
                   <Label>Emissions Scope</Label>
                   <Select
-                    onValueChange={(val: unknown) => setCarbonData({ ...carbonData, scope: val })}
+                    onValueChange={(val: any) => setCarbonData({ ...carbonData, scope: val })}
                     defaultValue={carbonData.scope}
                   >
                     <SelectTrigger>

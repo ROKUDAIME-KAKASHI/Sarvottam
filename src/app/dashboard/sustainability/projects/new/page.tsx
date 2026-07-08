@@ -25,7 +25,8 @@ export default function NewSustainabilityProjectPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({ title: "", description: "", sdgIds: [] as string[] });
-  const [sdgs, setSdgs] = useState<Record<string, unknown>[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [sdgs, setSdgs] = useState<any[]>([]);
 
   useEffect(() => {
     getSustainabilityDashboardData().then((data) => setSdgs(data.sdgs));

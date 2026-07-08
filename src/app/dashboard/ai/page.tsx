@@ -16,7 +16,8 @@ export default async function AICopilotPage() {
   const session = await auth();
   if (!session) redirect("/login");
 
-  const aiData = (await getDashboardAI()) as Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const aiData = (await getDashboardAI()) as any;
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -46,7 +47,7 @@ export default async function AICopilotPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.recommendedProjects?.map((p: unknown) => (
+                {aiData.recommendedProjects?.map((p: any) => (
                   <div key={p.id} className="p-4 border rounded-md relative overflow-hidden">
                     <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-bl-md">
                       {p.matchScore}% Match
@@ -68,7 +69,7 @@ export default async function AICopilotPage() {
                 <CardDescription>Potential mentors for your next venture.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.recommendedFaculty?.map((f: unknown) => (
+                {aiData.recommendedFaculty?.map((f: any) => (
                   <div
                     key={f.id}
                     className="flex justify-between items-center p-3 border-b last:border-0"
@@ -115,7 +116,7 @@ export default async function AICopilotPage() {
                 <CardDescription>Matched problem statements and grants.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.researchOpportunities?.map((r: unknown) => (
+                {aiData.researchOpportunities?.map((r: any) => (
                   <div key={r.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{r.title}</h4>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
@@ -133,7 +134,7 @@ export default async function AICopilotPage() {
                 <CardTitle>Collaboration Suggestions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.collaborationSuggestions?.map((c: unknown) => (
+                {aiData.collaborationSuggestions?.map((c: any) => (
                   <div key={c.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{c.name || c.email}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{c.reason}</p>
@@ -152,7 +153,7 @@ export default async function AICopilotPage() {
                 <CardTitle>Talent Matching</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.talentMatches?.map((t: unknown) => (
+                {aiData.talentMatches?.map((t: any) => (
                   <div
                     key={t.id}
                     className="flex justify-between items-center p-3 border-b last:border-0"
@@ -170,7 +171,7 @@ export default async function AICopilotPage() {
                 <CardTitle>Research Commercialization Matches</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.researchMatches?.map((r: unknown) => (
+                {aiData.researchMatches?.map((r: any) => (
                   <div key={r.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{r.title}</h4>
                     <p className="text-sm mt-1">

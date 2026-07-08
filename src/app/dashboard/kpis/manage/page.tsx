@@ -27,7 +27,8 @@ import {
 export default function ManageKPIsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<Record<string, unknown>[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     metricName: "",
     description: "",
@@ -81,9 +82,7 @@ export default function ManageKPIsPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="categoryId">Category</Label>
-                <Select
-                  onValueChange={(val: unknown) => setFormData({ ...formData, categoryId: val })}
-                >
+                <Select onValueChange={(val: any) => setFormData({ ...formData, categoryId: val })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select pillar..." />
                   </SelectTrigger>

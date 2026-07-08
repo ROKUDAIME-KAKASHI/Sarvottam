@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Action } from "@/components/action-button";
+import { ActionButton } from "@/components/action-button";
 import { approveApplication } from "@/app/actions/applications";
 
 type Application = {
@@ -48,7 +48,7 @@ export function RecentSubmissionsList({
                     {app.facultyApproved ? "Faculty OK" : "Pending"}
                   </Badge>
                   {app.status === "PENDING" && !app.facultyApproved && (
-                    <Action
+                    <ActionButton
                       action={async () => {
                         "use server";
                         return await approveApplication(app.id, "FACULTY", true);
@@ -58,7 +58,7 @@ export function RecentSubmissionsList({
                       className="h-7 text-xs px-2"
                     >
                       Approve
-                    </Action>
+                    </ActionButton>
                   )}
                 </div>
               </div>

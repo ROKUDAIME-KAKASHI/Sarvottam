@@ -14,7 +14,7 @@ export default function AssessmentForm({
   template,
   resultId,
 }: {
-  template: unknown;
+  template: any;
   resultId: string;
 }) {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function AssessmentForm({
   >({});
 
   // Group questions by dimension
-  const questionsByDimension = template.questions.reduce((acc: unknown, q: unknown) => {
+  const questionsByDimension = template.questions.reduce((acc: any, q: any) => {
     const dimName = q.dimension.name;
     if (!acc[dimName]) acc[dimName] = [];
     acc[dimName].push(q);
@@ -75,7 +75,7 @@ export default function AssessmentForm({
             <CardDescription>Evaluate parameters related to {dimName}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {questionsByDimension[dimName].map((q: unknown) => (
+            {questionsByDimension[dimName].map((q: any) => (
               <div key={q.id} className="p-4 border rounded-lg bg-card/50 space-y-4">
                 <div>
                   <Label className="text-base">{q.text}</Label>

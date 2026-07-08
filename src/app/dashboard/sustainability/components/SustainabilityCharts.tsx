@@ -70,7 +70,7 @@ export function CarbonChart({ metrics }: { metrics: CarbonMetric[] }) {
             outerRadius={80}
             paddingAngle={5}
             dataKey="emissions"
-            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
           >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

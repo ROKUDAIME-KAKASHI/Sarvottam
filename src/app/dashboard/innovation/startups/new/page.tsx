@@ -82,7 +82,7 @@ export default function RegisterStartupPage() {
               <div className="space-y-2">
                 <Label>Current Stage</Label>
                 <Select
-                  onValueChange={(val: unknown) => setFormData({ ...formData, stage: val })}
+                  onValueChange={(val: any) => setFormData({ ...formData, stage: val })}
                   defaultValue={formData.stage}
                 >
                   <SelectTrigger>

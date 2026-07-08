@@ -17,7 +17,8 @@ import { ShieldCheck, ShieldAlert, BadgeCheck } from "lucide-react";
 export default function CertificateVerificationPortal() {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{ valid: boolean; message?: string; data?: unknown } | null>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [result, setResult] = useState<{ valid: boolean; message?: string; data?: any } | null>(
     null
   );
 

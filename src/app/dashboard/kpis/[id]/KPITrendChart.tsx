@@ -10,7 +10,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
-export default function KPITrendChart({ history }: { history: unknown[] }) {
+export default function KPITrendChart({ history }: { history: any[] }) {
   if (!history || history.length === 0) {
     return (
       <div className="h-[300px] flex items-center justify-center text-muted-foreground">

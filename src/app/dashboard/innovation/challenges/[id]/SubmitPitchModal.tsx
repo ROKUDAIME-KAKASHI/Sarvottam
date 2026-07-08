@@ -30,7 +30,7 @@ export default function SubmitPitchModal({
   myStartups,
 }: {
   challengeId: string;
-  myStartups: unknown[];
+  myStartups: any[];
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -92,7 +92,7 @@ export default function SubmitPitchModal({
             <div className="space-y-2">
               <Label>Link to existing Startup (Optional)</Label>
               <Select
-                onValueChange={(val: unknown) => setFormData({ ...formData, startupId: val })}
+                onValueChange={(val: any) => setFormData({ ...formData, startupId: val })}
                 defaultValue={formData.startupId}
               >
                 <SelectTrigger>

@@ -16,7 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function UpdateKPIButton({ kpi }: { kpi: unknown }) {
+export default function UpdateKPIButton({ kpi }: { kpi: any }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(kpi.currentValue.toString());

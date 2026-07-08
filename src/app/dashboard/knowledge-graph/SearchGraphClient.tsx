@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 export default function SearchGraphClient() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<Record<string, unknown>[] | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [results, setResults] = useState<any[] | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +60,7 @@ export default function SearchGraphClient() {
                     Outbound Links
                   </span>
                   <div className="space-y-1 mt-1">
-                    {node.sourceEdges.map((edge: unknown) => (
+                    {node.sourceEdges.map((edge: any) => (
                       <div
                         key={edge.id}
                         className="flex items-center space-x-2 text-muted-foreground"
@@ -79,7 +80,7 @@ export default function SearchGraphClient() {
                     Inbound Links
                   </span>
                   <div className="space-y-1 mt-1">
-                    {node.targetEdges.map((edge: unknown) => (
+                    {node.targetEdges.map((edge: any) => (
                       <div
                         key={edge.id}
                         className="flex items-center space-x-2 text-muted-foreground"

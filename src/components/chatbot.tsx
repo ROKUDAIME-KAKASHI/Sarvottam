@@ -61,7 +61,7 @@ export function Chatbot({ user }: { user?: { name?: string | null; role?: string
         ...prev,
         { id: Date.now().toString(), role: "assistant", content: data.reply },
       ]);
-    } catch (error: unknown) {
+    } catch (error: any) {
       setMessages((prev) => [
         ...prev,
         { id: Date.now().toString(), role: "assistant", content: `Error: ${error.message}` },

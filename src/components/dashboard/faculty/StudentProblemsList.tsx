@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Action } from "@/components/action-button";
+import { ActionButton } from "@/components/action-button";
 import { approveProblem } from "@/app/actions/problems";
 
 type Problem = {
@@ -44,7 +44,7 @@ export function StudentProblemsList({ studentProblems }: { studentProblems: Prob
                   >
                     {problem.facultyApproved ? "Approved" : "Pending"}
                   </Badge>
-                  <Action
+                  <ActionButton
                     action={async () => {
                       "use server";
                       return await approveProblem(problem.id, "FACULTY", !problem.facultyApproved);
@@ -59,7 +59,7 @@ export function StudentProblemsList({ studentProblems }: { studentProblems: Prob
                     className="h-7 text-xs px-3"
                   >
                     {problem.facultyApproved ? "Revoke Approval" : "Approve Problem"}
-                  </Action>
+                  </ActionButton>
                 </div>
               </div>
             ))
