@@ -69,10 +69,10 @@ export async function createProject(
       data: {
         title,
         description,
-        type,
+        type: type as any,
         difficultyLevel,
         duration,
-        status: "OPEN",
+        status: "OPEN" as any,
         creatorId: session.user.id,
         mentorId,
         partnerId,

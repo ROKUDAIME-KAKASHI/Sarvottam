@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ComingSoon } from "@/components/coming-soon";
 import { approveApplication } from "@/app/actions/applications";
+import { formatUserSkills } from "@/lib/actions/skills.actions";
+import { ActionButton } from "@/components/action-button";
 
 export async function IndustryDashboard() {
   const session = await auth();
@@ -25,7 +27,7 @@ export async function IndustryDashboard() {
     include: {
       applications: {
         where: { status: "PENDING" },
-        include: { user: true },
+        include: { user: { include: { userSkills: { include: { skill: true } } } } },
       },
     },
   });
@@ -127,7 +129,7 @@ export async function IndustryDashboard() {
                           width:
                             item.status === "RESOLVED"
                               ? "100%"
-                              : item.status === "IN_PROGRESS"
+                              : (item.status as any) === "IN_PROGRESS"
                                 ? "50%"
                                 : "10%",
                         }}
@@ -165,7 +167,7 @@ export async function IndustryDashboard() {
                         By {app.user.name || app.user.email}
                       </p>
                       <p className="text-xs italic text-muted-foreground line-clamp-1">
-                        Skills: {app.user.skills || "N/A"}
+                        Skills: {formatUserSkills(app.user.userSkills) || "N/A"}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
@@ -176,16 +178,14 @@ export async function IndustryDashboard() {
                         {app.industryApproved ? "Partner OK" : "Pending"}
                       </Badge>
                       {!app.industryApproved && (
-                        <form
-                          action={async () => {
-                            "use server";
-                            await approveApplication(app.id, "INDUSTRY", true);
-                          }}
+                        <ActionButton
+                          action={approveApplication.bind(null, app.id, "INDUSTRY", true)}
+                          successMessage="Application authorized successfully"
+                          size="sm"
+                          className="h-7 text-xs px-3"
                         >
-                          <Button size="sm" className="h-7 text-xs px-3">
-                            Authorize
-                          </Button>
-                        </form>
+                          Authorize
+                        </ActionButton>
                       )}
                     </div>
                   </div>

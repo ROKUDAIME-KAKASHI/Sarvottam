@@ -1,0 +1,75 @@
+model KPICategory {
+  id          String   @id @default(cuid())
+  name        String   @unique // Quality, Innovation, Sustainability, Research, Collaboration
+  description String?
+  kpis        KPI[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model KPI {
+  id           String      @id @default(cuid())
+  metricName   String
+  description  String?
+  categoryId   String
+  category     KPICategory @relation(fields: [categoryId], references: [id])
+  currentValue Float       @default(0)
+  unit         String? // e.g., "%", "Count", "$"
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  targets KPITarget[]
+  history KPIHistory[]
+  trends  KPITrend[]
+  alerts  KPIAlert[]
+}
+
+model KPITarget {
+  id          String    @id @default(cuid())
+  kpiId       String
+  kpi         KPI       @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  targetValue Float
+  deadline    DateTime?
+  period      String    @default("ANNUAL") // MONTHLY, QUARTERLY, ANNUAL
+  isAchieved  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
+model KPIHistory {
+  id    String   @id @default(cuid())
+  kpiId String
+  kpi   KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  value Float
+  date  DateTime @default(now())
+  notes String?
+}
+
+model KPITrend {
+  id          String   @id @default(cuid())
+  kpiId       String
+  kpi         KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  direction   String // UP, DOWN, FLAT
+  percentage  Float // Percentage change
+  periodStart DateTime
+  periodEnd   DateTime
+  analyzedAt  DateTime @default(now())
+}
+
+model KPIAlert {
+  id         String    @id @default(cuid())
+  kpiId      String
+  kpi        KPI       @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  severity   String    @default("LOW") // LOW, MEDIUM, HIGH, CRITICAL
+  message    String
+  isResolved Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+}

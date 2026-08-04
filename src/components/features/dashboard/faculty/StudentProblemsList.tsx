@@ -45,10 +45,12 @@ export function StudentProblemsList({ studentProblems }: { studentProblems: Prob
                     {problem.facultyApproved ? "Approved" : "Pending"}
                   </Badge>
                   <ActionButton
-                    action={async () => {
-                      "use server";
-                      return await approveProblem(problem.id, "FACULTY", !problem.facultyApproved);
-                    }}
+                    action={approveProblem.bind(
+                      null,
+                      problem.id,
+                      "FACULTY",
+                      !problem.facultyApproved
+                    )}
                     successMessage={
                       problem.facultyApproved
                         ? "Problem approval revoked"

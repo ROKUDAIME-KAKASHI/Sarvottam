@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase, Building, MapPin, Plus, UserCircle, Search, Clock } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export default async function PlacementsPage() {
   const session = await auth();
@@ -37,37 +38,25 @@ export default async function PlacementsPage() {
 
   return (
     <div className="w-full max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-6 md:p-8 rounded-3xl border border-border/50 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-
-        <div className="relative z-10 space-y-2">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
-              <Briefcase className="w-6 h-6" />
-            </div>
-            <h1 className="text-3xl font-black tracking-tight">Placements & Jobs</h1>
-          </div>
-          <p className="text-muted-foreground font-medium max-w-xl">
-            Discover opportunities posted by industry partners and faculty members.
-          </p>
-        </div>
-
+      <PageHeader
+        title="Placements & Jobs"
+        description="Discover opportunities posted by industry partners and faculty members."
+        icon={Briefcase}
+      >
         {["FACULTY", "INDUSTRY_PARTNER", "SUPERADMIN"].includes(userRole) && (
-          <div className="relative z-10 shrink-0">
-            <Link
-              href="/dashboard/placements/new"
-              className={buttonVariants({
-                className:
-                  "rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all",
-                size: "lg",
-              })}
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              Post a Job
-            </Link>
-          </div>
+          <Link
+            href="/dashboard/placements/new"
+            className={buttonVariants({
+              className:
+                "rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all",
+              size: "lg",
+            })}
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Post a Job
+          </Link>
         )}
-      </div>
+      </PageHeader>
 
       <div className="relative">
         <Search className="absolute left-4 top-3.5 h-5 w-5 text-muted-foreground" />
@@ -169,20 +158,24 @@ export default async function PlacementsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                "Resume Building Masterclass",
-                "Mock Interview Scheduling",
-                "Industry Skill Gap Analysis",
-                "Portfolio Review",
+                { name: "Resume Building Masterclass", href: "/dashboard/lms" },
+                {
+                  name: "Mock Interview Scheduling",
+                  href: "/dashboard/placements/mock-interviews",
+                },
+                { name: "Industry Skill Gap Analysis", href: "/dashboard/ai" },
+                { name: "Portfolio Review", href: "/dashboard/placements/portfolio-review" },
               ].map((resource, i) => (
-                <div
+                <Link
                   key={i}
+                  href={resource.href}
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer border border-transparent hover:border-border/50"
                 >
                   <div className="w-8 h-8 rounded-full bg-background flex items-center justify-center text-primary shadow-sm">
                     {i + 1}
                   </div>
-                  <span className="text-sm font-medium">{resource}</span>
-                </div>
+                  <span className="text-sm font-medium">{resource.name}</span>
+                </Link>
               ))}
             </CardContent>
           </Card>

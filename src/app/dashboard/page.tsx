@@ -1,11 +1,14 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { StudentDashboard } from "@/components/dashboard/student-dashboard";
-import { FacultyDashboard } from "@/components/dashboard/faculty-dashboard";
-import { IndustryDashboard } from "@/components/dashboard/industry-dashboard";
-import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
+import { StudentDashboard } from "@/components/features/dashboard/student-dashboard";
+import { FacultyDashboard } from "@/components/features/dashboard/faculty-dashboard";
+import { IndustryDashboard } from "@/components/features/dashboard/industry-dashboard";
+import { AdminDashboard } from "@/components/features/dashboard/admin-dashboard";
 
-export default async function DashboardPage() {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function DashboardPage(props: { searchParams: SearchParams }) {
+  const searchParams = await props.searchParams;
   const session = await auth();
   if (!session) redirect("/login");
 
@@ -13,7 +16,7 @@ export default async function DashboardPage() {
 
   switch (role) {
     case "SUPERADMIN":
-      return <AdminDashboard />;
+      return <AdminDashboard searchParams={searchParams} />;
     case "FACULTY":
       return <FacultyDashboard />;
     case "INDUSTRY_PARTNER":

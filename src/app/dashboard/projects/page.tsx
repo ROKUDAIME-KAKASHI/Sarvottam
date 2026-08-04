@@ -19,16 +19,6 @@ export default async function ProjectsPage() {
         </div>
 
         <div className="flex gap-2">
-          <ComingSoon feature="Filtering">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-xl border-border/50 bg-background/50 backdrop-blur-md"
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-          </ComingSoon>
           <CreateProjectForm />
         </div>
       </div>

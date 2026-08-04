@@ -115,15 +115,16 @@ export default function UserList({
                 </div>
               </td>
               <td className="px-6 py-5 text-right">
-                <ComingSoon feature="User management options">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </ComingSoon>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    alert(`Management options for ${user.email} will be available in v1.1`)
+                  }
+                  className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
               </td>
             </motion.tr>
           ))}

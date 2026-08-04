@@ -4,6 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { addXP } from "@/lib/actions/gamification";
+import { ApplicationStatus } from "@prisma/client";
+import { z } from "zod";
+import { updateUserSkills } from "@/lib/actions/skills.actions";
+
+const applyProjectSchema = z.object({
+  projectId: z.string().min(1, "Project ID is required"),
+  skills: z.string().optional(),
+});
 
 export async function applyForProject(formData: FormData) {
   const session = await auth();
@@ -11,20 +19,21 @@ export async function applyForProject(formData: FormData) {
     return { error: "You must be logged in to apply for a project." };
   }
 
-  const projectId = formData.get("projectId") as string;
-  const skills = formData.get("skills") as string;
+  const parsed = applyProjectSchema.safeParse({
+    projectId: formData.get("projectId"),
+    skills: formData.get("skills"),
+  });
 
-  if (!projectId) {
-    return { error: "Project ID is required." };
+  if (!parsed.success) {
+    return { error: "Invalid fields provided.", fieldErrors: parsed.error.flatten().fieldErrors };
   }
+
+  const { projectId, skills } = parsed.data;
 
   try {
     // Save/Update user skills
     if (skills) {
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: { skills },
-      });
+      await updateUserSkills(session.user.id, skills);
     }
 
     // Check if user already applied
@@ -96,7 +105,7 @@ export async function approveApplication(
       return { error: "Only admins can provide final approval" };
     }
 
-    const dataToUpdate: Record<string, boolean | string> = {};
+    const dataToUpdate: Record<string, any> = {};
     if (approvalType === "FACULTY") dataToUpdate.facultyApproved = isApproved;
     if (approvalType === "INDUSTRY") dataToUpdate.industryApproved = isApproved;
     if (approvalType === "ADMIN") dataToUpdate.adminApproved = isApproved;
@@ -107,7 +116,7 @@ export async function approveApplication(
 
     // Logic: Admin override OR (Faculty AND Industry)
     if (willBeAdminApproved || (willBeFacultyApproved && willBeIndustryApproved)) {
-      dataToUpdate.status = "ACCEPTED";
+      dataToUpdate.status = "ACCEPTED" as any;
 
       // If accepted, we might want to update the project status if it's full,
       // but for now we just mark the application as accepted.
@@ -183,7 +192,7 @@ export async function getApplications() {
   }
 }
 
-export async function updateApplicationStatus(applicationId: string, status: string) {
+export async function updateApplicationStatus(applicationId: string, status: ApplicationStatus) {
   const session = await auth();
   if (!session?.user) {
     return { error: "Unauthorized" };

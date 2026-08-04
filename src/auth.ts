@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import type { DefaultSession } from "next-auth";
 import bcrypt from "bcryptjs";
+import { credentialsRateLimiter } from "@/lib/rate-limiter";
 
 declare module "next-auth" {
   interface User {
@@ -27,6 +28,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         impersonationToken: { label: "Impersonation Token", type: "text" },
       },
       async authorize(credentials) {
+        // Rate limiting by email
+        if (credentials?.email) {
+          const rlResult = await credentialsRateLimiter.limit(credentials.email as string);
+          if (!rlResult.success) {
+            throw new Error("Too many login attempts. Please try again later.");
+          }
+        }
+
         if (credentials?.impersonationToken) {
           const tokenRecord = await prisma.impersonationToken.findUnique({
             where: { id: credentials.impersonationToken as string },

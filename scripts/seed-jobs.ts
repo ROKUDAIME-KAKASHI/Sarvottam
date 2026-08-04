@@ -62,7 +62,7 @@ async function main() {
 
   for (const job of jobsData) {
     await prisma.job.create({
-      data: job,
+      data: job as any,
     });
   }
 

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import ApplicationList from "@/app/dashboard/applications/ApplicationList";
 import { auth } from "@/auth";
+import { formatUserSkills } from "@/lib/actions/skills.actions";
 
 export default async function ProjectDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -24,7 +25,9 @@ export default async function ProjectDetailsPage({ params }: { params: Promise<{
       },
       department: true,
       applications: {
-        include: { user: true },
+        include: {
+          user: { include: { userSkills: { select: { skill: { select: { name: true } } } } } },
+        },
       },
     },
   });
@@ -159,7 +162,7 @@ export default async function ProjectDetailsPage({ params }: { params: Promise<{
                   user: {
                     name: app.user.name,
                     email: app.user.email,
-                    skills: app.user.skills,
+                    skills: formatUserSkills(app.user.userSkills),
                   },
                 }))}
                 currentUserRole={session?.user?.role}

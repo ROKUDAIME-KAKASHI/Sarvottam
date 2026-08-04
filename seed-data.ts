@@ -191,12 +191,12 @@ async function main() {
   // Execute the insertions
   console.log("Seeding realistic projects...");
   for (const proj of projects) {
-    await prisma.project.create({ data: proj });
+    await prisma.project.create({ data: proj as any });
   }
 
   console.log("Seeding realistic problems...");
   for (const prob of problems) {
-    await prisma.problem.create({ data: prob });
+    await prisma.problem.create({ data: prob as any });
   }
 
   console.log("Done seeding realistic data!");

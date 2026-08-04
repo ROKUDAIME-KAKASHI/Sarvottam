@@ -2,26 +2,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Building, Activity, ShieldCheck, LogIn } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { impersonateUser, getUsersForImpersonation } from "@/app/actions/admin";
 import { ComingSoon } from "@/components/coming-soon";
 import ApplicationList from "@/app/dashboard/applications/ApplicationList";
-import { approveProblem } from "@/app/actions/problems";
+import { approveProblemFormAction } from "@/app/actions/problems";
+import Link from "next/link";
 
-export async function AdminDashboard() {
+export async function AdminDashboard({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const usersPage = Number(searchParams?.usersPage) || 1;
+  const problemsPage = Number(searchParams?.problemsPage) || 1;
+  const appsPage = Number(searchParams?.appsPage) || 1;
+  const itemsPerPage = 10;
   const totalUsers = await prisma.user.count();
   const industryPartners = await prisma.user.count({ where: { role: "INDUSTRY_PARTNER" } });
   const activeProjects = await prisma.project.count({ where: { status: "OPEN" } });
   const totalProblems = await prisma.problem.count();
 
-  const usersList = await getUsersForImpersonation();
+  const usersList = await getUsersForImpersonation(itemsPerPage, (usersPage - 1) * itemsPerPage);
 
   const pendingApplications = await prisma.application.findMany({
     where: { status: "PENDING" },
     include: { project: true, user: true },
     orderBy: { createdAt: "desc" },
+    take: itemsPerPage,
+    skip: (appsPage - 1) * itemsPerPage,
   });
+  const totalPendingApps = await prisma.application.count({ where: { status: "PENDING" } });
 
   const pendingProblems = await prisma.problem.findMany({
     where: {
@@ -29,6 +41,11 @@ export async function AdminDashboard() {
     },
     include: { submitter: true },
     orderBy: { createdAt: "desc" },
+    take: itemsPerPage,
+    skip: (problemsPage - 1) * itemsPerPage,
+  });
+  const totalPendingProblems = await prisma.problem.count({
+    where: { OR: [{ adminApproved: false }, { status: "OPEN" }] },
   });
 
   return (
@@ -128,10 +145,7 @@ export async function AdminDashboard() {
                         </Badge>
                         {!problem.adminApproved && (
                           <form
-                            action={async () => {
-                              "use server";
-                              await approveProblem(problem.id, "ADMIN", true);
-                            }}
+                            action={approveProblemFormAction.bind(null, problem.id, "ADMIN", true)}
                           >
                             <Button size="sm">Approve Problem</Button>
                           </form>
@@ -141,6 +155,34 @@ export async function AdminDashboard() {
                   ))
                 )}
               </div>
+
+              {/* Pagination Controls for Problems */}
+              {totalPendingProblems > itemsPerPage && (
+                <div className="flex items-center justify-between mt-4 border-t pt-4">
+                  <Link
+                    href={`/dashboard?problemsPage=${Math.max(1, problemsPage - 1)}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{ visibility: problemsPage > 1 ? "visible" : "hidden" }}
+                  >
+                    Previous
+                  </Link>
+                  <span className="text-sm text-muted-foreground">
+                    Page {problemsPage} of {Math.ceil(totalPendingProblems / itemsPerPage)}
+                  </span>
+                  <Link
+                    href={`/dashboard?problemsPage=${problemsPage + 1}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{
+                      visibility:
+                        problemsPage < Math.ceil(totalPendingProblems / itemsPerPage)
+                          ? "visible"
+                          : "hidden",
+                    }}
+                  >
+                    Next
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -161,6 +203,34 @@ export async function AdminDashboard() {
                   currentUserRole="SUPERADMIN"
                 />
               </div>
+
+              {/* Pagination Controls for Applications */}
+              {totalPendingApps > itemsPerPage && (
+                <div className="flex items-center justify-between p-6 pt-0 border-t">
+                  <Link
+                    href={`/dashboard?appsPage=${Math.max(1, appsPage - 1)}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{ visibility: appsPage > 1 ? "visible" : "hidden" }}
+                  >
+                    Previous
+                  </Link>
+                  <span className="text-sm text-muted-foreground">
+                    Page {appsPage} of {Math.ceil(totalPendingApps / itemsPerPage)}
+                  </span>
+                  <Link
+                    href={`/dashboard?appsPage=${appsPage + 1}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{
+                      visibility:
+                        appsPage < Math.ceil(totalPendingApps / itemsPerPage)
+                          ? "visible"
+                          : "hidden",
+                    }}
+                  >
+                    Next
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -199,6 +269,32 @@ export async function AdminDashboard() {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Controls for Users */}
+              {totalUsers > itemsPerPage && (
+                <div className="flex items-center justify-between mt-4 border-t pt-4">
+                  <Link
+                    href={`/dashboard?usersPage=${Math.max(1, usersPage - 1)}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{ visibility: usersPage > 1 ? "visible" : "hidden" }}
+                  >
+                    Previous
+                  </Link>
+                  <span className="text-sm text-muted-foreground">
+                    Page {usersPage} of {Math.ceil(totalUsers / itemsPerPage)}
+                  </span>
+                  <Link
+                    href={`/dashboard?usersPage=${usersPage + 1}`}
+                    className={buttonVariants({ variant: "outline", size: "sm" })}
+                    style={{
+                      visibility:
+                        usersPage < Math.ceil(totalUsers / itemsPerPage) ? "visible" : "hidden",
+                    }}
+                  >
+                    Next
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

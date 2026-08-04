@@ -1,0 +1,54 @@
+model SustainabilityProject {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  status      String    @default("PLANNING") // PLANNING, ACTIVE, COMPLETED
+  startDate   DateTime?
+  endDate     DateTime?
+  managerId   String
+  manager     User      @relation("ProjectManager", fields: [managerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  sdgs    SDG[]          @relation("ProjectSDGs")
+  reports ImpactReport[]
+}
+
+model ESGMetric {
+  id           String   @id @default(cuid())
+  category     String // ENVIRONMENTAL, SOCIAL, GOVERNANCE
+  name         String
+  value        Float
+  unit         String
+  measuredAt   DateTime @default(now())
+  recordedById String
+  recordedBy   User     @relation("ESGRecorder", fields: [recordedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model CarbonMetric {
+  id           String   @id @default(cuid())
+  scope        String // SCOPE_1, SCOPE_2, SCOPE_3
+  source       String
+  emissions    Float // metric tons of CO2e
+  measuredAt   DateTime @default(now())
+  recordedById String
+  recordedBy   User     @relation("CarbonRecorder", fields: [recordedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model ImpactReport {
+  id          String                 @id @default(cuid())
+  title       String
+  summary     String
+  periodStart DateTime
+  periodEnd   DateTime
+  projectId   String?
+  project     SustainabilityProject? @relation(fields: [projectId], references: [id])
+  authorId    String
+  author      User                   @relation("ReportAuthor", fields: [authorId], references: [id])
+  documentUrl String?
+  isPublished Boolean                @default(false)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+}

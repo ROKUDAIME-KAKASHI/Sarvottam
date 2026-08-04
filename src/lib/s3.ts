@@ -1,0 +1,20 @@
+import { S3Client } from "@aws-sdk/client-s3";
+
+const globalForS3 = globalThis as unknown as { s3: S3Client };
+
+export const s3 =
+  globalForS3.s3 ||
+  new S3Client({
+    region: process.env.AWS_REGION || "us-east-1",
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    },
+    // Useful if using Cloudflare R2 or MinIO
+    ...(process.env.S3_ENDPOINT && {
+      endpoint: process.env.S3_ENDPOINT,
+      forcePathStyle: true,
+    }),
+  });
+
+if (process.env.NODE_ENV !== "production") globalForS3.s3 = s3;

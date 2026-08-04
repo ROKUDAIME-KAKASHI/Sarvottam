@@ -26,7 +26,7 @@ export async function createCourse(data: {
 
   const course = await prisma.course.create({
     data: {
-      ...data,
+      ...(data as any),
       modules: {
         create: [{ title: "Introduction", description: "Getting started" }],
       },
@@ -75,11 +75,11 @@ export async function markAttendance(sessionId: string, userId: string, status: 
     where: {
       sessionId_userId: { sessionId, userId },
     },
-    update: { status },
+    update: { status: status as any },
     create: {
       sessionId,
       userId,
-      status,
+      status: status as any,
     },
   });
 

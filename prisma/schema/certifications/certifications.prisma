@@ -1,0 +1,109 @@
+model CertificationProgram {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  issuer      String   @default("Sarvottam Ecosystem")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tracks       CertificationTrack[]
+  badges       Badge[]
+  certificates Certificate[]
+}
+
+model CertificationTrack {
+  id          String               @id @default(cuid())
+  programId   String
+  program     CertificationProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  level       String               @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  orderIndex  Int                  @default(0)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  assessments      CertificationAssessment[]
+  microCredentials MicroCredential[]
+  certificates     Certificate[]
+}
+
+model CertificationAssessment {
+  id           String             @id @default(cuid())
+  trackId      String
+  track        CertificationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  passingScore Float              @default(70)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model Badge {
+  id          String               @id @default(cuid())
+  programId   String
+  program     CertificationProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  imageUrl    String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  earnedBy UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation("UserBadges", fields: [userId], references: [id], onDelete: Cascade)
+  badgeId  String
+  badge    Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model MicroCredential {
+  id        String             @id @default(cuid())
+  trackId   String
+  track     CertificationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User               @relation("UserMicroCredentials", fields: [userId], references: [id], onDelete: Cascade)
+  status    String             @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  earnedAt  DateTime?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model Certificate {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  issueDate   DateTime @default(now())
+  issuer      String   @default("Sarvottam Ecosystem")
+  url         String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  programId String?
+  program   CertificationProgram? @relation(fields: [programId], references: [id])
+  trackId   String?
+  track     CertificationTrack?   @relation(fields: [trackId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  verification CertificateVerification?
+}
+
+model CertificateVerification {
+  id               String      @id @default(cuid())
+  certificateId    String      @unique
+  certificate      Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  verificationCode String      @unique
+  verifiedAt       DateTime?
+  isRevoked        Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}

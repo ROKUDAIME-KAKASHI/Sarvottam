@@ -1,0 +1,343 @@
+// Prisma Enums - Centralized enum definitions for type safety and DB constraints
+// Run: npx prisma generate && npx prisma migrate dev --name add_enums
+
+// User & Auth
+enum UserRole {
+  STUDENT
+  FACULTY
+  INDUSTRY_PARTNER
+  SUPERADMIN
+}
+
+// Project
+enum ProjectStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ProjectType {
+  RESEARCH
+  CAPSTONE
+  INTERNSHIP
+  THESIS
+  CONSULTING
+  INNOVATION
+}
+
+// Application
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// Problem
+enum ProblemType {
+  TECHNICAL
+  PROCESS
+  STRATEGIC
+  COMPLIANCE
+  RESOURCE
+  OTHER
+}
+
+enum ProblemArea {
+  PEOPLE
+  PROCESS
+  TECHNOLOGY
+  BUSINESS
+  COMPLIANCE
+}
+
+enum ProblemQuadrant {
+  DO_FIRST
+  SCHEDULE
+  DELEGATE
+  ELIMINATE
+}
+
+enum ProblemStatus {
+  OPEN
+  PENDING
+  APPROVED
+  ESCALATED
+  RESOLVED
+  REJECTED
+}
+
+enum ProblemLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// KPI
+enum KPIPeriod {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+}
+
+enum KPITrendDirection {
+  UP
+  DOWN
+  FLAT
+}
+
+enum KPIAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Certification
+enum CertificationLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum MicroCredentialStatus {
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+}
+
+// LMS / Corporate Training
+enum CourseType {
+  COURSE
+  WORKSHOP
+  EXECUTIVE_PROGRAM
+  BOOTCAMP
+  SEMINAR
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  IN_PROGRESS
+  COMPLETED
+  DROPPED
+  EXPIRED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+// Excellence Framework
+enum AssessmentQuestionType {
+  SCALE
+  BOOLEAN
+  TEXT
+  MULTIPLE_CHOICE
+}
+
+enum AssessmentTargetType {
+  ORGANIZATION
+  DEPARTMENT
+  PROJECT
+  TEAM
+}
+
+enum AssessmentResultStatus {
+  DRAFT
+  SUBMITTED
+  REVIEWED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ImprovementPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum ImprovementStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+// Organizational Assessment
+enum OrgAssessmentStatus {
+  INITIATED
+  EVIDENCE_GATHERING
+  EVALUATION
+  COMPLETED
+  ARCHIVED
+}
+
+enum EvaluatorRole {
+  LEAD
+  REVIEWER
+  OBSERVER
+}
+
+enum RecommendationPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RecommendationStatus {
+  OPEN
+  ACCEPTED
+  IMPLEMENTED
+  REJECTED
+  DEFERRED
+}
+
+// Innovation Hub
+enum StartupStage {
+  IDEA
+  MVP
+  EARLY_TRACTION
+  SCALING
+  MATURE
+  EXITED
+}
+
+enum IncubationProgramStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum InnovationChallengeStatus {
+  OPEN
+  EVALUATION
+  CLOSED
+  CANCELLED
+}
+
+enum HackathonStatus {
+  DRAFT
+  REGISTRATION
+  LIVE
+  ENDED
+  CANCELLED
+}
+
+enum PitchSubmissionStatus {
+  SUBMITTED
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  WINNER
+}
+
+// Sustainability
+enum SustainabilityProjectStatus {
+  PLANNING
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum ESGCategory {
+  ENVIRONMENTAL
+  SOCIAL
+  GOVERNANCE
+}
+
+enum CarbonScope {
+  SCOPE_1
+  SCOPE_2
+  SCOPE_3
+}
+
+// Knowledge Graph
+enum KnowledgeNodeType {
+  PROBLEM
+  PROJECT
+  PAPER
+  PATENT
+  CASE_STUDY
+  STARTUP
+  USER
+  ORGANIZATION
+}
+
+enum KnowledgeRelation {
+  RESOLVED_BY
+  PUBLISHED_FROM
+  SPAWNED_STARTUP
+  RELATED_TO
+  DEPENDS_ON
+  INSPIRED_BY
+  CITES
+  COLLABORATES_WITH
+}
+
+// Placements
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+  FREELANCE
+  APPRENTICESHIP
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  FILLED
+  CANCELLED
+  ON_HOLD
+}
+
+enum JobApplicationStatus {
+  PENDING
+  REVIEWING
+  INTERVIEWING
+  OFFERED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum PatentStatus {
+  FILED
+  PUBLISHED
+  GRANTED
+  REJECTED
+  WITHDRAWN
+  EXPIRED
+}
+
+// Audit
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  IMPERSONATE
+  APPROVE
+  REJECT
+  EXPORT
+  IMPORT
+}

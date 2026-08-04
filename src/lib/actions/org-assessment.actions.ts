@@ -10,7 +10,7 @@ async function logAudit(action: string, entityType: string, entityId: string, de
 
   await prisma.auditLog.create({
     data: {
-      action,
+      action: action as any,
       entityType,
       entityId,
       userId: session.user.id as string,

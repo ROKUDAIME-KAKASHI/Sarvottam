@@ -35,12 +35,12 @@ export async function seedKnowledgeGraph() {
   // Link them
   await prisma.knowledgeEdge.createMany({
     data: [
-      { sourceId: prob1.id, targetId: proj1.id, relation: "RESOLVED_BY", weight: 0.9 },
-      { sourceId: prob2.id, targetId: proj2.id, relation: "RESOLVED_BY", weight: 0.8 },
-      { sourceId: proj1.id, targetId: paper1.id, relation: "PUBLISHED_FROM", weight: 0.95 },
-      { sourceId: proj1.id, targetId: patent1.id, relation: "RESULTED_IN", weight: 1.0 },
-      { sourceId: patent1.id, targetId: startup1.id, relation: "LICENSED_TO", weight: 1.0 },
-      { sourceId: prob1.id, targetId: startup1.id, relation: "ADDRESSES", weight: 0.85 },
+      { sourceId: prob1.id, targetId: proj1.id, relation: "RESOLVED_BY" as any, weight: 0.9 },
+      { sourceId: prob2.id, targetId: proj2.id, relation: "RESOLVED_BY" as any, weight: 0.8 },
+      { sourceId: proj1.id, targetId: paper1.id, relation: "PUBLISHED_FROM" as any, weight: 0.95 },
+      { sourceId: proj1.id, targetId: patent1.id, relation: "RESULTED_IN" as any, weight: 1.0 },
+      { sourceId: patent1.id, targetId: startup1.id, relation: "LICENSED_TO" as any, weight: 1.0 },
+      { sourceId: prob1.id, targetId: startup1.id, relation: "ADDRESSES" as any, weight: 0.85 },
     ],
   });
 }

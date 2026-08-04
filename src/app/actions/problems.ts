@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { addXP, awardBadgeByName } from "@/lib/actions/gamification";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const createProblemSchema = z.object({
   company: z.string().min(2, "Company name must be at least 2 characters"),
@@ -46,9 +47,9 @@ export async function createProblem(data: {
       data: {
         title,
         description,
-        type,
+        type: type as any,
         submitterId: session.user.id,
-        status: "OPEN",
+        status: "OPEN" as any,
       },
     });
 
@@ -59,7 +60,7 @@ export async function createProblem(data: {
     revalidatePath("/dashboard/problems");
     return { success: true, problemId: problem.id };
   } catch (error) {
-    console.error("Failed to create problem:", error);
+    logger.error("Failed to create problem", error, { userId: session.user.id });
     return { error: "Failed to submit the problem. Please try again." };
   }
 }
@@ -95,7 +96,7 @@ export async function getProblems() {
       orderBy: { createdAt: "desc" },
     });
   } catch (error) {
-    console.error("Failed to fetch problems:", error);
+    logger.error("Failed to fetch problems", error, { userId: session.user.id });
     return [];
   }
 }
@@ -108,7 +109,7 @@ export async function getMarketplaceProblems() {
       orderBy: { createdAt: "desc" },
     });
   } catch (error) {
-    console.error("Failed to fetch marketplace problems:", error);
+    logger.error("Failed to fetch marketplace problems", error);
     return [];
   }
 }
@@ -145,7 +146,7 @@ export async function approveProblem(
       return { error: "Only super admins can provide final admin approval" };
     }
 
-    const dataToUpdate: Record<string, boolean | string> = {};
+    const dataToUpdate: Record<string, any> = {};
     if (approvalType === "FACULTY") dataToUpdate.facultyApproved = isApproved;
     if (approvalType === "INDUSTRY") dataToUpdate.industryApproved = isApproved;
     if (approvalType === "ADMIN") dataToUpdate.adminApproved = isApproved;
@@ -175,7 +176,19 @@ export async function approveProblem(
     revalidatePath("/research");
     return { success: true };
   } catch (error) {
-    console.error("Failed to approve problem:", error);
+    logger.error("Failed to approve problem", error, {
+      problemId,
+      approvalType,
+      userId: session.user.id,
+    });
     return { error: "Failed to approve problem" };
   }
+}
+
+export async function approveProblemFormAction(
+  problemId: string,
+  approvalType: "FACULTY" | "INDUSTRY" | "ADMIN",
+  isApproved: boolean
+): Promise<void> {
+  await approveProblem(problemId, approvalType, isApproved);
 }

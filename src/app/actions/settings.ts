@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { updateUserSkills } from "@/lib/actions/skills.actions";
 
 export async function updateProfileSettings(formData: FormData) {
   const session = await auth();
@@ -16,8 +17,11 @@ export async function updateProfileSettings(formData: FormData) {
   try {
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { name, skills, portfolioUrl },
+      data: { name, portfolioUrl },
     });
+    if (skills !== undefined && skills !== null) {
+      await updateUserSkills(session.user.id, skills);
+    }
     revalidatePath("/dashboard/settings");
     revalidatePath("/dashboard/profile");
     return { success: true };

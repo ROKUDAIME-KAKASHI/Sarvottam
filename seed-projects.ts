@@ -78,7 +78,7 @@ async function main() {
   for (const p of projects) {
     await prisma.project.create({
       data: {
-        ...p,
+        ...(p as any),
         creatorId: creatorId,
       },
     });

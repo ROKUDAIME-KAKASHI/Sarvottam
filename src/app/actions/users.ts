@@ -39,7 +39,7 @@ export async function updateUserRole(userId: string, newRole: string) {
   try {
     await prisma.user.update({
       where: { id: userId },
-      data: { role: newRole },
+      data: { role: newRole as any },
     });
 
     return { success: true };

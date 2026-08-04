@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ProfileForm } from "./ProfileForm";
 import { redirect } from "next/navigation";
+import { formatUserSkills } from "@/lib/actions/skills.actions";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -18,7 +19,7 @@ export default async function ProfilePage() {
       name: true,
       email: true,
       role: true,
-      skills: true,
+      userSkills: { select: { skill: { select: { name: true } } } },
       portfolioUrl: true,
     },
   });
@@ -27,5 +28,11 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
-  return <ProfileForm user={user} />;
+  const formattedUser = {
+    ...user,
+    role: user.role.toString(),
+    skills: formatUserSkills(user.userSkills),
+  };
+
+  return <ProfileForm user={formattedUser} />;
 }

@@ -1,0 +1,89 @@
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  type      String?
+  industry  String?
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orgAssessments OrgAssessment[]
+}
+
+model OrgAssessment {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  status         String       @default("INITIATED") // INITIATED, EVIDENCE_GATHERING, EVALUATION, COMPLETED
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  sections        AssessmentSection[]
+  evaluators      Evaluator[]
+  recommendations Recommendation[]
+}
+
+model AssessmentSection {
+  id           String        @id @default(cuid())
+  assessmentId String
+  assessment   OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  name         String
+  description  String?
+  weight       Float         @default(1.0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  evidences AssessmentEvidence[]
+  scores    EvaluationScore[]
+}
+
+model AssessmentEvidence {
+  id           String            @id @default(cuid())
+  sectionId    String
+  section      AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title        String
+  url          String
+  description  String?
+  uploadedById String
+  uploadedBy   User              @relation("EvidenceUploader", fields: [uploadedById], references: [id])
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model Evaluator {
+  id           String        @id @default(cuid())
+  assessmentId String
+  assessment   OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User          @relation("OrgEvaluator", fields: [userId], references: [id])
+  role         String        @default("LEAD") // LEAD, REVIEWER
+  createdAt    DateTime      @default(now())
+
+  scores EvaluationScore[]
+}
+
+model EvaluationScore {
+  id          String            @id @default(cuid())
+  sectionId   String
+  section     AssessmentSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  evaluatorId String
+  evaluator   Evaluator         @relation(fields: [evaluatorId], references: [id], onDelete: Cascade)
+  score       Float
+  feedback    String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Recommendation {
+  id           String        @id @default(cuid())
+  assessmentId String
+  assessment   OrgAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  priority     String        @default("MEDIUM") // HIGH, MEDIUM, LOW
+  status       String        @default("OPEN") // OPEN, ACCEPTED, IMPLEMENTED, REJECTED
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}

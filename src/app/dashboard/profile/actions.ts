@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { updateUserSkills, formatUserSkills } from "@/lib/actions/skills.actions";
 
 export async function updateProfile(data: {
   name: string;
@@ -21,27 +22,37 @@ export async function updateProfile(data: {
 
   const currentUser = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { skills: true, role: true },
+    select: { userSkills: { select: { skill: { select: { name: true } } } }, role: true },
   });
 
   await prisma.user.update({
     where: { id: session.user.id },
     data: {
       name: data.name,
-      skills: data.skills || null,
-      portfolioUrl: data.portfolioUrl || null,
+      portfolioUrl: data.portfolioUrl,
     },
   });
+
+  if (data.skills !== undefined) {
+    await updateUserSkills(session.user.id, data.skills || "");
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/profile");
 
-  const skillsChanged = currentUser?.skills !== (data.skills || null);
+  const skillsChanged = formatUserSkills(currentUser?.userSkills) !== (data.skills || "");
   const isStudent = currentUser?.role === "STUDENT";
 
   let message = "Profile updated successfully";
-  if (isStudent && skillsChanged) {
-    message = "Submitted successfully waiting for approval";
+  if (
+    currentUser &&
+    currentUser.role === "STUDENT" &&
+    data.skills &&
+    (!formatUserSkills(currentUser.userSkills) || formatUserSkills(currentUser.userSkills) === "")
+  ) {
+    if (isStudent && skillsChanged) {
+      message = "Submitted successfully waiting for approval";
+    }
   }
 
   return { success: true, message };

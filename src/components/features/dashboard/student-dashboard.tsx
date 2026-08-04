@@ -17,6 +17,7 @@ export async function StudentDashboard() {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
+      userSkills: { include: { skill: true } },
       applications: {
         include: {
           project: {
@@ -66,12 +67,10 @@ export async function StudentDashboard() {
   });
 
   // Skills string to array
-  const skillsArray = user?.skills
-    ? user.skills
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : ["No skills added yet"];
+  const skillsArray =
+    user?.userSkills && user.userSkills.length > 0
+      ? user.userSkills.map((us) => us.skill.name)
+      : ["No skills added yet"];
 
   return (
     <div className="space-y-6">

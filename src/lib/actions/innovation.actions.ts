@@ -28,6 +28,7 @@ export async function createStartup(data: {
   const startup = await prisma.startup.create({
     data: {
       ...data,
+      stage: data.stage as any,
       founders: {
         create: [{ userId: session.user.id as string, role: "Founder" }],
       },

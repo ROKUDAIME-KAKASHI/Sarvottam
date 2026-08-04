@@ -7,8 +7,9 @@ import {
   getIndustryRecommendations,
   getAdminInsights,
 } from "@/lib/ai/engine";
+import { AIDashboardData } from "@/lib/ai/types";
 
-export async function getDashboardAI() {
+export async function getDashboardAI(): Promise<AIDashboardData> {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 

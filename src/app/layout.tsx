@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
 import { HideOnDashboard } from "@/components/hide-on-dashboard";
 import { Toaster } from "sonner";
 import { auth } from "@/auth";
 import { Chatbot } from "@/components/chatbot";
 
-const inter = Inter({ subsets: ["latin"] });
+const font = Outfit({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "Sarvottam – A New Era in Quality Excellence",
@@ -24,7 +24,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <body className={`${font.className} antialiased`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

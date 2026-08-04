@@ -1,0 +1,111 @@
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   @default("COURSE") // COURSE, WORKSHOP, EXECUTIVE_PROGRAM
+  level       String   @default("BEGINNER")
+  duration    Int? // duration in minutes or hours
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules     Module[]
+  sessions    Session[]
+  enrollments Enrollment[]
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons Lesson[]
+}
+
+model Lesson {
+  id         String   @id @default(cuid())
+  moduleId   String
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title      String
+  content    String?
+  videoUrl   String?
+  duration   Int? // duration in minutes
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Trainer {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation("TrainerProfile", fields: [userId], references: [id], onDelete: Cascade)
+  expertise String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  trainerId String
+  trainer   Trainer  @relation(fields: [trainerId], references: [id])
+  title     String
+  startDate DateTime
+  endDate   DateTime
+  location  String?
+  capacity  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attendance Attendance[]
+  feedbacks  Feedback[]
+}
+
+model Enrollment {
+  id          String    @id @default(cuid())
+  courseId    String
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation("UserEnrollments", fields: [userId], references: [id], onDelete: Cascade)
+  status      String    @default("ENROLLED") // ENROLLED, IN_PROGRESS, COMPLETED, DROPPED
+  progress    Float     @default(0) // Percentage 0-100
+  enrolledAt  DateTime  @default(now())
+  completedAt DateTime?
+
+  @@unique([courseId, userId])
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation("UserAttendance", fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("PRESENT") // PRESENT, ABSENT, LATE, EXCUSED
+  notes     String?
+  markedAt  DateTime @default(now())
+
+  @@unique([sessionId, userId])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation("UserFeedback", fields: [userId], references: [id], onDelete: Cascade)
+  rating      Int // 1-5 scale
+  comment     String?
+  submittedAt DateTime @default(now())
+
+  @@unique([sessionId, userId])
+}

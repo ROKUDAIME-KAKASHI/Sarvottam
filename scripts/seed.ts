@@ -125,7 +125,7 @@ async function main() {
   ];
 
   for (const p of projects) {
-    await prisma.project.create({ data: p });
+    await prisma.project.create({ data: p as any });
     console.log(`Created project: ${p.title}`);
   }
 
@@ -174,7 +174,7 @@ async function main() {
   ];
 
   for (const prob of problems) {
-    await prisma.problem.create({ data: prob });
+    await prisma.problem.create({ data: prob as any });
     console.log(`Created problem: ${prob.title}`);
   }
 

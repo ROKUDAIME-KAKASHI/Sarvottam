@@ -11,13 +11,18 @@ import {
   Activity,
   AlertTriangle,
 } from "lucide-react";
+import {
+  AIStudentRecommendation,
+  AIFacultyRecommendation,
+  AIIndustryRecommendation,
+  AIAdminInsight,
+} from "@/lib/ai/types";
 
 export default async function AICopilotPage() {
   const session = await auth();
-  if (!session) redirect("/login");
+  if (!session?.user) redirect("/login");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const aiData = (await getDashboardAI()) as any;
+  const rawAiData = await getDashboardAI();
 
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -35,7 +40,7 @@ export default async function AICopilotPage() {
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* STUDENT VIEW */}
-        {session.user.role === "STUDENT" && (
+        {session.user.role === "STUDENT" && "recommendedProjects" in rawAiData && (
           <>
             <Card>
               <CardHeader>
@@ -47,7 +52,7 @@ export default async function AICopilotPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.recommendedProjects?.map((p: any) => (
+                {(rawAiData as AIStudentRecommendation).recommendedProjects.map((p) => (
                   <div key={p.id} className="p-4 border rounded-md relative overflow-hidden">
                     <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-bl-md">
                       {p.matchScore}% Match
@@ -69,7 +74,7 @@ export default async function AICopilotPage() {
                 <CardDescription>Potential mentors for your next venture.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.recommendedFaculty?.map((f: any) => (
+                {(rawAiData as AIStudentRecommendation).recommendedFaculty.map((f) => (
                   <div
                     key={f.id}
                     className="flex justify-between items-center p-3 border-b last:border-0"
@@ -95,20 +100,22 @@ export default async function AICopilotPage() {
               <CardContent>
                 <p className="font-medium mb-2">Identified Missing Skills:</p>
                 <div className="flex gap-2 flex-wrap mb-4">
-                  {aiData.skillGap?.missingSkills.map((s: string) => (
+                  {(rawAiData as AIStudentRecommendation).skillGap.missingSkills.map((s) => (
                     <Badge key={s} variant="destructive">
                       {s}
                     </Badge>
                   ))}
                 </div>
-                <p className="text-sm">{aiData.skillGap?.suggestion}</p>
+                <p className="text-sm">
+                  {(rawAiData as AIStudentRecommendation).skillGap.suggestion}
+                </p>
               </CardContent>
             </Card>
           </>
         )}
 
         {/* FACULTY VIEW */}
-        {session.user.role === "FACULTY" && (
+        {session.user.role === "FACULTY" && "researchOpportunities" in rawAiData && (
           <>
             <Card>
               <CardHeader>
@@ -116,7 +123,7 @@ export default async function AICopilotPage() {
                 <CardDescription>Matched problem statements and grants.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.researchOpportunities?.map((r: any) => (
+                {(rawAiData as AIFacultyRecommendation).researchOpportunities.map((r) => (
                   <div key={r.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{r.title}</h4>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
@@ -134,7 +141,7 @@ export default async function AICopilotPage() {
                 <CardTitle>Collaboration Suggestions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.collaborationSuggestions?.map((c: any) => (
+                {(rawAiData as AIFacultyRecommendation).collaborationSuggestions.map((c) => (
                   <div key={c.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{c.name || c.email}</h4>
                     <p className="text-sm text-muted-foreground mt-1">{c.reason}</p>
@@ -146,14 +153,14 @@ export default async function AICopilotPage() {
         )}
 
         {/* INDUSTRY VIEW */}
-        {session.user.role === "INDUSTRY_PARTNER" && (
+        {session.user.role === "INDUSTRY_PARTNER" && "talentMatches" in rawAiData && (
           <>
             <Card>
               <CardHeader>
                 <CardTitle>Talent Matching</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.talentMatches?.map((t: any) => (
+                {(rawAiData as AIIndustryRecommendation).talentMatches.map((t) => (
                   <div
                     key={t.id}
                     className="flex justify-between items-center p-3 border-b last:border-0"
@@ -171,7 +178,7 @@ export default async function AICopilotPage() {
                 <CardTitle>Research Commercialization Matches</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {aiData.researchMatches?.map((r: any) => (
+                {(rawAiData as AIIndustryRecommendation).researchMatches.map((r) => (
                   <div key={r.id} className="p-4 border rounded-md">
                     <h4 className="font-semibold">{r.title}</h4>
                     <p className="text-sm mt-1">
@@ -188,7 +195,7 @@ export default async function AICopilotPage() {
         )}
 
         {/* SUPERADMIN VIEW */}
-        {session.user.role === "SUPERADMIN" && (
+        {session.user.role === "SUPERADMIN" && "systemHealth" in rawAiData && (
           <>
             <Card className="col-span-2">
               <CardHeader>
@@ -197,7 +204,7 @@ export default async function AICopilotPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg">{aiData.summary}</p>
+                <p className="text-lg">{(rawAiData as AIAdminInsight).summary}</p>
               </CardContent>
             </Card>
 
@@ -209,7 +216,7 @@ export default async function AICopilotPage() {
               </CardHeader>
               <CardContent>
                 <ul className="list-disc pl-5 space-y-2 text-sm">
-                  {aiData.predictions?.map((p: string, idx: number) => (
+                  {(rawAiData as AIAdminInsight).predictions.map((p, idx) => (
                     <li key={idx}>{p}</li>
                   ))}
                 </ul>
@@ -223,9 +230,9 @@ export default async function AICopilotPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {aiData.anomalies?.length > 0 ? (
+                {(rawAiData as AIAdminInsight).anomalies.length > 0 ? (
                   <ul className="list-disc pl-5 space-y-2 text-sm text-red-600 dark:text-red-400">
-                    {aiData.anomalies.map((a: string, idx: number) => (
+                    {(rawAiData as AIAdminInsight).anomalies.map((a, idx) => (
                       <li key={idx}>{a}</li>
                     ))}
                   </ul>

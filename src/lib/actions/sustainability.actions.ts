@@ -79,7 +79,7 @@ export async function logESGMetric(data: {
 
   const metric = await prisma.eSGMetric.create({
     data: {
-      ...data,
+      ...(data as any),
       recordedById: session.user.id as string,
     },
   });
@@ -94,7 +94,7 @@ export async function logCarbonMetric(data: { scope: string; source: string; emi
 
   const metric = await prisma.carbonMetric.create({
     data: {
-      ...data,
+      ...(data as any),
       recordedById: session.user.id as string,
     },
   });

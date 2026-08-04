@@ -24,7 +24,7 @@ export async function impersonateUser(targetUserId: string) {
   });
 }
 
-export async function getUsersForImpersonation() {
+export async function getUsersForImpersonation(take: number = 50, skip: number = 0) {
   const session = await auth();
 
   if (!session || session.user?.role !== "SUPERADMIN") {
@@ -40,5 +40,7 @@ export async function getUsersForImpersonation() {
       createdAt: true,
     },
     orderBy: { createdAt: "desc" },
+    take,
+    skip,
   });
 }

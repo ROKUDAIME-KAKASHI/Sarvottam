@@ -1,0 +1,64 @@
+model InnovationChallenge {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  prize       String?
+  deadline    DateTime
+  status      String   @default("OPEN") // OPEN, EVALUATION, CLOSED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  pitches PitchSubmission[]
+}
+
+model SDG {
+  id          String   @id @default(cuid())
+  sdgNumber   Int      @unique // 1 to 17
+  title       String
+  description String?
+  color       String?
+  createdAt   DateTime @default(now())
+
+  projects SustainabilityProject[] @relation("ProjectSDGs")
+}
+
+model KnowledgeNode {
+  id        String   @id @default(cuid())
+  type      String // PROBLEM, PROJECT, PAPER, PATENT, CASE_STUDY, STARTUP
+  entityId  String
+  label     String
+  createdAt DateTime @default(now())
+
+  sourceEdges KnowledgeEdge[] @relation("SourceNode")
+  targetEdges KnowledgeEdge[] @relation("TargetNode")
+}
+
+model KnowledgeEdge {
+  id        String        @id @default(cuid())
+  sourceId  String
+  source    KnowledgeNode @relation("SourceNode", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetId  String
+  target    KnowledgeNode @relation("TargetNode", fields: [targetId], references: [id], onDelete: Cascade)
+  relation  String // e.g., "RESOLVED_BY", "PUBLISHED_FROM", "SPAWNED_STARTUP"
+  weight    Float         @default(1.0)
+  createdAt DateTime      @default(now())
+
+  @@unique([sourceId, targetId, relation])
+}
+
+model Patent {
+  id         String   @id @default(cuid())
+  title      String
+  inventors  String
+  status     String   @default("FILED") // FILED, GRANTED
+  filingDate DateTime @default(now())
+  createdAt  DateTime @default(now())
+}
+
+model CaseStudy {
+  id        String   @id @default(cuid())
+  title     String
+  summary   String
+  impact    String?
+  createdAt DateTime @default(now())
+}

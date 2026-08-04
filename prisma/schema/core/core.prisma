@@ -1,0 +1,115 @@
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("STUDENT") // STUDENT, FACULTY, INDUSTRY_PARTNER, SUPERADMIN
+  skills        String?
+  portfolioUrl  String?
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  studentProfile  Student?
+  facultyProfile  Faculty?
+  industryProfile IndustryPartner?
+
+  applications        Application[]
+  notifications       Notification[]
+  submittedProblems   Problem[]            @relation("SubmittedProblems")
+  assignedProblems    Problem[]            @relation("AssignedProblems")
+  createdProjects     Project[]            @relation("ProjectCreator")
+  impersonationTokens ImpersonationToken[]
+  certificates        Certificate[]
+
+  // Excellence Framework
+  assessments      AssessmentResult[] @relation("Assessor")
+  improvementPlans ImprovementPlan[]  @relation("ImprovementOwner")
+
+  // Organizational Assessment Engine
+  uploadedEvidences AssessmentEvidence[] @relation("EvidenceUploader")
+  orgEvaluations    Evaluator[]          @relation("OrgEvaluator")
+  auditLogs         AuditLog[]           @relation("AuditUser")
+
+  // Certification Ecosystem
+  badges           UserBadge[]       @relation("UserBadges")
+  microCredentials MicroCredential[] @relation("UserMicroCredentials")
+
+  // Corporate Training (LMS)
+  trainerProfile Trainer?     @relation("TrainerProfile")
+  enrollments    Enrollment[] @relation("UserEnrollments")
+  attendances    Attendance[] @relation("UserAttendance")
+  feedbacks      Feedback[]   @relation("UserFeedback")
+
+  // Innovation Hub
+  founderProfile Founder?          @relation("FounderProfile")
+  mentorProfile  Mentor?           @relation("MentorProfile")
+  pitches        PitchSubmission[] @relation("UserPitches")
+
+  // Sustainability Center
+  managedProjects SustainabilityProject[] @relation("ProjectManager")
+  recordedESG     ESGMetric[]             @relation("ESGRecorder")
+  recordedCarbon  CarbonMetric[]          @relation("CarbonRecorder")
+  authoredReports ImpactReport[]          @relation("ReportAuthor")
+
+  // Placements
+  postedJobs      Job[]            @relation("PostedJobs")
+  jobApplications JobApplication[] @relation("JobApplications")
+
+  // Skills & Placements Features
+  userSkills                UserSkill[]
+  mockInterviewsStudent     MockInterviewSlot[]   @relation("InterviewStudent")
+  mockInterviewsInterviewer MockInterviewSlot[]   @relation("InterviewInterviewer")
+  portfolioSubmissions      PortfolioSubmission[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ImpersonationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  action     String
+  entityType String
+  entityId   String
+  userId     String
+  user       User     @relation("AuditUser", fields: [userId], references: [id])
+  details    String?
+  createdAt  DateTime @default(now())
+}
+
+model Skill {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  category   String?     @default("General")
+  userSkills UserSkill[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model UserSkill {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skillId   String
+  skill     Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, skillId])
+}

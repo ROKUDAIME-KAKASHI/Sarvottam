@@ -34,7 +34,7 @@ export async function registerUser(prevState: unknown, formData: FormData) {
         name,
         email,
         password: hashedPassword,
-        role,
+        role: role as any,
       },
     });
 

@@ -1,0 +1,50 @@
+model Job {
+  id           String           @id @default(cuid())
+  title        String
+  description  String
+  company      String
+  location     String?
+  type         String           @default("FULL_TIME")
+  status       String           @default("OPEN")
+  posterId     String
+  poster       User             @relation("PostedJobs", fields: [posterId], references: [id])
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model JobApplication {
+  id          String   @id @default(cuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicantId String
+  applicant   User     @relation("JobApplications", fields: [applicantId], references: [id], onDelete: Cascade)
+  status      String   @default("PENDING")
+  resumeUrl   String?
+  coverLetter String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MockInterviewSlot {
+  id            String   @id @default(cuid())
+  interviewerId String
+  interviewer   User     @relation("InterviewInterviewer", fields: [interviewerId], references: [id], onDelete: Cascade)
+  studentId     String?
+  student       User?    @relation("InterviewStudent", fields: [studentId], references: [id], onDelete: SetNull)
+  startTime     DateTime
+  isBooked      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PortfolioSubmission {
+  id           String   @id @default(cuid())
+  studentId    String
+  student      User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  portfolioUrl String
+  feedbackGoal String?
+  score        Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

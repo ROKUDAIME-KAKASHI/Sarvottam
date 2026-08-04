@@ -82,12 +82,10 @@ export default function ReportsClient({
                       </p>
                     </div>
                   </div>
-                  <ComingSoon feature="PDF generation and download">
-                    <Button variant="outline" size="sm">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download PDF
-                    </Button>
-                  </ComingSoon>
+                  <Button variant="outline" size="sm" onClick={() => window.print()}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </Button>
                 </motion.div>
               ))}
             </div>

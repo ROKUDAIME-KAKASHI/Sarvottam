@@ -1,0 +1,119 @@
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  projects    Project[]
+  faculties   Faculty[]
+  kpis        KPI[]
+}
+
+model Student {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills    String? // Comma-separated or JSON string
+  portfolio String?
+}
+
+model Faculty {
+  id               String      @id @default(cuid())
+  userId           String      @unique
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  departmentId     String?
+  department       Department? @relation(fields: [departmentId], references: [id])
+  mentoredProjects Project[]
+}
+
+model IndustryPartner {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName String
+  sector      String
+  projects    Project[]
+}
+
+model Project {
+  id              String           @id @default(cuid())
+  title           String
+  description     String
+  difficultyLevel String?
+  duration        String?
+  type            String?
+  status          String           @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED
+  departmentId    String?
+  department      Department?      @relation(fields: [departmentId], references: [id])
+  mentorId        String?
+  mentor          Faculty?         @relation(fields: [mentorId], references: [id])
+  partnerId       String?
+  partner         IndustryPartner? @relation(fields: [partnerId], references: [id])
+  creatorId       String?
+  creator         User?            @relation("ProjectCreator", fields: [creatorId], references: [id])
+  applications    Application[]
+  documents       Document[]
+  problems        Problem[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Application {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  status    String  @default("PENDING") // PENDING, ACCEPTED, REJECTED
+
+  // Granular approvals
+  adminApproved    Boolean @default(false)
+  facultyApproved  Boolean @default(false)
+  industryApproved Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
+
+model ResearchPaper {
+  id        String   @id @default(cuid())
+  title     String
+  abstract  String
+  url       String
+  authors   String
+  createdAt DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Problem {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  type        String?
+  area        String  @default("PROCESS") // PEOPLE, PROCESS, TECHNOLOGY, BUSINESS, COMPLIANCE
+  quadrant    String? // DO_FIRST, SCHEDULE, DELEGATE, ELIMINATE
+  status      String  @default("OPEN") // OPEN, PENDING, APPROVED, ESCALATED, RESOLVED
+  level       String  @default("MEDIUM") // LOW, MEDIUM, HIGH
+  score       Float?  @default(0) // priority score
+
+  adminApproved    Boolean @default(false)
+  facultyApproved  Boolean @default(false)
+  industryApproved Boolean @default(false)
+
+  submitterId String
+  submitter   User   @relation("SubmittedProblems", fields: [submitterId], references: [id])
+
+  assigneeId String?
+  assignee   User?   @relation("AssignedProblems", fields: [assigneeId], references: [id])
+
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

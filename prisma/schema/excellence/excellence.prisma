@@ -1,0 +1,125 @@
+model ExcellenceFramework {
+  id          String   @id @default(cuid())
+  name        String // e.g., "Sarvottam Excellence Model", "EFQM 2020"
+  description String?
+  version     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  dimensions     FrameworkDimension[]
+  templates      AssessmentTemplate[]
+  maturityLevels MaturityLevel[]
+}
+
+model FrameworkDimension {
+  id          String              @id @default(cuid())
+  frameworkId String
+  framework   ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  name        String // e.g., Leadership, People, Process, Innovation, Sustainability, Results
+  description String?
+  weightage   Float               @default(0) // Contribution to overall score
+  orderIndex  Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  questions AssessmentQuestion[]
+}
+
+model MaturityLevel {
+  id          String              @id @default(cuid())
+  frameworkId String
+  framework   ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  level       Int // e.g., 1 to 5
+  name        String // e.g., "Initial", "Managed", "Defined", "Quantitatively Managed", "Optimizing"
+  description String?
+  minScore    Float // Minimum score required to reach this level
+  maxScore    Float // Maximum score for this level
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model AssessmentTemplate {
+  id          String              @id @default(cuid())
+  frameworkId String
+  framework   ExcellenceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  name        String // e.g., "Annual Organizational Assessment"
+  description String?
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  questions AssessmentQuestion[]
+  results   AssessmentResult[]
+}
+
+model AssessmentQuestion {
+  id          String             @id @default(cuid())
+  templateId  String
+  template    AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  dimensionId String
+  dimension   FrameworkDimension @relation(fields: [dimensionId], references: [id], onDelete: Cascade)
+  text        String
+  guidance    String? // Guidance on how to answer
+  type        String             @default("SCALE") // SCALE, BOOLEAN, TEXT
+  maxValue    Int                @default(5)
+  weightage   Float              @default(1.0)
+  orderIndex  Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  responses AssessmentResponse[]
+}
+
+model AssessmentResult {
+  id              String             @id @default(cuid())
+  templateId      String
+  template        AssessmentTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  assessorId      String
+  assessor        User               @relation("Assessor", fields: [assessorId], references: [id])
+  organizationId  String? // Optional: If assessing a specific entity, could be project or department
+  targetType      String             @default("ORGANIZATION") // ORGANIZATION, DEPARTMENT, PROJECT
+  targetId        String?
+  status          String             @default("DRAFT") // DRAFT, SUBMITTED, REVIEWED, PUBLISHED
+  totalScore      Float              @default(0)
+  normalizedScore Float              @default(0) // e.g., out of 1000 like EFQM
+  maturityScore   Int? // Calculated 1-5 based on MaturityLevel
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  responses        AssessmentResponse[]
+  improvementPlans ImprovementPlan[]
+}
+
+model AssessmentResponse {
+  id           String             @id @default(cuid())
+  resultId     String
+  result       AssessmentResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     AssessmentQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  numericValue Float?
+  booleanValue Boolean?
+  textValue    String?
+  evidenceUrl  String? // Link to supporting document
+  notes        String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@unique([resultId, questionId])
+}
+
+model ImprovementPlan {
+  id          String           @id @default(cuid())
+  resultId    String
+  result      AssessmentResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  area        String // Maps to Dimension or specific area
+  priority    String           @default("MEDIUM") // HIGH, MEDIUM, LOW
+  status      String           @default("PLANNED") // PLANNED, IN_PROGRESS, COMPLETED, CANCELLED
+  ownerId     String?
+  owner       User?            @relation("ImprovementOwner", fields: [ownerId], references: [id])
+  dueDate     DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}

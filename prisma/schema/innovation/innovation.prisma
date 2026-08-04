@@ -1,0 +1,78 @@
+model Startup {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  industry    String?
+  stage       String    @default("IDEA") // IDEA, MVP, EARLY_TRACTION, SCALING
+  website     String?
+  foundedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  founders Founder[]
+  programs IncubationProgram[] @relation("StartupPrograms")
+  pitches  PitchSubmission[]
+}
+
+model Founder {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation("FounderProfile", fields: [userId], references: [id], onDelete: Cascade)
+  startupId String
+  startup   Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  role      String   @default("CEO")
+  createdAt DateTime @default(now())
+}
+
+model Mentor {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation("MentorProfile", fields: [userId], references: [id], onDelete: Cascade)
+  expertise   String // e.g., "Marketing, Fundraising"
+  bio         String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IncubationProgram {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String   @default("UPCOMING") // UPCOMING, ACTIVE, COMPLETED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  startups Startup[] @relation("StartupPrograms")
+}
+
+model Hackathon {
+  id        String   @id @default(cuid())
+  title     String
+  theme     String?
+  startDate DateTime
+  endDate   DateTime
+  location  String?
+  status    String   @default("DRAFT") // DRAFT, REGISTRATION, LIVE, ENDED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PitchSubmission {
+  id          String               @id @default(cuid())
+  title       String
+  description String
+  deckUrl     String?
+  startupId   String?
+  startup     Startup?             @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  submitterId String
+  submitter   User                 @relation("UserPitches", fields: [submitterId], references: [id], onDelete: Cascade)
+  challengeId String?
+  challenge   InnovationChallenge? @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  status      String               @default("SUBMITTED") // SUBMITTED, REVIEWING, SHORTLISTED, REJECTED, WINNER
+  score       Float?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}

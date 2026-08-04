@@ -49,10 +49,7 @@ export function RecentSubmissionsList({
                   </Badge>
                   {app.status === "PENDING" && !app.facultyApproved && (
                     <ActionButton
-                      action={async () => {
-                        "use server";
-                        return await approveApplication(app.id, "FACULTY", true);
-                      }}
+                      action={approveApplication.bind(null, app.id, "FACULTY", true)}
                       successMessage="Application approved successfully"
                       size="sm"
                       className="h-7 text-xs px-2"
