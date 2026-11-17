@@ -17,6 +17,7 @@ import {
   AIIndustryRecommendation,
   AIAdminInsight,
 } from "@/lib/ai/types";
+import { AIStudioTerminal } from "./AIStudioTerminal";
 
 export default async function AICopilotPage() {
   const session = await auth();
@@ -25,18 +26,24 @@ export default async function AICopilotPage() {
   const rawAiData = await getDashboardAI();
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="p-3 bg-primary/10 rounded-full">
+    <div className="flex-1 space-y-6 p-6 md:p-8 pt-6 max-w-6xl mx-auto">
+      <div className="flex items-center space-x-3 mb-2">
+        <div className="p-3 bg-primary/10 rounded-xl">
           <BrainCircuit className="w-8 h-8 text-primary" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">AI Copilot</h2>
-          <p className="text-muted-foreground">
-            Personalized insights and recommendations powered by Sarvottam AI.
+          <h2 className="text-3xl font-extrabold tracking-tight">AI Copilot & Reasoning Studio</h2>
+          <p className="text-sm text-muted-foreground">
+            Personalized insights, process optimization recommendations, and ecosystem intelligence.
           </p>
         </div>
       </div>
+
+      {/* Interactive AI Terminal */}
+      <AIStudioTerminal
+        userRole={session.user.role || "STUDENT"}
+        userName={session.user.name || "Colleague"}
+      />
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* STUDENT VIEW */}

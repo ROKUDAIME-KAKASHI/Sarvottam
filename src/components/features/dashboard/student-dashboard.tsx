@@ -142,9 +142,17 @@ export async function StudentDashboard() {
           <CardContent>
             <div className="space-y-4">
               {activeProjects.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  You are not participating in any active projects yet.
-                </p>
+                <div className="text-center py-6 px-4 bg-muted/20 border border-dashed border-border/70 rounded-xl space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    You have not joined an active industry research project yet.
+                  </p>
+                  <a
+                    href="/research"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-sm"
+                  >
+                    Browse Open Industry Challenges &rarr;
+                  </a>
+                </div>
               ) : (
                 activeProjects.map((app) => (
                   <div
@@ -168,15 +176,35 @@ export async function StudentDashboard() {
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Skill Tracking</CardTitle>
-            <CardDescription>Your validated quality skills</CardDescription>
+            <CardDescription>Your validated quality competencies</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex flex-wrap gap-2">
               {skillsArray.map((skill, i) => (
                 <Badge key={i} variant="outline" className="px-3 py-1 bg-primary/5">
                   {skill}
                 </Badge>
               ))}
+            </div>
+
+            <div className="pt-3 border-t border-border/50 space-y-2">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+                Quick Actions
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="/framework"
+                  className="p-2 text-xs font-medium rounded-lg border border-border/60 hover:bg-muted/40 hover:border-primary/30 transition-all block text-center"
+                >
+                  Quality Engine
+                </a>
+                <a
+                  href="/dashboard/placements"
+                  className="p-2 text-xs font-medium rounded-lg border border-border/60 hover:bg-muted/40 hover:border-primary/30 transition-all block text-center"
+                >
+                  Placements & Jobs
+                </a>
+              </div>
             </div>
           </CardContent>
         </Card>

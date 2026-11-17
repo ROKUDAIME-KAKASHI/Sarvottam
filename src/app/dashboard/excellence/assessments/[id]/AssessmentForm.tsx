@@ -25,7 +25,7 @@ export default function AssessmentForm({
 
   // Group questions by dimension
   const questionsByDimension = template.questions.reduce((acc: any, q: any) => {
-    const dimName = q.dimension.name;
+    const dimName = q.dimension?.name || "Core Dimension";
     if (!acc[dimName]) acc[dimName] = [];
     acc[dimName].push(q);
     return acc;

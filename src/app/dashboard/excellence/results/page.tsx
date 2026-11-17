@@ -49,7 +49,7 @@ export default async function ResultsPage() {
                   <TableCell>{result.assessor.name || result.assessor.email}</TableCell>
                   <TableCell className="font-bold">{result.totalScore}</TableCell>
                   <TableCell>{result.status}</TableCell>
-                  <TableCell>{result.createdAt.toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(result.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/dashboard/excellence/results/${result.id}`}>
