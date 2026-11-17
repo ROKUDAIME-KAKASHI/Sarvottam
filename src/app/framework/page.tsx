@@ -21,6 +21,7 @@ import {
   Users,
   Award,
 } from "lucide-react";
+import { QualityCalculator } from "./QualityCalculator";
 
 const FRAMEWORK_PILLARS = [
   {
@@ -245,6 +246,11 @@ export default function FrameworkPage() {
               </div>
             </div>
           </Card>
+        </div>
+
+        {/* Interactive Six Sigma & TQM Process Capability Engine */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <QualityCalculator />
         </div>
 
         {/* Quality Maturity Scale */}

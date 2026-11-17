@@ -277,7 +277,7 @@ export function SystemExplorer({ problems, projects, isLoggedIn }: SystemExplore
             filteredProblems.map((prob) => (
               <Card
                 key={prob.id}
-                className="flex flex-col justify-between rounded-2xl border-border/60 bg-card hover:border-primary/40 hover:shadow-md transition-all duration-200 group"
+                className="flex flex-col justify-between rounded-2xl border-border/60 bg-card hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
               >
                 <CardHeader className="p-5 pb-3">
                   <div className="flex items-start justify-between gap-2 mb-2">

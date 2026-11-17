@@ -99,7 +99,7 @@ export function SystemHero({ stats, isLoggedIn }: SystemHeroProps) {
           className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground max-w-5xl leading-[1.12]"
         >
           Real Industry Quality Challenges. <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-indigo-600 dark:from-primary dark:via-blue-400 dark:to-sky-300">
+          <span className="text-muted-foreground/85 font-bold">
             Solved by Academic Research Nodes.
           </span>
         </motion.h1>

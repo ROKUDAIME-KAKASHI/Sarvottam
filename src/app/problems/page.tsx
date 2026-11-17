@@ -42,6 +42,39 @@ const PROBLEM_TYPES = [
   { value: "COMPLIANCE", label: "Regulatory / ISO / ESG Audit Variance" },
 ];
 
+const SAMPLE_TEMPLATES = [
+  {
+    title: "EV Battery Pack Thermal Variance",
+    company: "Tata Electromotive Systems",
+    sector: "Automotive & Electric Vehicles",
+    type: "TECHNOLOGY",
+    problem:
+      "During fast-charge cycles (150kW+), our modular lithium iron phosphate (LFP) battery packs demonstrate a 4.8°C thermal differential between core cells and perimeter cells, inducing localized degradation and cell balancing latency.",
+    outcome:
+      "Design an optimized micro-channel liquid cooling manifold simulation and thermal model to limit core-perimeter delta to <1.5°C under 200kW fast charge.",
+  },
+  {
+    title: "High-Pressure Die Casting Porosity",
+    company: "Bharat Precision Forgings",
+    sector: "Advanced Manufacturing",
+    type: "PROCESS",
+    problem:
+      "Aluminum structural chassis nodes produced via high-pressure die casting suffer from trapped gas porosity in thick-section runner junctions, resulting in a 3.4% non-destructive X-ray rejection rate.",
+    outcome:
+      "Implement vacuum-assisted venting and Six Sigma DMAIC parameter optimization to reduce porosity defects to <0.3% across high-volume production.",
+  },
+  {
+    title: "IoT Edge Telemetry Packet Drop",
+    company: "Zenith Grid Solutions",
+    sector: "IoT, Edge & Cyber-Physical Systems",
+    type: "TECHNOLOGY",
+    problem:
+      "Substation IoT telemetry gateways experience up to 14% packet drops during intermittent cellular handover, creating blind spots in real-time power quality harmonics monitoring.",
+    outcome:
+      "Implement a lightweight store-and-forward edge sync protocol with compressed delta sync achieving 99.98% telemetry delivery assurance.",
+  },
+];
+
 export default function ProblemsPortal() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -187,7 +220,40 @@ export default function ProblemsPortal() {
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-0 pt-6">
+            <CardContent className="p-0 pt-6 space-y-6">
+              {/* Quick Load Industry Template Chips */}
+              <div className="p-4 rounded-2xl border border-border/50 bg-muted/20 space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-mono font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-primary" />
+                    Load Verified Industrial Scenarios:
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Click to populate fields
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {SAMPLE_TEMPLATES.map((tmpl, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() =>
+                        setFormData({
+                          company: tmpl.company,
+                          sector: tmpl.sector,
+                          type: tmpl.type,
+                          problem: tmpl.problem,
+                          outcome: tmpl.outcome,
+                        })
+                      }
+                      className="px-3 py-1.5 rounded-xl border border-border/60 bg-background/80 hover:bg-primary/10 hover:border-primary/40 text-xs font-semibold text-foreground transition-all cursor-pointer text-left"
+                    >
+                      {tmpl.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
                   <div className="bg-destructive/10 text-destructive p-4 rounded-xl text-xs font-semibold border border-destructive/20 flex items-start gap-2.5">

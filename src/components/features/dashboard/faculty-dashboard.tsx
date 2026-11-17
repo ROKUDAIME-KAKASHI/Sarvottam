@@ -10,8 +10,14 @@ export async function FacultyDashboard() {
 
   if (!userId) return null;
 
+  const facultyProfile = await prisma.faculty.findUnique({
+    where: { userId },
+  });
+
   const mentoredProjects = await prisma.project.findMany({
-    where: { mentorId: userId },
+    where: {
+      OR: [...(facultyProfile ? [{ mentorId: facultyProfile.id }] : []), { mentorId: userId }],
+    },
     include: {
       applications: {
         include: { user: true },

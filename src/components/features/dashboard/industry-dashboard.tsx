@@ -16,6 +16,10 @@ export async function IndustryDashboard() {
 
   if (!userId) return null;
 
+  const partnerProfile = await prisma.industryPartner.findUnique({
+    where: { userId },
+  });
+
   const problems = await prisma.problem.findMany({
     where: { submitterId: userId },
     orderBy: { createdAt: "desc" },
@@ -23,11 +27,25 @@ export async function IndustryDashboard() {
   });
 
   const projects = await prisma.project.findMany({
-    where: { partnerId: userId },
+    where: {
+      OR: [
+        ...(partnerProfile ? [{ partnerId: partnerProfile.id }] : []),
+        { partnerId: userId },
+        { creatorId: userId },
+      ],
+    },
     include: {
       applications: {
         where: { status: "PENDING" },
         include: { user: { include: { userSkills: { include: { skill: true } } } } },
+      },
+    },
+  });
+
+  const documentsCount = await prisma.document.count({
+    where: {
+      project: {
+        OR: [...(partnerProfile ? [{ partnerId: partnerProfile.id }] : []), { partnerId: userId }],
       },
     },
   });
@@ -72,18 +90,18 @@ export async function IndustryDashboard() {
             <p className="text-xs text-muted-foreground">Active development</p>
           </CardContent>
         </Card>
-        <ComingSoon feature="Research reports">
-          <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+        <Link href="/dashboard/documents" className="block">
+          <Card className="hover:border-primary/40 transition-colors cursor-pointer h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Research Reports</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Ready to download</p>
+              <div className="text-2xl font-bold">{documentsCount}</div>
+              <p className="text-xs text-muted-foreground">Technical documents & deliverables</p>
             </CardContent>
           </Card>
-        </ComingSoon>
+        </Link>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
