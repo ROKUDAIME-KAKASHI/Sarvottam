@@ -9,6 +9,8 @@ import { ComingSoon } from "@/components/coming-soon";
 import ApplicationList from "@/app/dashboard/applications/ApplicationList";
 import { approveProblemFormAction } from "@/app/actions/problems";
 import Link from "next/link";
+import { ProjectPipelineChart } from "./project-pipeline-chart";
+import { DepartmentKPIChart } from "./department-kpi-chart";
 
 export async function AdminDashboard({
   searchParams,
@@ -47,6 +49,26 @@ export async function AdminDashboard({
   const totalPendingProblems = await prisma.problem.count({
     where: { OR: [{ adminApproved: false }, { status: "OPEN" }] },
   });
+
+  const inProgressProjects = await prisma.project.count({ where: { status: "IN_PROGRESS" } });
+  const completedProjects = await prisma.project.count({ where: { status: "COMPLETED" } });
+  const acceptedApps = await prisma.application.count({ where: { status: "ACCEPTED" } });
+
+  const rawDepts = await prisma.department.findMany({
+    include: {
+      _count: {
+        select: { projects: true, faculties: true, kpis: true },
+      },
+    },
+  });
+
+  const departmentData = rawDepts.map((d) => ({
+    id: d.id,
+    name: d.name,
+    projectCount: d._count.projects,
+    facultyCount: d._count.faculties,
+    kpiCount: d._count.kpis,
+  }));
 
   return (
     <div className="space-y-6">
@@ -303,14 +325,20 @@ export async function AdminDashboard({
           <Card>
             <CardHeader>
               <CardTitle>Project Pipeline Status</CardTitle>
-              <CardDescription>Overview of all projects across the platform</CardDescription>
+              <CardDescription>
+                Live research workspace volume across all lifecycle stages
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <ComingSoon feature="Project pipeline visualization">
-                <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground cursor-pointer hover:bg-muted/20 transition-colors">
-                  [ Chart Visualization: Projects Pipeline ]
-                </div>
-              </ComingSoon>
+              <ProjectPipelineChart
+                data={{
+                  openProjects: activeProjects,
+                  inProgressProjects,
+                  completedProjects,
+                  pendingApplications: totalPendingApps,
+                  acceptedApplications: acceptedApps,
+                }}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -318,14 +346,12 @@ export async function AdminDashboard({
           <Card>
             <CardHeader>
               <CardTitle>Department Node Performance</CardTitle>
-              <CardDescription>KPIs by Node</CardDescription>
+              <CardDescription>
+                Research projects, faculty supervisors, and KPIs by academic department
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <ComingSoon feature="Department KPI charts">
-                <div className="h-[300px] flex items-center justify-center border-2 border-dashed rounded-lg bg-muted/10 text-muted-foreground cursor-pointer hover:bg-muted/20 transition-colors">
-                  [ Bar Chart: Department KPIs ]
-                </div>
-              </ComingSoon>
+              <DepartmentKPIChart departments={departmentData} />
             </CardContent>
           </Card>
         </TabsContent>

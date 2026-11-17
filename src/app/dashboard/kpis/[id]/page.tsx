@@ -7,12 +7,13 @@ import Link from "next/link";
 import KPITrendChart from "./KPITrendChart";
 import { AlertCircle, ArrowLeft, Target } from "lucide-react";
 
-export default async function KPIDetailPage({ params }: { params: { id: string } }) {
+export default async function KPIDetailPage(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
   const session = await auth();
   if (!session) redirect("/login");
 
   const kpi = await prisma.kPI.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       category: true,
       department: true,

@@ -3,7 +3,8 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import AssessmentForm from "./AssessmentForm";
 
-export default async function AssessmentDetailPage({ params }: { params: { id: string } }) {
+export default async function AssessmentDetailPage(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
@@ -11,7 +12,7 @@ export default async function AssessmentDetailPage({ params }: { params: { id: s
 
   // The id here is the AssessmentTemplate id
   const template = await prisma.assessmentTemplate.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       questions: {
         include: {

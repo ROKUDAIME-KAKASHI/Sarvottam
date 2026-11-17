@@ -13,14 +13,15 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default async function ScorecardPage({ params }: { params: { id: string } }) {
+export default async function ScorecardPage(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
   const session = await auth();
   if (!session) {
     redirect("/login");
   }
 
   const result = await prisma.assessmentResult.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       template: {
         include: { framework: true },
